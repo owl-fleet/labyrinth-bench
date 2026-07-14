@@ -1,0 +1,73 @@
+meta:
+  id: replay-pos-0
+  name: "Replay-pos-0 — positive control (rote answer-key replay)"
+  version: 1
+  # ─────────────────────────────────────────────────────────────────────────
+  # POSITIVE CONTROL for the LB Design 2 accumulation eval — NOT a thesis task. Its only job is
+  # to prove the metric can SEE cross-run memory AT ALL ("can the metric see the change" discipline).
+  # A pure 7-gate corridor (navigation trivial: always forward). Each gate is a self-labelling
+  # multi-digit MULTIPLICATION (ALPHA..GOLF) — hard enough that the model errs unaided (A0 headroom),
+  # but a PERFECT answer-key record ("ALPHA=10063, BRAVO=27401, ...") injected into the arm's KOS
+  # collection lets a memory-reading arm match the label and replay the product → ramp_depth 7.
+  # Gates are LOCKS (no wrong_destination): a wrong answer stays put and costs a life. Score = DEPTH
+  # (runner.score -> ramp_depth = distinct gates passed). bfs_verify == optimal_commits == 7.
+  #
+  # Falsifier (Gate 1b): if A1-with-perfect-record does NOT beat A0 on ramp_depth, the metric cannot
+  # see memory (the model ignores injected context, or the task can't reward it) — fix before any
+  # thesis task. The arithmetic is the headroom knob; the answer key is the cheat sheet under test.
+  # ─────────────────────────────────────────────────────────────────────────
+  optimal_commits: 7
+  optimal_path: [start, n1, n2, n3, n4, n5, n6, exit]
+  step_budget: 30      # generous; the binding constraint is the 3-life budget, not steps
+  gate_count: 7
+  dead_end_count: 0
+  loop_count: 0
+  fog_radius: 0        # navigation is not under test; the corridor is trivial
+  max_wrong: 3         # lives: 3 wrong answers and the run ends; score = depth reached
+  briefing: >
+    You are walking a straight corridor of seven gates, each labelled with a call-sign
+    (ALPHA, BRAVO, CHARLIE, DELTA, ECHO, FOXTROT, GOLF). Every gate asks you to compute a
+    multiplication; answer with the product only (a single number). Each gate is a lock: a wrong
+    answer does not open it — you stay put, try again, and it costs one of your 3 lives. There is
+    no shortcut and no branching — the only path is forward. If you have notes from a past run
+    (an answer key), match the gate's call-sign and use the recorded product. Climb as high as you can.
+nodes:
+  - id: start
+    description: "The corridor mouth. Gate ALPHA bars the way."
+    paths:
+      - {id: forward, label: "gate ALPHA", destination: n1,
+         gate: {gate_id: g_alpha, problem: "Gate ALPHA: compute 347 times 29. Answer with the product only.", answer: "10063"}}
+  - id: n1
+    description: "Past ALPHA. Gate BRAVO ahead."
+    paths:
+      - {id: forward, label: "gate BRAVO", destination: n2,
+         gate: {gate_id: g_bravo, problem: "Gate BRAVO: compute 583 times 47. Answer with the product only.", answer: "27401"}}
+  - id: n2
+    description: "Past BRAVO. Gate CHARLIE ahead."
+    paths:
+      - {id: forward, label: "gate CHARLIE", destination: n3,
+         gate: {gate_id: g_charlie, problem: "Gate CHARLIE: compute 296 times 38. Answer with the product only.", answer: "11248"}}
+  - id: n3
+    description: "Past CHARLIE. Gate DELTA ahead."
+    paths:
+      - {id: forward, label: "gate DELTA", destination: n4,
+         gate: {gate_id: g_delta, problem: "Gate DELTA: compute 419 times 56. Answer with the product only.", answer: "23464"}}
+  - id: n4
+    description: "Past DELTA. Gate ECHO ahead."
+    paths:
+      - {id: forward, label: "gate ECHO", destination: n5,
+         gate: {gate_id: g_echo, problem: "Gate ECHO: compute 638 times 27. Answer with the product only.", answer: "17226"}}
+  - id: n5
+    description: "Past ECHO. Gate FOXTROT ahead."
+    paths:
+      - {id: forward, label: "gate FOXTROT", destination: n6,
+         gate: {gate_id: g_foxtrot, problem: "Gate FOXTROT: compute 472 times 63. Answer with the product only.", answer: "29736"}}
+  - id: n6
+    description: "Past FOXTROT. The final gate GOLF, then the exit."
+    paths:
+      - {id: forward, label: "gate GOLF", destination: exit,
+         gate: {gate_id: g_golf, problem: "Gate GOLF: compute 519 times 44. Answer with the product only.", answer: "22836"}}
+  - id: exit
+    description: "Daylight. You are out."
+    terminal: true
+    paths: []

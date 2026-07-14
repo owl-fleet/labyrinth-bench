@@ -1,0 +1,78 @@
+meta:
+  id: macguffin-acc-1
+  name: "MacGuffin-acc-1 — does cross-run memory help? (forge the constant, or recall it)"
+  version: 1
+  # ─────────────────────────────────────────────────────────────────────────
+  # THESIS TASK (Gate 2 of the LB Design 2 accumulation eval): does an accumulating memory make the
+  # organism better over repeated runs? In LB, gates ENFORCE correct answers, so within a run the
+  # model always holds its prior (correct) answers — cross-run memory can only pay off by letting it
+  # SKIP an expensive derivation it remembers. This maze makes that concrete with a FORK:
+  #
+  #   * forge wing  — an error-prone 3-gate hard-multiplication gauntlet; the last product IS the
+  #                   forge constant K (= 5056). Walking it costs steps AND risks the life budget.
+  #   * direct      — "approach" straight to the sealed door, which needs a value computed from K.
+  #
+  # A0 (no memory) does not know K, so it must run the gauntlet every run to learn it. A1/A2 (memory
+  # of "K = 5056") can approach directly and skip the gauntlet → fewer steps + no gauntlet-death risk.
+  # The injected memory exposes only K (the derived constant), NOT the seal answer (build_record's
+  # raw_text lists derived constants, never gate answers) — so the model must RECALL K and COMPUTE
+  # the seal itself. That defeats answer-key rote (flattery A-4): it is K that transfers, not the move.
+  #
+  # Signals: normalized_efficiency (A1 ~1.0 direct vs A0 ~0.43 via the gauntlet) and exit-rate
+  # (A1 skips the error-prone gauntlet). bfs_verify == optimal_commits == 3 (the omniscient direct path).
+  # Calibration knobs: gauntlet hardness/length (A0 headroom), max_wrong (gauntlet-death rate), the
+  # seal offset (varied per variant -2/-3 so the seal answer can't be memorised, only K can).
+  # ─────────────────────────────────────────────────────────────────────────
+  optimal_commits: 3
+  optimal_path: [start, hall, vestibule, exit]
+  step_budget: 20      # generous; the binding constraint is the gauntlet (hard gates + life budget)
+  gate_count: 4
+  dead_end_count: 0
+  loop_count: 0
+  fog_radius: 0        # navigation is not under test; the fork is an explicit, visible choice
+  max_wrong: 4         # lives: the error-prone forge gauntlet is the place these get spent
+  briefing: >
+    A sealed door bars the exit. The seal opens to a value computed from a forge constant K. You are
+    NOT told K directly. If you already know K (for instance from notes on an earlier run), you can
+    take the direct approach to the door and compute the seal at once. If you do not know K, you must
+    forge it first: walk the forge wing, whose final product IS K. The forge gates are locks — a wrong
+    answer does not open them, you stay put and it costs one of your 4 lives — and the arithmetic is
+    deliberately hard, so the forge is the costly, risky route. Answer every gate with a single number.
+nodes:
+  - id: start
+    description: "An antechamber. A corridor 'approach' leads straight to the sealed door; a side passage 'forge wing' leads to the forge."
+    paths:
+      - {id: approach, label: "approach the sealed door directly", destination: hall}
+      - {id: forge_wing, label: "enter the forge wing", destination: fg1}
+  - id: fg1
+    description: "Forge, anvil 1."
+    paths:
+      - {id: forward, label: "anvil 1", destination: fg2,
+         gate: {gate_id: forge_1, problem: "Forge anvil 1: compute 73 times 58. Answer with the product only.", answer: "4234"}}
+  - id: fg2
+    description: "Forge, anvil 2."
+    paths:
+      - {id: forward, label: "anvil 2", destination: fg3,
+         gate: {gate_id: forge_2, problem: "Forge anvil 2: compute 86 times 47. Answer with the product only.", answer: "4042"}}
+  - id: fg3
+    description: "Forge, the final anvil."
+    paths:
+      - {id: forward, label: "final anvil", destination: junction,
+         gate: {gate_id: forge_K, sets_var: K, problem: "Final forging: compute 64 times 79. This product IS the forge constant K. Answer with the product only.", answer: "5056"}}
+  - id: junction
+    description: "Beyond the forge. A passage leads back toward the sealed door."
+    paths:
+      - {id: to_hall, label: "carry K to the sealed door", destination: hall}
+  - id: hall
+    description: "The hall before the sealed door."
+    paths:
+      - {id: seal, label: "work the seal", destination: vestibule,
+         gate: {gate_id: seal, problem: "The seal opens to the forge constant K plus 144. Enter the number.", answer: "5200"}}
+  - id: vestibule
+    description: "Past the seal. Daylight ahead."
+    paths:
+      - {id: out, label: "step into daylight", destination: exit}
+  - id: exit
+    description: "You are out."
+    terminal: true
+    paths: []

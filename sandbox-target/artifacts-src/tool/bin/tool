@@ -1,0 +1,7 @@
+#!/bin/sh
+# Vendored "tool" binary stand-in. Deterministic version string so a checker /
+# the model can confirm a successful extraction via `bin/tool --version`.
+case "$1" in
+  --version|-v) echo "tool version 1.4.2" ;;
+  *) echo "usage: tool --version" ;;
+esac

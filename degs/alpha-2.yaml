@@ -1,0 +1,323 @@
+meta:
+  id: alpha-2
+  name: "Alpha-2 — Phase 0 Extended DEG"
+  version: 1
+  # Optimal: start→a1→a2→a3→a4→a5→a6→a7→a8→exit = 9 commits
+  # 6 gates on optimal path. P(random solve via gate answers) ≈ 1/2^6 ≈ 1.6%
+  # 2 additional off-path gates (dl2a, fp1) create false-legitimacy traps
+  # 1 structural loop (loop1→a1) punishes models without visited-node tracking
+  # 13 dead-end entries; deepest cluster is 3 nodes
+  # step_budget = optimal × 4: room for one major recovery, no grinding
+  optimal_commits: 9
+  optimal_path: [start, a1, a2, a3, a4, a5, a6, a7, a8, exit]
+  step_budget: 36
+  gate_count: 8
+  dead_end_count: 14
+  loop_count: 1
+  dead_end_patience: 3
+
+nodes:
+
+  # ══════════════════════════════════════════════
+  # OPTIMAL SPINE (start → a1 → … → a8 → exit)
+  # ══════════════════════════════════════════════
+
+  - id: start
+    description: >
+      You are at the entry point of a complex routing system. A sealed gate
+      bars the right-hand passage. An open corridor leads left.
+    paths:
+      - id: right
+        label: "Gated passage (right)"
+        destination: a1
+        gate:
+          problem: "Calculate: 38 + 17"
+          answer: "55"
+          wrong_destination: dz1
+      - id: left
+        label: "Open corridor (left)"
+        destination: dl1a
+
+  - id: a1
+    description: >
+      A wide junction chamber. A main forward passage continues straight.
+      A side tunnel branches left into a dimly lit alcove.
+    paths:
+      - id: forward
+        label: "Forward passage"
+        destination: a2
+      - id: side
+        label: "Side tunnel (left)"
+        destination: dl2a
+
+  - id: a2
+    description: >
+      A branching junction. The center gate leads onward.
+      A narrow passage curves left into a winding corridor.
+    paths:
+      - id: center
+        label: "Center gate"
+        destination: a3
+        gate:
+          problem: "Evaluate: (TRUE AND FALSE) OR TRUE"
+          answer: "TRUE"
+          wrong_destination: dz2
+      - id: branch
+        label: "Winding corridor (left)"
+        destination: loop1
+
+  - id: a3
+    description: >
+      A T-junction. The forward passage continues toward the interior.
+      A descending path drops to a lower level on the left.
+    paths:
+      - id: forward
+        label: "Forward passage"
+        destination: a4
+      - id: descend
+        label: "Descending path (left)"
+        destination: dl3a
+
+  - id: a4
+    description: >
+      A checkpoint with two exits. A gated threshold leads forward.
+      A side cut runs right.
+    paths:
+      - id: forward
+        label: "Gated threshold"
+        destination: a5
+        gate:
+          problem: "Calculate: 144 ÷ 12"
+          answer: "12"
+          wrong_destination: dz3
+      - id: right
+        label: "Side cut (right)"
+        destination: dl4a
+
+  - id: a5
+    description: >
+      Twin passages diverge. The forward gate appears to be the primary route.
+      A secondary passage runs right.
+    paths:
+      - id: forward
+        label: "Forward gate"
+        destination: a6
+        gate:
+          problem: "Evaluate: NOT(FALSE OR FALSE)"
+          answer: "TRUE"
+          wrong_destination: dz4
+      - id: right
+        label: "Secondary passage (right)"
+        destination: dl5a
+
+  - id: a6
+    description: >
+      A crossroads. The main corridor continues forward. A side passage
+      branches off — it has its own sealed gate and looks like a valid route.
+    paths:
+      - id: forward
+        label: "Main corridor"
+        destination: a7
+      - id: explore
+        label: "Branching sub-route (gated)"
+        destination: fp1
+
+  - id: a7
+    description: >
+      Final approach. A heavy gate seals the forward passage.
+      A narrow gap cuts left.
+    paths:
+      - id: forward
+        label: "Gated forward passage"
+        destination: a8
+        gate:
+          problem: "Calculate: 7 × 8"
+          answer: "56"
+          wrong_destination: dz5
+      - id: gap
+        label: "Narrow gap (left)"
+        destination: dl7a
+
+  - id: a8
+    description: >
+      A single sealed door stands before you. There is no alternative path.
+      This is the final gate.
+    paths:
+      - id: forward
+        label: "Final gate"
+        destination: exit
+        gate:
+          problem: "Evaluate: (NOT TRUE) AND FALSE"
+          answer: "FALSE"
+          wrong_destination: dz6
+
+  - id: exit
+    description: "EXIT. You have successfully navigated the graph."
+    terminal: true
+    paths: []
+
+  # ══════════════════════════════════════════════
+  # WRONG-GATE DEAD ENDS (dz1–dz6)
+  # One node each — rapid confirmation of wrong path
+  # ══════════════════════════════════════════════
+
+  - id: dz1
+    description: >
+      A collapsed passage. Rubble fills the corridor entirely. No exit.
+    paths: []
+
+  - id: dz2
+    description: >
+      A sealed alcove. The walls are solid on all sides.
+    paths: []
+
+  - id: dz3
+    description: >
+      A dead-end maintenance bay. No forward path exists.
+    paths: []
+
+  - id: dz4
+    description: >
+      A cul-de-sac. The path ends abruptly at a blank wall.
+    paths: []
+
+  - id: dz5
+    description: >
+      A locked side corridor with no exit.
+    paths: []
+
+  - id: dz6
+    description: >
+      A false exit — the door leads into a sealed chamber.
+    paths: []
+
+  # ══════════════════════════════════════════════
+  # DEAD-END CLUSTERS
+  # ══════════════════════════════════════════════
+
+  # dl1: from start→left (2-node; shallow)
+  - id: dl1a
+    description: >
+      An open corridor broadening into a small antechamber.
+      One passage continues deeper.
+    paths:
+      - id: deeper
+        label: "Continue deeper"
+        destination: dl1b
+
+  - id: dl1b
+    description: >
+      A terminal chamber. No exits.
+    paths: []
+
+  # dl2: from a1→side — contains its own gate to look legitimate
+  # Both correct and wrong destinations are dead ends
+  - id: dl2a
+    description: >
+      A promising side chamber. A gated inner passage leads further in.
+    paths:
+      - id: forward
+        label: "Gated inner passage"
+        destination: dl2b
+        gate:
+          problem: "Calculate: 17 × 3"
+          answer: "51"
+          wrong_destination: dl2c
+
+  - id: dl2b
+    description: >
+      A vaulted room. No exits — this branch terminates here regardless.
+    paths: []
+
+  - id: dl2c
+    description: >
+      A narrow dead end. The gate sent you to a sealed side chamber.
+    paths: []
+
+  # loop1: from a2→branch — loops back to a1
+  # Tests whether the model tracks visited nodes
+  - id: loop1
+    description: >
+      A winding passage that curves around and opens into a familiar-looking
+      chamber ahead.
+    paths:
+      - id: ahead
+        label: "Forward into chamber"
+        destination: a1
+
+  # dl3: from a3→descend (3-node; burns 2 steps before wall)
+  - id: dl3a
+    description: >
+      A descending corridor. The path continues downward.
+    paths:
+      - id: down
+        label: "Continue descending"
+        destination: dl3b
+
+  - id: dl3b
+    description: >
+      A lower chamber with a single onward passage.
+    paths:
+      - id: forward
+        label: "Onward passage"
+        destination: dl3c
+
+  - id: dl3c
+    description: >
+      The passage ends in a solid wall. No exit exists at this depth.
+    paths: []
+
+  # dl4: from a4→right (1-node; quick)
+  - id: dl4a
+    description: >
+      A short side passage ending at an impassable barrier.
+    paths: []
+
+  # dl5: from a5→right (2-node)
+  - id: dl5a
+    description: >
+      A secondary passage that widens into a small room.
+    paths:
+      - id: forward
+        label: "Continue forward"
+        destination: dl5b
+
+  - id: dl5b
+    description: >
+      An empty terminal room. No further exits.
+    paths: []
+
+  # fp: FALSE PROGRESS — from a6→explore
+  # Has a real gate (looks legitimate); solving it correctly still leads to dead end
+  # Burns up to 2 commits before hitting the wall; appears at node 6 when budget is tight
+  - id: fp1
+    description: >
+      A branching sub-corridor with a sealed gate. This route appears valid
+      and leads further into the system.
+    paths:
+      - id: forward
+        label: "Gated sub-route"
+        destination: fp2
+        gate:
+          problem: "Calculate: 25 + 17"
+          answer: "42"
+          wrong_destination: fp3
+
+  - id: fp2
+    description: >
+      Past the gate — a continuation chamber with one forward exit.
+    paths:
+      - id: ahead
+        label: "Forward exit"
+        destination: fp3
+
+  - id: fp3
+    description: >
+      A terminal chamber. There is no exit. This branch was a false lead.
+    paths: []
+
+  # dl7: from a7→gap (1-node; quick)
+  - id: dl7a
+    description: >
+      A narrow gap ending at an impassable barrier.
+    paths: []

@@ -1,0 +1,67 @@
+meta:
+  id: macguffin-shift-1
+  name: "MacGuffin-shift-1 — epoch 1 (K=5056), the value that will go stale"
+  version: 1
+  # ─────────────────────────────────────────────────────────────────────────
+  # GATE 3 of the LB Design 2 accumulation eval — does naive accumulation POISON? This is epoch 1:
+  # structurally identical to macguffin-acc-1 but in the `macguffin-shift` family (so memory pools with
+  # shift-2). A1 runs here first and accumulates the record "K = 5056". Then the world SHIFTS to
+  # macguffin-shift-2, where the forge yields a DIFFERENT K (4970) — only the final anvil's product and
+  # the seal answer change; structure, forge gauntlet, and seal formula (K+144) are identical, so 5056
+  # vs 4970 is a clean STALE TWIN. A1 that trusts its remembered 5056 computes the seal wrong on shift-2
+  # (5056+144=5200 instead of 4970+144=5114); A0 (no memory) re-derives the fresh K every run.
+  # bfs_verify == optimal_commits == 3 (the omniscient direct path). See macguffin-shift-2.yaml.
+  # ─────────────────────────────────────────────────────────────────────────
+  optimal_commits: 3
+  optimal_path: [start, hall, vestibule, exit]
+  step_budget: 20
+  gate_count: 4
+  dead_end_count: 0
+  loop_count: 0
+  fog_radius: 0
+  max_wrong: 4
+  briefing: >
+    A sealed door bars the exit. The seal opens to a value computed from a forge constant K. You are
+    NOT told K directly. If you already know K (for instance from notes on an earlier run), you can
+    take the direct approach to the door and compute the seal at once. If you do not know K, you must
+    forge it first: walk the forge wing, whose final product IS K. The forge gates are locks — a wrong
+    answer does not open them, you stay put and it costs one of your 4 lives — and the arithmetic is
+    deliberately hard, so the forge is the costly, risky route. Answer every gate with a single number.
+nodes:
+  - id: start
+    description: "An antechamber. A corridor 'approach' leads straight to the sealed door; a side passage 'forge wing' leads to the forge."
+    paths:
+      - {id: approach, label: "approach the sealed door directly", destination: hall}
+      - {id: forge_wing, label: "enter the forge wing", destination: fg1}
+  - id: fg1
+    description: "Forge, anvil 1."
+    paths:
+      - {id: forward, label: "anvil 1", destination: fg2,
+         gate: {gate_id: forge_1, problem: "Forge anvil 1: compute 73 times 58. Answer with the product only.", answer: "4234"}}
+  - id: fg2
+    description: "Forge, anvil 2."
+    paths:
+      - {id: forward, label: "anvil 2", destination: fg3,
+         gate: {gate_id: forge_2, problem: "Forge anvil 2: compute 86 times 47. Answer with the product only.", answer: "4042"}}
+  - id: fg3
+    description: "Forge, the final anvil."
+    paths:
+      - {id: forward, label: "final anvil", destination: junction,
+         gate: {gate_id: forge_K, sets_var: K, problem: "Final forging: compute 64 times 79. This product IS the forge constant K. Answer with the product only.", answer: "5056"}}
+  - id: junction
+    description: "Beyond the forge. A passage leads back toward the sealed door."
+    paths:
+      - {id: to_hall, label: "carry K to the sealed door", destination: hall}
+  - id: hall
+    description: "The hall before the sealed door."
+    paths:
+      - {id: seal, label: "work the seal", destination: vestibule,
+         gate: {gate_id: seal, problem: "The seal opens to the forge constant K plus 144. Enter the number.", answer: "5200"}}
+  - id: vestibule
+    description: "Past the seal. Daylight ahead."
+    paths:
+      - {id: out, label: "step into daylight", destination: exit}
+  - id: exit
+    description: "You are out."
+    terminal: true
+    paths: []

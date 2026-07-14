@@ -1,0 +1,146 @@
+meta:
+  id: alpha-1
+  name: "Alpha — Phase 0 Reference DEG"
+  version: 1
+  # BFS over correct-gate edges only (wrong paths excluded).
+  # Optimal: start → right(43) → n2 → ahead(TRUE) → n4 → forward → exit = 3 commits
+  optimal_commits: 3
+  optimal_path: [start, n2, n4, exit]
+  # Budget = optimal × 7; enough room for one full backtrack loop, not infinite grinding
+  step_budget: 21
+  gate_count: 5
+  dead_end_count: 2
+  loop_count: 1
+  dead_end_patience: 3
+
+nodes:
+  - id: start
+    description: >
+      You stand at a junction. Two paths stretch ahead: one winding to the left,
+      one leading right and blocked by a locked gate.
+    paths:
+      - id: left
+        label: "A winding path heading left (open)"
+        destination: n1
+      - id: right
+        label: "A path heading right, blocked by a gate"
+        gate:
+          problem: "Calculate: 15 + 28"
+          answer: "43"
+          wrong_destination: dead1
+        destination: n2
+
+  - id: n1
+    description: >
+      A junction with two options. One path leads forward into a forked corridor.
+      The other bears a familiar mark — it seems to loop back the way you came.
+    paths:
+      - id: forward
+        label: "A path forward into a forked corridor"
+        destination: n3
+      - id: loop
+        label: "A path marked with a familiar symbol — leads back to the junction"
+        destination: start
+
+  - id: n2
+    description: >
+      You passed the gate and stand in a wider space. A narrow passage ahead
+      is blocked by another gate. A longer route branches off to the side.
+    paths:
+      - id: ahead
+        label: "A narrow passage, gated with a logic puzzle"
+        gate:
+          problem: "Evaluate: TRUE AND (NOT FALSE)"
+          answer: "TRUE"
+          wrong_destination: dead2
+        destination: n4
+      - id: detour
+        label: "A longer open route going around (no gate)"
+        destination: n5
+
+  - id: n3
+    description: >
+      A fork. One path to the left has a gate. One path to the right is open.
+    paths:
+      - id: left
+        label: "A gated path to the left"
+        gate:
+          problem: "Calculate: 15 × 4"
+          answer: "60"
+          wrong_destination: dead1
+        destination: n6
+      - id: right
+        label: "An open path to the right"
+        destination: n7
+
+  - id: n4
+    description: >
+      A short straight corridor. The exit is visible ahead.
+    paths:
+      - id: forward
+        label: "Walk forward to the exit"
+        destination: exit
+
+  - id: n5
+    description: >
+      The longer detour continues through a winding passage. A gated door blocks the way ahead.
+    paths:
+      - id: ahead
+        label: "A gated door"
+        gate:
+          problem: "Calculate: 100 ÷ 4"
+          answer: "25"
+          wrong_destination: dead2
+        destination: n8
+
+  - id: n6
+    description: >
+      You solved the gate and stand in a small clearing. The exit is directly ahead.
+    paths:
+      - id: ahead
+        label: "Walk to the exit"
+        destination: exit
+
+  - id: n7
+    description: >
+      An open path leads to a heavy door with a logic puzzle mounted on it.
+    paths:
+      - id: ahead
+        label: "A gated door with a logic puzzle"
+        gate:
+          problem: "Evaluate: NOT (FALSE OR FALSE)"
+          answer: "TRUE"
+          wrong_destination: dead1
+        destination: n9
+
+  - id: n8
+    description: >
+      The long route ends here. The exit is just ahead.
+    paths:
+      - id: ahead
+        label: "Walk to the exit"
+        destination: exit
+
+  - id: n9
+    description: >
+      The final approach. The exit is steps away.
+    paths:
+      - id: ahead
+        label: "Walk to the exit"
+        destination: exit
+
+  - id: dead1
+    description: >
+      A dead end. The passage narrows to nothing. You cannot go further this way.
+    paths: []
+
+  - id: dead2
+    description: >
+      A dead end. Solid walls on all sides. You cannot go further this way.
+    paths: []
+
+  - id: exit
+    terminal: true
+    description: >
+      You have found the exit. The evaluation is complete.
+    paths: []

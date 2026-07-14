@@ -1,0 +1,146 @@
+meta:
+  id: nav-3
+  name: "Nav-3 — recall/synthesis difficulty ramp (depth = ceiling)"
+  version: 1
+  # ─────────────────────────────────────────────────────────────────────────
+  # CEILING RAMP (HUD-orchestration program, child plan 04). A pure corridor — NO branching, NO
+  # dead-ends, NO loop-traps. Navigation is trivial on purpose; the ONLY way to fail is the
+  # wrong-answer budget (max_wrong "lives"). Steps are effectively unlimited. The score is DEPTH:
+  # how far down the ramp the model climbs before it burns its lives (runner.score -> ramp_depth).
+  #
+  # The corridor is a difficulty RAMP that escalates recall-first, arithmetic-late:
+  #   chain 1 (easy +):    c1a=7 -> c1b=+5 -> c1c=+6
+  #   chain 2 (slightly harder +/-): c2a=19 -> c2b=+7 -> c2c=-4
+  #   synthesis:           s1 = c1c + c2c
+  #   derivatives (running total OP a reach-back to a specific earlier gate):
+  #     d1..d8  : +/- against c1a,c2a,c1b,c2b,c1c,c2c,s1,c1a  (recall-bound; arithmetic stays small)
+  #     d9..d13 : multiplication creeps in -> the running total blows up (arithmetic-bound)
+  # The reach-back targets rotate through ALL earlier gates, so the model must recall ANY prior
+  # answer on demand — trivial from a clean overlay (recall = c1a=7 | c1b=12 | ...), brutal from an
+  # accumulating context full of its own noise. Where the gap (managed vs accumulating) is widest =
+  # recall-bound; where it closes = arithmetic-bound (motivates the calculator/compute tool arm).
+  #
+  # Gates are LOCKS (no wrong_destination): wrong = stay put, lose a life. Dependent answers are
+  # computed by answer_fn (engine), referencing earlier gates by id. bfs_verify == optimal == 20.
+  # ─────────────────────────────────────────────────────────────────────────
+  optimal_commits: 20
+  optimal_path: [start, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, n13, n14, n15, n16, n17, n18, n19, exit]
+  step_budget: 60      # effectively unlimited forward steps; the life budget is the real constraint
+  gate_count: 20
+  dead_end_count: 0
+  loop_count: 0
+  fog_radius: 2
+  max_wrong: 4         # lives: 4 wrong answers and the run ends; score = depth reached
+  briefing: >
+    You are climbing a numbered ladder of gates. Each gate's answer feeds later gates: most ask you to
+    combine "the previous gate's answer" (your running total) with the answer to a specific EARLIER gate,
+    named (e.g. "your c1a answer"). Take notes — you will be asked to recall any earlier answer. Gates are
+    locks: a wrong answer does not open the gate, you stay and try again, but you may answer wrong at most
+    {max_wrong} times before the run ends. There is no step limit — go as far up the ladder as you can.
+    The map shows the corridor only {fog_radius} steps ahead; a room's gate is hidden until you enter it.
+
+nodes:
+  - id: start
+    description: "The foot of the ladder. A single gate forward."
+    paths:
+      - {id: forward, label: "gate", destination: n1,
+         gate: {gate_id: c1a, problem: "Calculate 3 + 4", answer: "7"}}
+  - id: n1
+    description: "Gate 2."
+    paths:
+      - {id: forward, label: "gate", destination: n2,
+         gate: {gate_id: c1b, depends_on: c1a, problem_template: "Add 5 to your c1a answer", answer_fn: "int(c1a) + 5"}}
+  - id: n2
+    description: "Gate 3."
+    paths:
+      - {id: forward, label: "gate", destination: n3,
+         gate: {gate_id: c1c, depends_on: c1b, problem_template: "Add 6 to your c1b answer", answer_fn: "int(c1b) + 6"}}
+  - id: n3
+    description: "Gate 4."
+    paths:
+      - {id: forward, label: "gate", destination: n4,
+         gate: {gate_id: c2a, problem: "Calculate 11 + 8", answer: "19"}}
+  - id: n4
+    description: "Gate 5."
+    paths:
+      - {id: forward, label: "gate", destination: n5,
+         gate: {gate_id: c2b, depends_on: c2a, problem_template: "Add 7 to your c2a answer", answer_fn: "int(c2a) + 7"}}
+  - id: n5
+    description: "Gate 6."
+    paths:
+      - {id: forward, label: "gate", destination: n6,
+         gate: {gate_id: c2c, depends_on: c2b, problem_template: "Subtract 4 from your c2b answer", answer_fn: "int(c2b) - 4"}}
+  - id: n6
+    description: "Gate 7 — synthesis."
+    paths:
+      - {id: forward, label: "gate", destination: n7,
+         gate: {gate_id: s1, depends_on: [c1c, c2c], problem_template: "Add your c1c answer to your c2c answer", answer_fn: "int(c1c) + int(c2c)"}}
+  - id: n7
+    description: "Gate 8."
+    paths:
+      - {id: forward, label: "gate", destination: n8,
+         gate: {gate_id: d1, depends_on: [s1, c1a], problem_template: "Add your c1a answer to the previous gate's answer", answer_fn: "int(s1) + int(c1a)"}}
+  - id: n8
+    description: "Gate 9."
+    paths:
+      - {id: forward, label: "gate", destination: n9,
+         gate: {gate_id: d2, depends_on: [d1, c2a], problem_template: "Add your c2a answer to the previous gate's answer", answer_fn: "int(d1) + int(c2a)"}}
+  - id: n9
+    description: "Gate 10."
+    paths:
+      - {id: forward, label: "gate", destination: n10,
+         gate: {gate_id: d3, depends_on: [d2, c1b], problem_template: "Subtract your c1b answer from the previous gate's answer", answer_fn: "int(d2) - int(c1b)"}}
+  - id: n10
+    description: "Gate 11."
+    paths:
+      - {id: forward, label: "gate", destination: n11,
+         gate: {gate_id: d4, depends_on: [d3, c2b], problem_template: "Add your c2b answer to the previous gate's answer", answer_fn: "int(d3) + int(c2b)"}}
+  - id: n11
+    description: "Gate 12."
+    paths:
+      - {id: forward, label: "gate", destination: n12,
+         gate: {gate_id: d5, depends_on: [d4, c1c], problem_template: "Subtract your c1c answer from the previous gate's answer", answer_fn: "int(d4) - int(c1c)"}}
+  - id: n12
+    description: "Gate 13."
+    paths:
+      - {id: forward, label: "gate", destination: n13,
+         gate: {gate_id: d6, depends_on: [d5, c2c], problem_template: "Add your c2c answer to the previous gate's answer", answer_fn: "int(d5) + int(c2c)"}}
+  - id: n13
+    description: "Gate 14."
+    paths:
+      - {id: forward, label: "gate", destination: n14,
+         gate: {gate_id: d7, depends_on: [d6, s1], problem_template: "Subtract your s1 answer from the previous gate's answer", answer_fn: "int(d6) - int(s1)"}}
+  - id: n14
+    description: "Gate 15."
+    paths:
+      - {id: forward, label: "gate", destination: n15,
+         gate: {gate_id: d8, depends_on: [d7, c1a], problem_template: "Add your c1a answer to the previous gate's answer", answer_fn: "int(d7) + int(c1a)"}}
+  - id: n15
+    description: "Gate 16 — multiplication begins."
+    paths:
+      - {id: forward, label: "gate", destination: n16,
+         gate: {gate_id: d9, depends_on: [d8, c1a], problem_template: "Multiply the previous gate's answer by your c1a answer", answer_fn: "int(d8) * int(c1a)"}}
+  - id: n16
+    description: "Gate 17."
+    paths:
+      - {id: forward, label: "gate", destination: n17,
+         gate: {gate_id: d10, depends_on: [d9, c2a], problem_template: "Subtract your c2a answer from the previous gate's answer", answer_fn: "int(d9) - int(c2a)"}}
+  - id: n17
+    description: "Gate 18."
+    paths:
+      - {id: forward, label: "gate", destination: n18,
+         gate: {gate_id: d11, depends_on: [d10, c1b], problem_template: "Multiply the previous gate's answer by your c1b answer", answer_fn: "int(d10) * int(c1b)"}}
+  - id: n18
+    description: "Gate 19."
+    paths:
+      - {id: forward, label: "gate", destination: n19,
+         gate: {gate_id: d12, depends_on: [d11, c2c], problem_template: "Add your c2c answer to the previous gate's answer", answer_fn: "int(d11) + int(c2c)"}}
+  - id: n19
+    description: "Gate 20 — the top of the ladder."
+    paths:
+      - {id: forward, label: "gate", destination: exit,
+         gate: {gate_id: d13, depends_on: [d12, c1a], problem_template: "Multiply the previous gate's answer by your c1a answer", answer_fn: "int(d12) * int(c1a)"}}
+  - id: exit
+    description: "TOP OF THE LADDER. You climbed every rung."
+    terminal: true
+    paths: []

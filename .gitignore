@@ -1,0 +1,7 @@
+results/*.jsonl
+results/*.log
+results/.session_history.json
+results/.eval_lock_*
+__pycache__/
+*.pyc
+sealed/

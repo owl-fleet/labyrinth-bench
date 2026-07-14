@@ -1,0 +1,184 @@
+meta:
+  id: rev-1
+  name: "Rev-1 — belief-revision ramp (break the frontier with logic)"
+  version: 1
+  # ─────────────────────────────────────────────────────────────────────────
+  # BELIEF-REVISION RAMP (HUD-orchestration program, child plan 06). A pure corridor — NO branching,
+  # NO dead-ends, NO loop-traps (navigation is trivial on purpose; the only way to fail is the
+  # wrong-answer life budget). Score = DEPTH (runner.score -> ramp_depth = distinct gates passed).
+  #
+  # THE LEVER: variables (A..F) get REASSIGNED as you climb. Each gate asks for a combination of the
+  # CURRENT values of variables. An accumulating context holds every stale value the variable ever
+  # had (A=3, then A=12, then A=20) plus the model's own earlier work that used the stale ones —
+  # equally weighted as tokens. A managed/overlay-only arm sees ONLY the canonical current ledger
+  # ([STATE] A=20 | B=20 | ...) via --show-state and reads the latest. Per-step inference is small
+  # (so curation can lift even the frontier model); the hard part is keeping state canonical.
+  #
+  # GOAL (child 06): break gpt-oss:120b's ACCUMULATING arm at a depth its MANAGED arm clears →
+  # universality of curation (curation helps the frontier model too, not just small→big). rev-1 is
+  # the FIRST calibration artifact; if the 120b doesn't break, deepen (more revisions / variables /
+  # depth) in rev-2. Calibration knobs: ramp length, #variables, revision frequency. Arithmetic stays
+  # SMALL on purpose — the binding constraint must be STATE, not arithmetic (the arithmetic wall is a
+  # separate axis, motivating the calculator tool arm).
+  #
+  # CONVENTIONS: variables are UPPERCASE single letters (A..F); gate-ids are lowercase (set_a0,
+  # rev_a1, use_1, ...) and UNIQUE so ramp_depth counts honestly. answer_fn references variable names,
+  # resolved from the ledger's CURRENT value; depends_on lists every variable the answer_fn reads
+  # (the eval namespace is built from depends_on). sets_var writes the gate's answer into the ledger
+  # on a correct commit, overwriting any prior binding. Gates are LOCKS (no wrong_destination):
+  # wrong = stay put, lose a life. bfs_verify == optimal_commits == 26.
+  # ─────────────────────────────────────────────────────────────────────────
+  optimal_commits: 26
+  optimal_path: [start, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, n11, n12, n13, n14, n15, n16, n17, n18, n19, n20, n21, n22, n23, n24, n25, exit]
+  step_budget: 80      # effectively unlimited forward steps; the life budget is the real constraint
+  gate_count: 26
+  dead_end_count: 0
+  loop_count: 0
+  fog_radius: 0        # navigation is not the variable under test; the corridor is trivial
+  max_wrong: 4         # lives: 4 wrong answers and the run ends; score = depth reached
+  briefing: >
+    You are climbing a ladder of gates. Six variables — A, B, C, D, E, F — hold values that CHANGE as
+    you climb: a gate may reassign a variable, and every later gate asks about a variable's CURRENT
+    value (or a combination of current values), never an old one. Older values are stale — always use
+    the latest. Take notes; you will be asked to recall or combine any current value at any time.
+    Gates are locks: a wrong answer does not open the gate — you stay put, try again, and it costs one
+    of your {max_wrong} lives. There is no step limit — climb as high as you can. Answer with a single
+    number (use 1 / 0 for yes / no questions).
+
+nodes:
+  # ── establish (populate the ledger) ──
+  - id: start
+    description: "The foot of the ladder."
+    paths:
+      - {id: forward, label: "gate", destination: n1,
+         gate: {gate_id: set_a0, sets_var: A, problem: "Variable A is initialized to 3. What is the value of A?", answer: "3"}}
+  - id: n1
+    description: "Gate 2."
+    paths:
+      - {id: forward, label: "gate", destination: n2,
+         gate: {gate_id: set_b0, sets_var: B, problem: "Variable B is initialized to 8. What is the value of B?", answer: "8"}}
+  - id: n2
+    description: "Gate 3."
+    paths:
+      - {id: forward, label: "gate", destination: n3,
+         gate: {gate_id: set_c0, sets_var: C, problem: "Variable C is initialized to 5. What is the value of C?", answer: "5"}}
+  - id: n3
+    description: "Gate 4."
+    paths:
+      - {id: forward, label: "gate", destination: n4,
+         gate: {gate_id: set_d0, sets_var: D, problem: "Variable D is initialized to 9. What is the value of D?", answer: "9"}}
+  - id: n4
+    description: "Gate 5."
+    paths:
+      - {id: forward, label: "gate", destination: n5,
+         gate: {gate_id: set_e0, sets_var: E, problem: "Variable E is initialized to 2. What is the value of E?", answer: "2"}}
+  - id: n5
+    description: "Gate 6."
+    paths:
+      - {id: forward, label: "gate", destination: n6,
+         gate: {gate_id: set_f0, sets_var: F, problem: "Variable F is initialized to 7. What is the value of F?", answer: "7"}}
+  # ── use + revise, interleaved (the body) ──
+  - id: n6
+    description: "Gate 7."
+    paths:
+      - {id: forward, label: "gate", destination: n7,
+         gate: {gate_id: use_1, depends_on: [A, B], problem: "Add the current value of A to the current value of B.", answer_fn: "int(A) + int(B)"}}
+  - id: n7
+    description: "Gate 8."
+    paths:
+      - {id: forward, label: "gate", destination: n8,
+         gate: {gate_id: use_2, depends_on: [C, D], problem: "Answer the larger of the current values of C and D.", answer_fn: "max(int(C), int(D))"}}
+  - id: n8
+    description: "Gate 9 — A changes."
+    paths:
+      - {id: forward, label: "gate", destination: n9,
+         gate: {gate_id: rev_a1, sets_var: A, problem: "A changes: A is now 12. Answer 12 to set it.", answer: "12"}}
+  - id: n9
+    description: "Gate 10."
+    paths:
+      - {id: forward, label: "gate", destination: n10,
+         gate: {gate_id: use_3, depends_on: [A, B], problem: "Add the current value of A to the current value of B.", answer_fn: "int(A) + int(B)"}}
+  - id: n10
+    description: "Gate 11."
+    paths:
+      - {id: forward, label: "gate", destination: n11,
+         gate: {gate_id: use_4, depends_on: [A], problem: "Answer 1 if the current value of A is different from 3, otherwise answer 0.", answer_fn: "1 if int(A) != 3 else 0"}}
+  - id: n11
+    description: "Gate 12 — B changes."
+    paths:
+      - {id: forward, label: "gate", destination: n12,
+         gate: {gate_id: rev_b1, sets_var: B, depends_on: [B, A], problem: "B changes: B becomes B plus the current value of A. Answer the new value of B.", answer_fn: "int(B) + int(A)"}}
+  - id: n12
+    description: "Gate 13."
+    paths:
+      - {id: forward, label: "gate", destination: n13,
+         gate: {gate_id: use_5, depends_on: [B, A], problem: "Subtract the current value of A from the current value of B.", answer_fn: "int(B) - int(A)"}}
+  - id: n13
+    description: "Gate 14 — D changes."
+    paths:
+      - {id: forward, label: "gate", destination: n14,
+         gate: {gate_id: rev_d1, sets_var: D, problem: "D changes: D is now 4. Answer 4 to set it.", answer: "4"}}
+  - id: n14
+    description: "Gate 15."
+    paths:
+      - {id: forward, label: "gate", destination: n15,
+         gate: {gate_id: use_6, depends_on: [B, D], problem: "Answer the larger of the current values of B and D.", answer_fn: "max(int(B), int(D))"}}
+  - id: n15
+    description: "Gate 16."
+    paths:
+      - {id: forward, label: "gate", destination: n16,
+         gate: {gate_id: use_7, depends_on: [A, B], problem: "Answer 1 if the current values of A and B are equal, otherwise answer 0.", answer_fn: "1 if int(A) == int(B) else 0"}}
+  - id: n16
+    description: "Gate 17 — A changes again."
+    paths:
+      - {id: forward, label: "gate", destination: n17,
+         gate: {gate_id: rev_a2, sets_var: A, problem: "A changes: A is now 20. Answer 20 to set it.", answer: "20"}}
+  - id: n17
+    description: "Gate 18."
+    paths:
+      - {id: forward, label: "gate", destination: n18,
+         gate: {gate_id: use_8, depends_on: [A, B], problem: "Answer 1 if the current values of A and B are equal, otherwise answer 0.", answer_fn: "1 if int(A) == int(B) else 0"}}
+  - id: n18
+    description: "Gate 19."
+    paths:
+      - {id: forward, label: "gate", destination: n19,
+         gate: {gate_id: use_9, depends_on: [A, C, E], problem: "Add the current values of A, C and E.", answer_fn: "int(A) + int(C) + int(E)"}}
+  - id: n19
+    description: "Gate 20 — C changes."
+    paths:
+      - {id: forward, label: "gate", destination: n20,
+         gate: {gate_id: rev_c1, sets_var: C, depends_on: [C, E], problem: "C changes: C becomes C plus the current value of E. Answer the new value of C.", answer_fn: "int(C) + int(E)"}}
+  - id: n20
+    description: "Gate 21."
+    paths:
+      - {id: forward, label: "gate", destination: n21,
+         gate: {gate_id: use_10, depends_on: [C, D], problem: "Answer the smaller of the current values of C and D.", answer_fn: "min(int(C), int(D))"}}
+  - id: n21
+    description: "Gate 22 — E changes."
+    paths:
+      - {id: forward, label: "gate", destination: n22,
+         gate: {gate_id: rev_e1, sets_var: E, problem: "E changes: E is now 6. Answer 6 to set it.", answer: "6"}}
+  - id: n22
+    description: "Gate 23."
+    paths:
+      - {id: forward, label: "gate", destination: n23,
+         gate: {gate_id: use_11, depends_on: [C, E], problem: "Add the current values of C and E.", answer_fn: "int(C) + int(E)"}}
+  - id: n23
+    description: "Gate 24."
+    paths:
+      - {id: forward, label: "gate", destination: n24,
+         gate: {gate_id: use_12, depends_on: [A, E], problem: "Multiply the current value of A by the current value of E.", answer_fn: "int(A) * int(E)"}}
+  - id: n24
+    description: "Gate 25."
+    paths:
+      - {id: forward, label: "gate", destination: n25,
+         gate: {gate_id: use_13, depends_on: [B], problem: "Answer 1 if the current value of B is greater than 8, otherwise answer 0.", answer_fn: "1 if int(B) > 8 else 0"}}
+  - id: n25
+    description: "Gate 26 — the top of the ladder (synthesis over all current values)."
+    paths:
+      - {id: forward, label: "gate", destination: exit,
+         gate: {gate_id: use_14, depends_on: [A, B, C, D, E, F], problem: "Add the current values of all six variables: A, B, C, D, E and F.", answer_fn: "int(A) + int(B) + int(C) + int(D) + int(E) + int(F)"}}
+  - id: exit
+    description: "TOP OF THE LADDER. You tracked every value through every change."
+    terminal: true
+    paths: []

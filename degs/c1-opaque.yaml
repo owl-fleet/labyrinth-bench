@@ -1,0 +1,194 @@
+meta:
+  id: c1-opaque
+  name: "C1-Opaque — dependent arithmetic chain, shadow spine"
+  version: 1
+  # ─────────────────────────────────────────────────────────────────────────
+  # INSTRUMENT-PROOF RUNG (HUD-orchestration program, child plan 02).
+  #
+  # A single dependent arithmetic chain g1 -> g2 -> g3 on the TRUE SPINE
+  # (start -> c2 -> c3 -> exit). Each spine gate's WRONG answer does NOT dead-end;
+  # it routes to a SHADOW node that still presents the next chain gate. A
+  # mis-seeded model keeps executing the program on a wrong prior — but the shadow
+  # chain gate is un-passable there (its dependency was never stored, so
+  # resolved_answer == __UNRESOLVABLE__ -> always WRONG), funnelling deeper into
+  # shadow until it dead-ends. EXIT requires the all-correct spine.
+  #
+  # Result signatures the A1 metrics now separate:
+  #   - mis-seeded-but-faithful: knowledge_state_consistency HIGH, chain_accuracy LOW, exit 0
+  #     (the model computed g2/g3 correctly *from its own wrong prior* — it executed the program)
+  #   - guesser: both LOW (answers not derivable from its own prior)
+  #
+  # Legibility fix (kills the "read the topology" exploit): the spine path is NOT
+  # always the gated one and NOT a constant label — start has gated-spine + open-dead,
+  # c2 has gated-spine + gated-dead (solving the decoy correctly still dead-ends),
+  # c3 has gated-spine + open-dead. So topology != answer.
+  #
+  # bfs_verify (correct edges only) == optimal_commits == 3; shadow nodes are reached
+  # ONLY via wrong_destination, so they are absent from dist_to_exit (provably never
+  # reach a terminal). budget = optimal x 4 = 12: room to attempt the full chain in
+  # shadow on a wrong prior before dead-ending.
+  # ─────────────────────────────────────────────────────────────────────────
+  optimal_commits: 3
+  optimal_path: [start, c2, c3, exit]
+  step_budget: 12
+  gate_count: 6        # 3 spine chain gates + 2 shadow copies + 1 decoy
+  dead_end_count: 7
+  loop_count: 0
+  dead_end_patience: 3
+  briefing: >
+    This is a multi-step task that requires recall and synthesis. The gates form a
+    dependent chain: some gate problems require an answer you computed at an earlier
+    gate. Carry your answers forward — take notes, you will likely need them. Nodes
+    and gates have unique names. A wrong gate answer is not merely a lost step: it can
+    route you onto a path that looks valid but can never reach EXIT. Solve the gates in
+    order and find the EXIT.
+
+nodes:
+
+  # ══════════════════════════════════════════════
+  # TRUE SPINE — start -> c2 -> c3 -> exit
+  # ══════════════════════════════════════════════
+
+  - id: start
+    description: >
+      You stand at the mouth of a branching vault. A sealed gate bars the main
+      passage ahead; an open side corridor runs off to the left.
+    paths:
+      - id: forward
+        label: "Sealed main passage"
+        destination: c2
+        gate:
+          gate_id: g1
+          problem: "Calculate 47 × 38"
+          answer: "1786"
+          wrong_destination: sh_a
+      - id: left
+        label: "Open side corridor"
+        destination: d1
+
+  - id: c2
+    description: >
+      A vaulted junction. One mechanism is keyed to a figure established earlier.
+      A second, smaller passage branches to the side behind its own lock.
+    paths:
+      - id: ahead
+        label: "Keyed mechanism (main)"
+        destination: c3
+        gate:
+          gate_id: g2
+          depends_on: g1
+          problem_template: "Add {C} to the answer you gave at the previous gate"
+          answer_fn: "int(prev_result) + C"
+          seed: {C: 318}
+          answer: "2104"
+          wrong_destination: sh_b
+      - id: side
+        label: "Locked side passage"
+        destination: d2a
+        gate:
+          problem: "Calculate 12 + 7"
+          answer: "19"
+          wrong_destination: d2b
+
+  - id: c3
+    description: >
+      A long gallery. The final mechanism ahead is keyed once more to your
+      running figure. A low gap opens to the right.
+    paths:
+      - id: onward
+        label: "Final keyed mechanism"
+        destination: exit
+        gate:
+          gate_id: g3
+          depends_on: g2
+          problem_template: "Subtract {D} from the answer you gave at the previous gate"
+          answer_fn: "int(prev_result) - D"
+          seed: {D: 90}
+          answer: "2014"
+          wrong_destination: dz_final
+      - id: gap
+        label: "Low gap (right)"
+        destination: d3
+
+  - id: exit
+    description: "EXIT. You have navigated the chain."
+    terminal: true
+    paths: []
+
+  # ══════════════════════════════════════════════
+  # SHADOW SPINE — reached only via a wrong chain-gate answer.
+  # Presents the next chain gate, which is un-passable here
+  # (dependency never stored -> __UNRESOLVABLE__ -> always WRONG).
+  # Looks like an ordinary chamber: no tell that you are off-route.
+  # ══════════════════════════════════════════════
+
+  - id: sh_a
+    description: >
+      A vaulted junction. A mechanism here is keyed to a figure established earlier.
+    paths:
+      - id: ahead
+        label: "Keyed mechanism"
+        destination: dz_sha          # correct dest — never taken (gate un-passable here)
+        gate:
+          gate_id: g2
+          depends_on: g1
+          problem_template: "Add {C} to the answer you gave at the previous gate"
+          answer_fn: "int(prev_result) + C"
+          seed: {C: 318}
+          answer: "2104"
+          wrong_destination: sh_b
+
+  - id: sh_b
+    description: >
+      A long gallery. A final mechanism ahead is keyed to your running figure.
+    paths:
+      - id: onward
+        label: "Final keyed mechanism"
+        destination: dz_shb          # correct dest — never taken (gate un-passable here)
+        gate:
+          gate_id: g3
+          depends_on: g2
+          problem_template: "Subtract {D} from the answer you gave at the previous gate"
+          answer_fn: "int(prev_result) - D"
+          seed: {D: 90}
+          answer: "2014"
+          wrong_destination: dz_final
+
+  # ══════════════════════════════════════════════
+  # DEAD ENDS
+  # ══════════════════════════════════════════════
+
+  - id: d1
+    description: >
+      The side corridor narrows and ends at a blank wall. No exit.
+    paths: []
+
+  - id: d2a
+    description: >
+      Past the lock: a sealed store-room. No onward path.
+    paths: []
+
+  - id: d2b
+    description: >
+      A cramped dead end behind the side lock. No exit.
+    paths: []
+
+  - id: d3
+    description: >
+      The gap opens into a shallow recess that ends immediately. No exit.
+    paths: []
+
+  - id: dz_final
+    description: >
+      The mechanism grinds and the passage seals behind a slab. A dead end.
+    paths: []
+
+  - id: dz_sha
+    description: >
+      A sealed antechamber. No onward path.
+    paths: []
+
+  - id: dz_shb
+    description: >
+      A blind gallery terminating at solid rock. No exit.
+    paths: []

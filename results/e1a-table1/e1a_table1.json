@@ -1,0 +1,797 @@
+{
+  "deepseek-r1-70b": {
+    "safe": "deepseek-r1-70b",
+    "control": {
+      "n_valid": 6,
+      "n_error": 0,
+      "depths": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        4
+      ],
+      "depth_median": 1.0,
+      "depth_mean": 1.5,
+      "depth_min": 1,
+      "depth_max": 4,
+      "n_exit": 0,
+      "exit_rate": 0.0,
+      "turns_mean": 7.666666666666667,
+      "consistency_mean": 0.05555555555555555,
+      "gate_acc_mean": 0.25925925925925924,
+      "elapsed_mean": 682.9133333333333,
+      "obs_commit_ratio": 0.14705882352941177,
+      "total_obs": 5,
+      "total_commit": 34,
+      "unobserved_guesses": 0
+    },
+    "wiped": {
+      "n_valid": 6,
+      "n_error": 0,
+      "depths": [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "depth_median": 20.0,
+      "depth_mean": 20.0,
+      "depth_min": 20,
+      "depth_max": 20,
+      "n_exit": 6,
+      "exit_rate": 1.0,
+      "turns_mean": 21.0,
+      "consistency_mean": 0.9537037037037037,
+      "gate_acc_mean": 0.9538239538239538,
+      "elapsed_mean": 2126.4900000000002,
+      "obs_commit_ratio": 0.0,
+      "total_obs": 0,
+      "total_commit": 126,
+      "unobserved_guesses": 0
+    },
+    "contrast": {
+      "control_median": 1.0,
+      "wiped_median": 20.0,
+      "delta_wiped_minus_control": 19.0,
+      "meets_falsifier": true,
+      "ceiling_row": false,
+      "complete": true
+    }
+  },
+  "gemma4-12b": {
+    "safe": "gemma4-12b",
+    "control": {
+      "n_valid": 6,
+      "n_error": 0,
+      "depths": [
+        1,
+        5,
+        9,
+        19,
+        20,
+        20
+      ],
+      "depth_median": 14.0,
+      "depth_mean": 12.333333333333334,
+      "depth_min": 1,
+      "depth_max": 20,
+      "n_exit": 2,
+      "exit_rate": 0.3333333333333333,
+      "turns_mean": 26.5,
+      "consistency_mean": 0.6944444444444445,
+      "gate_acc_mean": 0.6964520181911485,
+      "elapsed_mean": 436.7316666666666,
+      "obs_commit_ratio": 0.7362637362637363,
+      "total_obs": 67,
+      "total_commit": 91,
+      "unobserved_guesses": 0
+    },
+    "wiped": {
+      "n_valid": 6,
+      "n_error": 0,
+      "depths": [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "depth_median": 20.0,
+      "depth_mean": 20.0,
+      "depth_min": 20,
+      "depth_max": 20,
+      "n_exit": 6,
+      "exit_rate": 1.0,
+      "turns_mean": 21.0,
+      "consistency_mean": 0.9444444444444443,
+      "gate_acc_mean": 0.9538239538239538,
+      "elapsed_mean": 657.1666666666666,
+      "obs_commit_ratio": 0.0,
+      "total_obs": 0,
+      "total_commit": 126,
+      "unobserved_guesses": 0
+    },
+    "contrast": {
+      "control_median": 14.0,
+      "wiped_median": 20.0,
+      "delta_wiped_minus_control": 6.0,
+      "meets_falsifier": true,
+      "ceiling_row": false,
+      "complete": true
+    }
+  },
+  "gemma4-31b": {
+    "safe": "gemma4-31b",
+    "control": {
+      "n_valid": 6,
+      "n_error": 0,
+      "depths": [
+        16,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "depth_median": 20.0,
+      "depth_mean": 19.333333333333332,
+      "depth_min": 16,
+      "depth_max": 20,
+      "n_exit": 5,
+      "exit_rate": 0.8333333333333334,
+      "turns_mean": 38.333333333333336,
+      "consistency_mean": 0.9888888888888889,
+      "gate_acc_mean": 0.9666666666666667,
+      "elapsed_mean": 1317.5083333333334,
+      "obs_commit_ratio": 0.9166666666666666,
+      "total_obs": 110,
+      "total_commit": 120,
+      "unobserved_guesses": 0
+    },
+    "wiped": null,
+    "contrast": {
+      "control_median": 20.0,
+      "wiped_median": null,
+      "delta_wiped_minus_control": null,
+      "meets_falsifier": false,
+      "ceiling_row": true,
+      "complete": false
+    }
+  },
+  "glm-4-7-flash": {
+    "safe": "glm-4-7-flash",
+    "control": {
+      "n_valid": 6,
+      "n_error": 0,
+      "depths": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "depth_median": 4.5,
+      "depth_mean": 4.5,
+      "depth_min": 2,
+      "depth_max": 7,
+      "n_exit": 0,
+      "exit_rate": 0.0,
+      "turns_mean": 12.333333333333334,
+      "consistency_mean": 0.7305555555555555,
+      "gate_acc_mean": 0.5248436748436748,
+      "elapsed_mean": 344.32166666666666,
+      "obs_commit_ratio": 0.38461538461538464,
+      "total_obs": 20,
+      "total_commit": 52,
+      "unobserved_guesses": 0
+    },
+    "wiped": {
+      "n_valid": 6,
+      "n_error": 0,
+      "depths": [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "depth_median": 20.0,
+      "depth_mean": 20.0,
+      "depth_min": 20,
+      "depth_max": 20,
+      "n_exit": 6,
+      "exit_rate": 1.0,
+      "turns_mean": 21.0,
+      "consistency_mean": 0.9537037037037037,
+      "gate_acc_mean": 0.9531024531024531,
+      "elapsed_mean": 891.1583333333333,
+      "obs_commit_ratio": 0.0,
+      "total_obs": 0,
+      "total_commit": 126,
+      "unobserved_guesses": 0
+    },
+    "contrast": {
+      "control_median": 4.5,
+      "wiped_median": 20.0,
+      "delta_wiped_minus_control": 15.5,
+      "meets_falsifier": true,
+      "ceiling_row": false,
+      "complete": true
+    }
+  },
+  "gpt-oss-120b": {
+    "safe": "gpt-oss-120b",
+    "control": {
+      "n_valid": 6,
+      "n_error": 0,
+      "depths": [
+        13,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "depth_median": 20.0,
+      "depth_mean": 18.833333333333332,
+      "depth_min": 13,
+      "depth_max": 20,
+      "n_exit": 5,
+      "exit_rate": 0.8333333333333334,
+      "turns_mean": 39.666666666666664,
+      "consistency_mean": 0.9305555555555555,
+      "gate_acc_mean": 0.9153297682709448,
+      "elapsed_mean": 431.8666666666666,
+      "obs_commit_ratio": 0.9262295081967213,
+      "total_obs": 113,
+      "total_commit": 122,
+      "unobserved_guesses": 0
+    },
+    "wiped": null,
+    "contrast": {
+      "control_median": 20.0,
+      "wiped_median": null,
+      "delta_wiped_minus_control": null,
+      "meets_falsifier": false,
+      "ceiling_row": true,
+      "complete": false
+    }
+  },
+  "hf-co-InternScience-Agents-A1-Q4_K_M-GGUF": {
+    "safe": "hf-co-InternScience-Agents-A1-Q4_K_M-GGUF",
+    "control": {
+      "n_valid": 6,
+      "n_error": 3,
+      "depths": [
+        13,
+        17,
+        19,
+        19,
+        20,
+        20
+      ],
+      "depth_median": 19.0,
+      "depth_mean": 18.0,
+      "depth_min": 13,
+      "depth_max": 20,
+      "n_exit": 2,
+      "exit_rate": 0.3333333333333333,
+      "turns_mean": 44.5,
+      "consistency_mean": 0.8761574074074074,
+      "gate_acc_mean": 0.8479792443986818,
+      "elapsed_mean": 1994.8,
+      "obs_commit_ratio": 1.0317460317460319,
+      "total_obs": 130,
+      "total_commit": 126,
+      "unobserved_guesses": 0
+    },
+    "wiped": null,
+    "contrast": {
+      "control_median": 19.0,
+      "wiped_median": null,
+      "delta_wiped_minus_control": null,
+      "meets_falsifier": false,
+      "ceiling_row": false,
+      "complete": false
+    }
+  },
+  "hf-co-empero-ai-Qwythos-9B-Claude-Mythos-5-1M-GGUF-Q4_K_M": {
+    "safe": "hf-co-empero-ai-Qwythos-9B-Claude-Mythos-5-1M-GGUF-Q4_K_M",
+    "control": {
+      "n_valid": 6,
+      "n_error": 1,
+      "depths": [
+        1,
+        1,
+        1,
+        2,
+        2,
+        4
+      ],
+      "depth_median": 1.5,
+      "depth_mean": 1.8333333333333333,
+      "depth_min": 1,
+      "depth_max": 4,
+      "n_exit": 0,
+      "exit_rate": 0.0,
+      "turns_mean": 19.0,
+      "consistency_mean": 0.0,
+      "gate_acc_mean": 0.37063492063492065,
+      "elapsed_mean": 71.55499999999999,
+      "obs_commit_ratio": 1.0789473684210527,
+      "total_obs": 41,
+      "total_commit": 38,
+      "unobserved_guesses": 0
+    },
+    "wiped": {
+      "n_valid": 6,
+      "n_error": 0,
+      "depths": [
+        5,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "depth_median": 7.0,
+      "depth_mean": 6.666666666666667,
+      "depth_min": 5,
+      "depth_max": 7,
+      "n_exit": 0,
+      "exit_rate": 0.0,
+      "turns_mean": 17.0,
+      "consistency_mean": 0.638888888888889,
+      "gate_acc_mean": 0.6608391608391608,
+      "elapsed_mean": 58.98666666666667,
+      "obs_commit_ratio": 0.18309859154929578,
+      "total_obs": 13,
+      "total_commit": 71,
+      "unobserved_guesses": 0
+    },
+    "contrast": {
+      "control_median": 1.5,
+      "wiped_median": 7.0,
+      "delta_wiped_minus_control": 5.5,
+      "meets_falsifier": true,
+      "ceiling_row": false,
+      "complete": true
+    }
+  },
+  "llama3-3-70b": {
+    "safe": "llama3-3-70b",
+    "control": {
+      "n_valid": 6,
+      "n_error": 0,
+      "depths": [
+        15,
+        15,
+        15,
+        15,
+        15,
+        16
+      ],
+      "depth_median": 15.0,
+      "depth_mean": 15.166666666666666,
+      "depth_min": 15,
+      "depth_max": 16,
+      "n_exit": 0,
+      "exit_rate": 0.0,
+      "turns_mean": 34.333333333333336,
+      "consistency_mean": 0.8587301587301587,
+      "gate_acc_mean": 0.7912280701754386,
+      "elapsed_mean": 160.805,
+      "obs_commit_ratio": 0.7913043478260869,
+      "total_obs": 91,
+      "total_commit": 115,
+      "unobserved_guesses": 0
+    },
+    "wiped": {
+      "n_valid": 6,
+      "n_error": 0,
+      "depths": [
+        9,
+        9,
+        9,
+        9,
+        9,
+        9
+      ],
+      "depth_median": 9.0,
+      "depth_mean": 9.0,
+      "depth_min": 9,
+      "depth_max": 9,
+      "n_exit": 0,
+      "exit_rate": 0.0,
+      "turns_mean": 13.0,
+      "consistency_mean": 0.875,
+      "gate_acc_mean": 0.6923076923076922,
+      "elapsed_mean": 74.15833333333333,
+      "obs_commit_ratio": 0.0,
+      "total_obs": 0,
+      "total_commit": 78,
+      "unobserved_guesses": 0
+    },
+    "contrast": {
+      "control_median": 15.0,
+      "wiped_median": 9.0,
+      "delta_wiped_minus_control": -6.0,
+      "meets_falsifier": false,
+      "ceiling_row": false,
+      "complete": true
+    }
+  },
+  "llama4-scout": {
+    "safe": "llama4-scout",
+    "control": {
+      "n_valid": 6,
+      "n_error": 0,
+      "depths": [
+        7,
+        7,
+        10,
+        10,
+        10,
+        10
+      ],
+      "depth_median": 10.0,
+      "depth_mean": 9.0,
+      "depth_min": 7,
+      "depth_max": 10,
+      "n_exit": 0,
+      "exit_rate": 0.0,
+      "turns_mean": 22.0,
+      "consistency_mean": 0.6481481481481483,
+      "gate_acc_mean": 0.6883116883116883,
+      "elapsed_mean": 135.61666666666667,
+      "obs_commit_ratio": 0.6923076923076923,
+      "total_obs": 54,
+      "total_commit": 78,
+      "unobserved_guesses": 0
+    },
+    "wiped": {
+      "n_valid": 6,
+      "n_error": 0,
+      "depths": [
+        7,
+        7,
+        7,
+        7,
+        7,
+        7
+      ],
+      "depth_median": 7.0,
+      "depth_mean": 7.0,
+      "depth_min": 7,
+      "depth_max": 7,
+      "n_exit": 0,
+      "exit_rate": 0.0,
+      "turns_mean": 63.0,
+      "consistency_mean": 0.8,
+      "gate_acc_mean": 0.6363636363636364,
+      "elapsed_mean": 86.41166666666668,
+      "obs_commit_ratio": 4.7384615384615385,
+      "total_obs": 308,
+      "total_commit": 65,
+      "unobserved_guesses": 0
+    },
+    "contrast": {
+      "control_median": 10.0,
+      "wiped_median": 7.0,
+      "delta_wiped_minus_control": -3.0,
+      "meets_falsifier": false,
+      "ceiling_row": false,
+      "complete": true
+    }
+  },
+  "ornith-9b": {
+    "safe": "ornith-9b",
+    "control": {
+      "n_valid": 6,
+      "n_error": 0,
+      "depths": [
+        1,
+        1,
+        1,
+        2,
+        2,
+        5
+      ],
+      "depth_median": 1.5,
+      "depth_mean": 2.0,
+      "depth_min": 1,
+      "depth_max": 5,
+      "n_exit": 0,
+      "exit_rate": 0.0,
+      "turns_mean": 26.333333333333332,
+      "consistency_mean": 0.2916666666666667,
+      "gate_acc_mean": 0.3259259259259259,
+      "elapsed_mean": 330.8566666666667,
+      "obs_commit_ratio": 4.142857142857143,
+      "total_obs": 116,
+      "total_commit": 28,
+      "unobserved_guesses": 0
+    },
+    "wiped": {
+      "n_valid": 6,
+      "n_error": 0,
+      "depths": [
+        7,
+        7,
+        7,
+        9,
+        12,
+        13
+      ],
+      "depth_median": 8.0,
+      "depth_mean": 9.166666666666666,
+      "depth_min": 7,
+      "depth_max": 13,
+      "n_exit": 0,
+      "exit_rate": 0.0,
+      "turns_mean": 15.0,
+      "consistency_mean": 0.6780303030303031,
+      "gate_acc_mean": 0.6860174139585905,
+      "elapsed_mean": 624.7016666666667,
+      "obs_commit_ratio": 0.12987012987012986,
+      "total_obs": 10,
+      "total_commit": 77,
+      "unobserved_guesses": 0
+    },
+    "contrast": {
+      "control_median": 1.5,
+      "wiped_median": 8.0,
+      "delta_wiped_minus_control": 6.5,
+      "meets_falsifier": true,
+      "ceiling_row": false,
+      "complete": true
+    }
+  },
+  "qwen3-14b": {
+    "safe": "qwen3-14b",
+    "control": {
+      "n_valid": 6,
+      "n_error": 0,
+      "depths": [
+        3,
+        3,
+        4,
+        5,
+        5,
+        8
+      ],
+      "depth_median": 4.5,
+      "depth_mean": 4.666666666666667,
+      "depth_min": 3,
+      "depth_max": 8,
+      "n_exit": 0,
+      "exit_rate": 0.0,
+      "turns_mean": 12.0,
+      "consistency_mean": 0.5496031746031745,
+      "gate_acc_mean": 0.5224867724867724,
+      "elapsed_mean": 124.61333333333333,
+      "obs_commit_ratio": 0.36538461538461536,
+      "total_obs": 19,
+      "total_commit": 52,
+      "unobserved_guesses": 0
+    },
+    "wiped": {
+      "n_valid": 6,
+      "n_error": 0,
+      "depths": [
+        12,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "depth_median": 20.0,
+      "depth_mean": 18.666666666666668,
+      "depth_min": 12,
+      "depth_max": 20,
+      "n_exit": 5,
+      "exit_rate": 0.8333333333333334,
+      "turns_mean": 20.666666666666668,
+      "consistency_mean": 0.9203703703703704,
+      "gate_acc_mean": 0.9062911725955204,
+      "elapsed_mean": 197.15666666666667,
+      "obs_commit_ratio": 0.0,
+      "total_obs": 0,
+      "total_commit": 123,
+      "unobserved_guesses": 0
+    },
+    "contrast": {
+      "control_median": 4.5,
+      "wiped_median": 20.0,
+      "delta_wiped_minus_control": 15.5,
+      "meets_falsifier": true,
+      "ceiling_row": false,
+      "complete": true
+    }
+  },
+  "qwen3-5-122b": {
+    "safe": "qwen3-5-122b",
+    "control": {
+      "n_valid": 6,
+      "n_error": 0,
+      "depths": [
+        12,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "depth_median": 20.0,
+      "depth_mean": 18.666666666666668,
+      "depth_min": 12,
+      "depth_max": 20,
+      "n_exit": 5,
+      "exit_rate": 0.8333333333333334,
+      "turns_mean": 38.666666666666664,
+      "consistency_mean": 0.8956228956228957,
+      "gate_acc_mean": 0.8910455486542442,
+      "elapsed_mean": 1503.4916666666668,
+      "obs_commit_ratio": 0.848,
+      "total_obs": 106,
+      "total_commit": 125,
+      "unobserved_guesses": 0
+    },
+    "wiped": null,
+    "contrast": {
+      "control_median": 20.0,
+      "wiped_median": null,
+      "delta_wiped_minus_control": null,
+      "meets_falsifier": false,
+      "ceiling_row": true,
+      "complete": false
+    }
+  },
+  "qwen3-5-27b": {
+    "safe": "qwen3-5-27b",
+    "control": {
+      "n_valid": 6,
+      "n_error": 1,
+      "depths": [
+        5,
+        9,
+        9,
+        10,
+        18,
+        20
+      ],
+      "depth_median": 9.5,
+      "depth_mean": 11.833333333333334,
+      "depth_min": 5,
+      "depth_max": 20,
+      "n_exit": 1,
+      "exit_rate": 0.16666666666666666,
+      "turns_mean": 30.5,
+      "consistency_mean": 0.7998366013071895,
+      "gate_acc_mean": 0.7302882302882302,
+      "elapsed_mean": 4530.221666666666,
+      "obs_commit_ratio": 0.7956989247311828,
+      "total_obs": 74,
+      "total_commit": 93,
+      "unobserved_guesses": 0
+    },
+    "wiped": null,
+    "contrast": {
+      "control_median": 9.5,
+      "wiped_median": null,
+      "delta_wiped_minus_control": null,
+      "meets_falsifier": false,
+      "ceiling_row": false,
+      "complete": false
+    }
+  },
+  "qwen3-5-9b": {
+    "safe": "qwen3-5-9b",
+    "control": {
+      "n_valid": 6,
+      "n_error": 0,
+      "depths": [
+        2,
+        2,
+        4,
+        5,
+        7,
+        8
+      ],
+      "depth_median": 4.5,
+      "depth_mean": 4.666666666666667,
+      "depth_min": 2,
+      "depth_max": 8,
+      "n_exit": 0,
+      "exit_rate": 0.0,
+      "turns_mean": 49.833333333333336,
+      "consistency_mean": 0.5047619047619047,
+      "gate_acc_mean": 0.5435120435120435,
+      "elapsed_mean": 523.5133333333333,
+      "obs_commit_ratio": 4.914893617021277,
+      "total_obs": 231,
+      "total_commit": 47,
+      "unobserved_guesses": 0
+    },
+    "wiped": {
+      "n_valid": 6,
+      "n_error": 0,
+      "depths": [
+        12,
+        16,
+        17,
+        17,
+        17,
+        18
+      ],
+      "depth_median": 17.0,
+      "depth_mean": 16.166666666666668,
+      "depth_min": 12,
+      "depth_max": 18,
+      "n_exit": 0,
+      "exit_rate": 0.0,
+      "turns_mean": 35.0,
+      "consistency_mean": 0.8009469696969697,
+      "gate_acc_mean": 0.8019098548510314,
+      "elapsed_mean": 5240.9366666666665,
+      "obs_commit_ratio": 0.6585365853658537,
+      "total_obs": 81,
+      "total_commit": 123,
+      "unobserved_guesses": 0
+    },
+    "contrast": {
+      "control_median": 4.5,
+      "wiped_median": 17.0,
+      "delta_wiped_minus_control": 12.5,
+      "meets_falsifier": true,
+      "ceiling_row": false,
+      "complete": true
+    }
+  },
+  "qwen3-6-27b": {
+    "safe": "qwen3-6-27b",
+    "control": {
+      "n_valid": 6,
+      "n_error": 0,
+      "depths": [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "depth_median": 20.0,
+      "depth_mean": 20.0,
+      "depth_min": 20,
+      "depth_max": 20,
+      "n_exit": 6,
+      "exit_rate": 1.0,
+      "turns_mean": 41.166666666666664,
+      "consistency_mean": 0.9907407407407408,
+      "gate_acc_mean": 0.9920634920634921,
+      "elapsed_mean": 1710.42,
+      "obs_commit_ratio": 0.9504132231404959,
+      "total_obs": 115,
+      "total_commit": 121,
+      "unobserved_guesses": 0
+    },
+    "wiped": null,
+    "contrast": {
+      "control_median": 20.0,
+      "wiped_median": null,
+      "delta_wiped_minus_control": null,
+      "meets_falsifier": false,
+      "ceiling_row": true,
+      "complete": false
+    }
+  }
+}

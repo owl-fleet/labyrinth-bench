@@ -1,0 +1,480 @@
+# GENERATED (deterministic, seed=2027) — static DEG, do not hand-edit; re-render if needed.
+meta:
+  id: rev-2
+  name: "Rev-2 \u2014 interference + self-pollution (break the frontier)"
+  version: 1
+  optimal_commits: 34
+  optimal_path:
+  - start
+  - n1
+  - n2
+  - n3
+  - n4
+  - n5
+  - n6
+  - n7
+  - n8
+  - n9
+  - n10
+  - n11
+  - n12
+  - n13
+  - n14
+  - n15
+  - n16
+  - n17
+  - n18
+  - n19
+  - n20
+  - n21
+  - n22
+  - n23
+  - n24
+  - n25
+  - n26
+  - n27
+  - n28
+  - n29
+  - n30
+  - n31
+  - n32
+  - n33
+  - exit
+  step_budget: 120
+  gate_count: 34
+  dead_end_count: 0
+  loop_count: 0
+  fog_radius: 0
+  max_wrong: 5
+  briefing: "You are climbing a ladder of gates. Eight variables (A..H) hold values that CHANGE as you climb, and they CHANGE BACK \u2014 a variable may return to a value it held earlier, and several variables may share the same value. Every gate asks about a variable's CURRENT value (or a combination of current values), never an old one; the most recent time you saw a value is NOT necessarily current. You will sometimes be asked the SAME question twice with a change in between \u2014 recompute, do not reuse your earlier answer. Take careful notes. Gates are locks: a wrong answer does not open the gate \u2014 you stay put, try again, and it costs one of your {max_wrong} lives. There is no step limit. Answer with a single number (use 1 / 0 for yes / no questions)."
+nodes:
+- id: start
+  description: The foot of the ladder.
+  paths:
+  - id: forward
+    label: gate
+    destination: n1
+    gate:
+      gate_id: set_a
+      sets_var: A
+      problem: Variable A is initialized to 3. What is the value of A?
+      answer: '3'
+- id: n1
+  description: Gate 2.
+  paths:
+  - id: forward
+    label: gate
+    destination: n2
+    gate:
+      gate_id: set_b
+      sets_var: B
+      problem: Variable B is initialized to 6. What is the value of B?
+      answer: '6'
+- id: n2
+  description: Gate 3.
+  paths:
+  - id: forward
+    label: gate
+    destination: n3
+    gate:
+      gate_id: set_c
+      sets_var: C
+      problem: Variable C is initialized to 3. What is the value of C?
+      answer: '3'
+- id: n3
+  description: Gate 4.
+  paths:
+  - id: forward
+    label: gate
+    destination: n4
+    gate:
+      gate_id: set_d
+      sets_var: D
+      problem: Variable D is initialized to 3. What is the value of D?
+      answer: '3'
+- id: n4
+  description: Gate 5.
+  paths:
+  - id: forward
+    label: gate
+    destination: n5
+    gate:
+      gate_id: set_e
+      sets_var: E
+      problem: Variable E is initialized to 8. What is the value of E?
+      answer: '8'
+- id: n5
+  description: Gate 6.
+  paths:
+  - id: forward
+    label: gate
+    destination: n6
+    gate:
+      gate_id: set_f
+      sets_var: F
+      problem: Variable F is initialized to 5. What is the value of F?
+      answer: '5'
+- id: n6
+  description: Gate 7.
+  paths:
+  - id: forward
+    label: gate
+    destination: n7
+    gate:
+      gate_id: set_g
+      sets_var: G
+      problem: Variable G is initialized to 9. What is the value of G?
+      answer: '9'
+- id: n7
+  description: Gate 8.
+  paths:
+  - id: forward
+    label: gate
+    destination: n8
+    gate:
+      gate_id: set_h
+      sets_var: H
+      problem: Variable H is initialized to 6. What is the value of H?
+      answer: '6'
+- id: n8
+  description: Gate 9.
+  paths:
+  - id: forward
+    label: gate
+    destination: n9
+    gate:
+      gate_id: use_1
+      depends_on:
+      - C
+      - D
+      problem: Add the current value of C to the current value of D.
+      answer_fn: int(C) + int(D)
+- id: n9
+  description: Gate 10.
+  paths:
+  - id: forward
+    label: gate
+    destination: n10
+    gate:
+      gate_id: rev_c_1
+      sets_var: C
+      problem: 'C changes: C is now 6. Answer 6 to set it.'
+      answer: '6'
+- id: n10
+  description: Gate 11.
+  paths:
+  - id: forward
+    label: gate
+    destination: n11
+    gate:
+      gate_id: use_2
+      depends_on:
+      - C
+      - D
+      problem: Add the current value of C to the current value of D.
+      answer_fn: int(C) + int(D)
+- id: n11
+  description: Gate 12.
+  paths:
+  - id: forward
+    label: gate
+    destination: n12
+    gate:
+      gate_id: rsn_1
+      depends_on:
+      - E
+      - C
+      - F
+      - H
+      problem: If the current value of E is greater than the current value of C, answer the current value of F; otherwise answer the current value of H.
+      answer_fn: int(F) if int(E) > int(C) else int(H)
+- id: n12
+  description: Gate 13.
+  paths:
+  - id: forward
+    label: gate
+    destination: n13
+    gate:
+      gate_id: use_3
+      depends_on:
+      - F
+      - C
+      problem: Add the current value of F to the current value of C.
+      answer_fn: int(F) + int(C)
+- id: n13
+  description: Gate 14.
+  paths:
+  - id: forward
+    label: gate
+    destination: n14
+    gate:
+      gate_id: rev_f_1
+      sets_var: F
+      problem: 'F changes: F is now 6. Answer 6 to set it.'
+      answer: '6'
+- id: n14
+  description: Gate 15.
+  paths:
+  - id: forward
+    label: gate
+    destination: n15
+    gate:
+      gate_id: use_4
+      depends_on:
+      - F
+      - C
+      problem: Add the current value of F to the current value of C.
+      answer_fn: int(F) + int(C)
+- id: n15
+  description: Gate 16.
+  paths:
+  - id: forward
+    label: gate
+    destination: n16
+    gate:
+      gate_id: use_5
+      depends_on:
+      - E
+      - D
+      problem: Add the current value of E to the current value of D.
+      answer_fn: int(E) + int(D)
+- id: n16
+  description: Gate 17.
+  paths:
+  - id: forward
+    label: gate
+    destination: n17
+    gate:
+      gate_id: rev_e_1
+      sets_var: E
+      problem: 'E changes: E is now 4. Answer 4 to set it.'
+      answer: '4'
+- id: n17
+  description: Gate 18.
+  paths:
+  - id: forward
+    label: gate
+    destination: n18
+    gate:
+      gate_id: use_6
+      depends_on:
+      - E
+      - D
+      problem: Add the current value of E to the current value of D.
+      answer_fn: int(E) + int(D)
+- id: n18
+  description: Gate 19.
+  paths:
+  - id: forward
+    label: gate
+    destination: n19
+    gate:
+      gate_id: use_7
+      depends_on:
+      - F
+      - G
+      problem: Answer the larger of the current values of F and G.
+      answer_fn: max(int(F), int(G))
+- id: n19
+  description: Gate 20.
+  paths:
+  - id: forward
+    label: gate
+    destination: n20
+    gate:
+      gate_id: rev_f_2
+      sets_var: F
+      problem: 'F changes: F is now 7. Answer 7 to set it.'
+      answer: '7'
+- id: n20
+  description: Gate 21.
+  paths:
+  - id: forward
+    label: gate
+    destination: n21
+    gate:
+      gate_id: use_8
+      depends_on:
+      - F
+      - G
+      problem: Answer the larger of the current values of F and G.
+      answer_fn: max(int(F), int(G))
+- id: n21
+  description: Gate 22.
+  paths:
+  - id: forward
+    label: gate
+    destination: n22
+    gate:
+      gate_id: rsn_2
+      depends_on:
+      - C
+      - G
+      - D
+      - H
+      problem: Answer the larger of (current C + current G) and (current D + current H).
+      answer_fn: max(int(C) + int(G), int(D) + int(H))
+- id: n22
+  description: Gate 23.
+  paths:
+  - id: forward
+    label: gate
+    destination: n23
+    gate:
+      gate_id: use_9
+      depends_on:
+      - F
+      - E
+      problem: Add the current value of F to the current value of E.
+      answer_fn: int(F) + int(E)
+- id: n23
+  description: Gate 24.
+  paths:
+  - id: forward
+    label: gate
+    destination: n24
+    gate:
+      gate_id: rev_f_3
+      sets_var: F
+      problem: 'F changes: F is now 4. Answer 4 to set it.'
+      answer: '4'
+- id: n24
+  description: Gate 25.
+  paths:
+  - id: forward
+    label: gate
+    destination: n25
+    gate:
+      gate_id: use_10
+      depends_on:
+      - F
+      - E
+      problem: Add the current value of F to the current value of E.
+      answer_fn: int(F) + int(E)
+- id: n25
+  description: Gate 26.
+  paths:
+  - id: forward
+    label: gate
+    destination: n26
+    gate:
+      gate_id: use_11
+      depends_on:
+      - A
+      - C
+      problem: Answer the larger of the current values of A and C.
+      answer_fn: max(int(A), int(C))
+- id: n26
+  description: Gate 27.
+  paths:
+  - id: forward
+    label: gate
+    destination: n27
+    gate:
+      gate_id: rev_a_1
+      sets_var: A
+      problem: 'A changes: A is now 6. Answer 6 to set it.'
+      answer: '6'
+- id: n27
+  description: Gate 28.
+  paths:
+  - id: forward
+    label: gate
+    destination: n28
+    gate:
+      gate_id: use_12
+      depends_on:
+      - A
+      - C
+      problem: Answer the larger of the current values of A and C.
+      answer_fn: max(int(A), int(C))
+- id: n28
+  description: Gate 29.
+  paths:
+  - id: forward
+    label: gate
+    destination: n29
+    gate:
+      gate_id: rsn_3
+      depends_on:
+      - E
+      - G
+      - D
+      - F
+      problem: Answer the larger of (current E + current G) and (current D + current F).
+      answer_fn: max(int(E) + int(G), int(D) + int(F))
+- id: n29
+  description: Gate 30.
+  paths:
+  - id: forward
+    label: gate
+    destination: n30
+    gate:
+      gate_id: use_13
+      depends_on:
+      - C
+      - H
+      problem: Add the current value of C to the current value of H.
+      answer_fn: int(C) + int(H)
+- id: n30
+  description: Gate 31.
+  paths:
+  - id: forward
+    label: gate
+    destination: n31
+    gate:
+      gate_id: rev_c_2
+      sets_var: C
+      problem: 'C changes: C is now 3. Answer 3 to set it.'
+      answer: '3'
+- id: n31
+  description: Gate 32.
+  paths:
+  - id: forward
+    label: gate
+    destination: n32
+    gate:
+      gate_id: use_14
+      depends_on:
+      - C
+      - H
+      problem: Add the current value of C to the current value of H.
+      answer_fn: int(C) + int(H)
+- id: n32
+  description: Gate 33.
+  paths:
+  - id: forward
+    label: gate
+    destination: n33
+    gate:
+      gate_id: rsn_4
+      depends_on:
+      - D
+      - B
+      - A
+      - F
+      problem: If the current value of D is greater than the current value of B, answer the current value of A; otherwise answer the current value of F.
+      answer_fn: int(A) if int(D) > int(B) else int(F)
+- id: n33
+  description: Gate 34.
+  paths:
+  - id: forward
+    label: gate
+    destination: exit
+    gate:
+      gate_id: syn_final
+      depends_on:
+      - A
+      - B
+      - C
+      - D
+      - E
+      - F
+      - G
+      - H
+      problem: 'Add the current values of all eight variables: A, B, C, D, E, F, G, H.'
+      answer_fn: int(A) + int(B) + int(C) + int(D) + int(E) + int(F) + int(G) + int(H)
+- id: exit
+  description: "TOP \u2014 you tracked every value through every change."
+  terminal: true
+  paths: []

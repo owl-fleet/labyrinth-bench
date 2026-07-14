@@ -1,0 +1,201 @@
+meta:
+  id: nav-1
+  name: "Nav-1 — fog-of-war navigable labyrinth (lock-chain)"
+  version: 1
+  # ─────────────────────────────────────────────────────────────────────────
+  # NAVIGABLE RUNG (HUD-orchestration program, child plan 04).
+  #
+  # A branchy graph (not a corridor): junctions with 2–3 corridors, dead-end clusters of
+  # depth 1–3 hanging off the wrong choices. The fog-of-war map (radius 2) is what lets a
+  # model SEE a couple of corridors ahead and plan a route around the dead-ends; blind
+  # (radius 0) it must wander into them. That gap is the awareness lift the radius ladder
+  # measures (04e).
+  #
+  # GATES ARE LOCKS (no wrong_destination): a wrong answer does NOT open the door — you stay
+  # put and spend a step, then retry or route elsewhere. No routing-to-doom. Dead ends are
+  # *topology you choose to walk into*, not gate-punishment. Failure = budget / loop.
+  #
+  # A 3-gate dependent lock-chain threaded along the spine, by NAME. Gates are EASY arithmetic
+  # on purpose — the challenge is fog-navigation + RECALL, not mental math (hard math + a lock just
+  # floors the run at gate 1):
+  #   G1 (independent)              "Calculate 23 + 19"           = 42
+  #   G2 (depends_on G1, adjacent)  "Add 8 to your G1 answer"     = 50
+  #   G3 (depends_on G1, NON-adjacent — reaches back past G2) "Subtract 5 from your G1 answer" = 37
+  # G3's reach-back across the intervening G2 is the working-memory stress that recall
+  # (HUD) is meant to relieve. Decoys D1/D2 are named locks on dead-end corridors so
+  # "gated ≠ spine" and "named ≠ chain" (legibility honest).
+  #
+  # Legibility: the spine corridor is sometimes open (start→atrium, vault→concourse,
+  # concourse→gallery) and sometimes gated (atrium→vault G1, gallery→rotunda G2,
+  # rotunda→exit G3); dead-end corridors are a mix of open and gated. So neither
+  # "gated" nor a constant label identifies the route.
+  #
+  # bfs_verify (correct edges) == optimal_commits == 6
+  #   start → atrium → vault → concourse → gallery → rotunda → exit
+  # budget = optimal × 3 = 18. fog_radius 2 → exit (6 deep) is fogged from start.
+  # ─────────────────────────────────────────────────────────────────────────
+  optimal_commits: 6
+  optimal_path: [start, atrium, vault, concourse, gallery, rotunda, exit]
+  step_budget: 18
+  gate_count: 5        # G1, G2, G3 (chain) + D1, D2 (decoy locks)
+  dead_end_count: 12
+  loop_count: 0
+  dead_end_patience: 3
+  fog_radius: 2
+  briefing: >
+    You explore by a fog-of-war map that reveals corridors only up to {fog_radius} step(s) away in
+    any direction; you cannot see the interior of a room (its description and its gate problems)
+    until you have entered it. Rooms and gates have unique names. Some gate problems depend on
+    answers you computed at earlier gates — referenced by gate name (e.g. "your G1 answer") — so
+    take notes; you will likely need them. A wrong gate answer simply does not open that gate: you
+    stay put and lose the step; a closed door is not a dead end, but wandering down the wrong
+    corridor can be. Take stock, plan a route, and find the EXIT.
+
+nodes:
+
+  # ══════════════════════════════════════════════
+  # SPINE — start → atrium → vault → concourse → gallery → rotunda → exit
+  # ══════════════════════════════════════════════
+
+  - id: start
+    description: >
+      A low entry chamber. An open archway leads north; a narrow opening breaks the
+      east wall.
+    paths:
+      - {id: north, label: "north archway", destination: atrium}
+      - {id: east, label: "east opening", destination: cell_a}
+
+  - id: atrium
+    description: >
+      A pillared atrium. A sealed arch faces you; a stair descends to one side; a low
+      alcove is set with its own small lock.
+    paths:
+      - id: arch
+        label: "sealed arch"
+        destination: vault
+        gate:
+          gate_id: G1
+          problem: "Calculate 23 + 19"
+          answer: "42"
+      - {id: stair, label: "descending stair", destination: crypt_a}
+      - id: alcove
+        label: "locked alcove"
+        destination: niche
+        gate:
+          gate_id: D1
+          problem: "Calculate 15 + 9"
+          answer: "24"
+
+  - id: vault
+    description: >
+      A broad vault. A passage runs on ahead; a pit drops away to the side.
+    paths:
+      - {id: passage, label: "forward passage", destination: concourse}
+      - {id: pit, label: "side pit", destination: pit_b}
+
+  - id: concourse
+    description: >
+      A wide concourse. A ramp climbs onward; a side hatch is locked; a chute angles down.
+    paths:
+      - {id: ramp, label: "onward ramp", destination: gallery}
+      - id: hatch
+        label: "locked hatch"
+        destination: dead_h
+        gate:
+          gate_id: D2
+          problem: "Calculate 9 + 4"
+          answer: "13"
+      - {id: chute, label: "down chute", destination: chute_b}
+
+  - id: gallery
+    description: >
+      A long gallery. A sealed west door bars the way on; an open east passage leads off.
+    paths:
+      - id: west_lock
+        label: "sealed west door"
+        destination: rotunda
+        gate:
+          gate_id: G2
+          depends_on: G1
+          problem_template: "Add {C} to your G1 answer"
+          answer_fn: "int(prev_result) + C"
+          seed: {C: 8}
+          answer: "50"
+      - {id: east, label: "east passage", destination: sump_a}
+
+  - id: rotunda
+    description: >
+      A domed rotunda. A great seal blocks the final passage; a quiet side nook opens nearby.
+    paths:
+      - id: seal
+        label: "great seal"
+        destination: exit
+        gate:
+          gate_id: G3
+          depends_on: G1
+          problem_template: "Subtract {D} from your G1 answer"
+          answer_fn: "int(prev_result) - D"
+          seed: {D: 5}
+          answer: "37"
+      - {id: side, label: "side nook", destination: nook_a}
+
+  - id: exit
+    description: "EXIT. You have navigated the labyrinth."
+    terminal: true
+    paths: []
+
+  # ══════════════════════════════════════════════
+  # DEAD-END TOPOLOGY (navigate around using the map)
+  # ══════════════════════════════════════════════
+
+  - id: cell_a
+    description: >
+      A cramped cell. A crack in the floor continues down.
+    paths:
+      - {id: down, label: "floor crack", destination: cell_b}
+  - id: cell_b
+    description: "A sealed sub-cell. No way on."
+    paths: []
+
+  - id: crypt_a
+    description: >
+      A dim crypt landing. The stair keeps descending.
+    paths:
+      - {id: down, label: "lower stair", destination: crypt_b}
+  - id: crypt_b
+    description: >
+      A deeper crypt. A final passage runs on.
+    paths:
+      - {id: deep, label: "deep passage", destination: crypt_c}
+  - id: crypt_c
+    description: "The crypt ends at solid rock. No exit."
+    paths: []
+
+  - id: niche
+    description: "Past the alcove lock: a shallow niche. Nothing here. No way on."
+    paths: []
+
+  - id: pit_b
+    description: "The pit bottoms out in rubble. No exit."
+    paths: []
+
+  - id: dead_h
+    description: "Past the hatch lock: a choked maintenance shaft. No way on."
+    paths: []
+
+  - id: chute_b
+    description: "The chute ends in a flooded sump. No exit."
+    paths: []
+
+  - id: sump_a
+    description: >
+      A damp side room. A passage leads further in.
+    paths:
+      - {id: in, label: "inner passage", destination: sump_b}
+  - id: sump_b
+    description: "A blind inner room. No exit."
+    paths: []
+
+  - id: nook_a
+    description: "A quiet nook. It ends at a blank wall. No exit."
+    paths: []

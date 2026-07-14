@@ -1,0 +1,178 @@
+meta:
+  id: nav-2
+  name: "Nav-2 — two dependent chains + a synthesis gate (C5)"
+  version: 1
+  # ─────────────────────────────────────────────────────────────────────────
+  # SYNTHESIS RUNG (HUD-orchestration program, child plan 04). ~2x nav-1, difficulty up for
+  # SEPARATION. The challenge is RECALL UNDER CONTEXT LOAD, not mental math (gates are trivial sums).
+  #
+  # Spine (11 commits): start -> n1 -> ... -> n10 -> exit, threading:
+  #   chain A (dependent):  A1=20+5=25 -> A2=A1+10=35 -> A3=A2+5=40
+  #   independents (distractors, DISTINCT answers so a confused model grabs the wrong number):
+  #                          I1=7+6=13,  I2=9+8=17
+  #   chain B (dependent):  B1=12+6=18 -> B2=B1+4=22
+  #   SYNTHESIS:            S = A3 + B2 = 40 + 22 = 62   (depends_on BOTH chains)
+  #
+  # The killer is S: to pass it the model must recall A3=40 (established 7 commits earlier, buried
+  # under I1/I2/B1/B2 + its own noise) AND B2=22, and combine them. Gates are LOCKS (omit
+  # wrong_destination): a wrong answer doesn't open, you stay put and spend a step. S is
+  # __UNRESOLVABLE__ until both A3 and B2 are passed, so the full two-chain program must execute.
+  # Decoys D1/D2 are named locks on dead branches (gated != spine; named != chain). Spine corridors
+  # mix open + gated for legibility. budget = 26 (~2.4x optimal): room to reach S, where the
+  # accumulating-context model drowns and the managed/overlay context (recall = A3|B2 by name) wins.
+  #
+  # bfs_verify (correct edges) == optimal_commits == 11.
+  # ─────────────────────────────────────────────────────────────────────────
+  optimal_commits: 11
+  optimal_path: [start, n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, exit]
+  step_budget: 26
+  gate_count: 10       # A1 A2 A3 I1 I2 B1 B2 S (spine) + D1 D2 (decoy)
+  dead_end_count: 14
+  loop_count: 0
+  dead_end_patience: 3
+  fog_radius: 2
+  briefing: >
+    You explore by a fog-of-war map that reveals corridors only up to {fog_radius} step(s) away in
+    any direction; you cannot see the interior of a room (its description and its gate problems)
+    until you have entered it. Rooms and gates have unique names. Some gate problems depend on
+    answers you computed at earlier gates — referenced by gate name (e.g. "your A1 answer"), and one
+    gate near the end combines answers from TWO earlier gates. Take notes; you will need them. A
+    wrong gate answer simply does not open that gate: you stay put and lose the step; a closed door
+    is not a dead end, but wandering down the wrong corridor can be. Take stock, plan a route, and
+    find the EXIT.
+
+nodes:
+
+  - id: start
+    description: >
+      An entrance rotunda. A passage runs north; a side opening breaks the east wall.
+    paths:
+      - {id: north, label: "north passage", destination: n1}
+      - {id: east, label: "east opening", destination: da}
+
+  # ── chain A ──
+  - id: n1
+    description: "A chamber with a sealed gate ahead and a low aside."
+    paths:
+      - {id: forward, label: "sealed gate", destination: n2,
+         gate: {gate_id: A1, problem: "Calculate 20 + 5", answer: "25"}}
+      - {id: aside, label: "low aside", destination: dc}
+  - id: n2
+    description: "A narrow vault. One keyed gate forward."
+    paths:
+      - {id: forward, label: "keyed gate", destination: n3,
+         gate: {gate_id: A2, depends_on: A1, problem_template: "Add 10 to your A1 answer",
+                answer_fn: "int(A1) + 10", answer: "35"}}
+  - id: n3
+    description: "A junction. A keyed gate forward; a locked alcove to the side."
+    paths:
+      - {id: forward, label: "keyed gate", destination: n4,
+         gate: {gate_id: A3, depends_on: A2, problem_template: "Add 5 to your A2 answer",
+                answer_fn: "int(A2) + 5", answer: "40"}}
+      - {id: alcove, label: "locked alcove", destination: de,
+         gate: {gate_id: D1, problem: "Calculate 8 + 6", answer: "14"}}
+
+  # ── open junction (length + navigation) ──
+  - id: n4
+    description: "A wide hall. An open passage continues; stairs descend to one side."
+    paths:
+      - {id: onward, label: "open passage", destination: n5}
+      - {id: down, label: "descending stairs", destination: df}
+
+  # ── independents (distractors) ──
+  - id: n5
+    description: "A gated chamber; an aside opens off it."
+    paths:
+      - {id: forward, label: "gate", destination: n6,
+         gate: {gate_id: I1, problem: "Calculate 7 + 6", answer: "13"}}
+      - {id: aside, label: "aside", destination: dh}
+  - id: n6
+    description: "A gated chamber with no other way on but the gate."
+    paths:
+      - {id: forward, label: "gate", destination: n7,
+         gate: {gate_id: I2, problem: "Calculate 9 + 8", answer: "17"}}
+
+  # ── open junction ──
+  - id: n7
+    description: "A crossing. An open way on; a locked side door."
+    paths:
+      - {id: onward, label: "open way", destination: n8}
+      - {id: door, label: "locked side door", destination: dj,
+         gate: {gate_id: D2, problem: "Calculate 9 + 7", answer: "16"}}
+
+  # ── chain B ──
+  - id: n8
+    description: "A gated chamber; a short aside."
+    paths:
+      - {id: forward, label: "gate", destination: n9,
+         gate: {gate_id: B1, problem: "Calculate 12 + 6", answer: "18"}}
+      - {id: aside, label: "short aside", destination: dk}
+  - id: n9
+    description: "A keyed gate forward; an aside off it."
+    paths:
+      - {id: forward, label: "keyed gate", destination: n10,
+         gate: {gate_id: B2, depends_on: B1, problem_template: "Add 4 to your B1 answer",
+                answer_fn: "int(B1) + 4", answer: "22"}}
+      - {id: aside, label: "aside", destination: dl}
+
+  # ── synthesis ──
+  - id: n10
+    description: >
+      The final hall. A great seal bars the exit, keyed to two figures you established earlier.
+      A quiet aside opens nearby.
+    paths:
+      - {id: forward, label: "great seal", destination: exit,
+         gate: {gate_id: S, depends_on: [A3, B2],
+                problem_template: "Add your A3 answer to your B2 answer",
+                answer_fn: "int(A3) + int(B2)", answer: "62"}}
+      - {id: aside, label: "quiet aside", destination: dm}
+
+  - id: exit
+    description: "EXIT. You navigated both chains and the synthesis."
+    terminal: true
+    paths: []
+
+  # ══════════════════════════════════════════════
+  # DEAD-END TOPOLOGY
+  # ══════════════════════════════════════════════
+  - id: da
+    description: "A side corridor; it continues a little further."
+    paths:
+      - {id: deeper, label: "deeper", destination: db}
+  - id: db
+    description: "A blank wall. No exit."
+    paths: []
+  - id: dc
+    description: "A shallow aside. No way on."
+    paths: []
+  - id: dd
+    description: "A sealed nook. No exit."
+    paths: []
+  - id: de
+    description: "Past the alcove lock: an empty cell. No way on."
+    paths: []
+  - id: df
+    description: "A lower landing; the stairs keep going down."
+    paths:
+      - {id: down, label: "further down", destination: dg}
+  - id: dg
+    description: "The stairwell ends in rubble. No exit."
+    paths: []
+  - id: dh
+    description: "A cramped aside. No way on."
+    paths: []
+  - id: di
+    description: "A dead nook. No exit."
+    paths: []
+  - id: dj
+    description: "Past the side door: a choked passage. No way on."
+    paths: []
+  - id: dk
+    description: "A short aside ending at a wall. No exit."
+    paths: []
+  - id: dl
+    description: "A blind aside. No exit."
+    paths: []
+  - id: dm
+    description: "A quiet aside; it ends at solid rock. No exit."
+    paths: []

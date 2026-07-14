@@ -1,0 +1,11 @@
+services:
+  labyrinth-bench:
+    build: .
+    container_name: labyrinth-bench
+    ports:
+      - "8090:8090"
+    environment:
+      DEGS_DIR: /app/degs
+    volumes:
+      - .:/app
+      - ./results:/results

@@ -1,0 +1,344 @@
+meta:
+  id: alpha-3b
+  name: "Alpha-3b — Gate-First Dependent Chain DEG"
+  version: 1
+  # Variant of alpha-3 with the pre-gate dead end removed from start.
+  # In alpha-3, start offered a free left corridor (→ dl1a/dl1b dead end) alongside the
+  # gated right passage. Most ≤14B models went left first, loop-trapped, and never
+  # encountered a gate. Alpha-3b removes that choice: start has only the gated passage.
+  # The model's first action must engage a gate, priming gate-solving context before
+  # any navigation branch appears.
+  #
+  # Everything else is identical to alpha-3:
+  # Optimal: start→a1→a2→a3→a4→a5→a6→a7→a8→a9→a10→exit = 11 commits
+  # Dependent arithmetic chain (must recall each gate answer for the next):
+  #   gate_0 (commit 1): 27 + 16 = 43                       [at start]
+  #   gate_1 (commit 3): 9 × 6 = 54                         [at a2]
+  #   gate_2 (commit 5): 54 + 18 = 72  [depends_on: gate_1] [at a4]
+  #   gate_3 (commit 9): 72 − 15 = 57  [depends_on: gate_2] [at a8]
+  #   gate_4 (commit 11): 57 × 3 = 171 [depends_on: gate_3] [at a10]
+  # Recall gate (commit 6): SIGMA-8 identifier visible in a1 description (commit 2)
+  # 2 off-path gates: false-legit trap at dl2a, false-progress trap at fp1
+  # 1 structural loop (loop1→a1) punishes models without visited-node tracking
+  # step_budget = optimal × 4: room for two major recoveries
+  optimal_commits: 11
+  optimal_path: [start, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, exit]
+  step_budget: 44
+  gate_count: 8
+  dead_end_count: 14
+  loop_count: 1
+  dead_end_patience: 3
+
+nodes:
+
+  # ══════════════════════════════════════════════
+  # OPTIMAL SPINE (start → a1 → … → a10 → exit)
+  # ══════════════════════════════════════════════
+
+  - id: start
+    description: >
+      You are at the entry point of a secure relay station. A sealed gate bars
+      the only forward passage.
+    paths:
+      - id: right
+        label: "Gated passage (right)"
+        destination: a1
+        gate:
+          problem: "Calculate: 27 + 16"
+          answer: "43"
+          wrong_destination: dz1
+
+  - id: a1
+    description: >
+      A wide junction chamber. Conduit hardware lines the walls; a maintenance
+      tag wired to the main conduit reads: SIGMA-8. A forward passage continues
+      ahead. A side alcove branches left.
+    paths:
+      - id: forward
+        label: "Forward passage"
+        destination: a2
+      - id: side
+        label: "Side alcove (left)"
+        destination: dl2a
+
+  - id: a2
+    description: >
+      A branching junction. A center gate controls access to the forward passage.
+      A winding corridor diverges to the right.
+    paths:
+      - id: center
+        label: "Center gate"
+        destination: a3
+        gate:
+          gate_id: gate_1
+          problem_template: "Calculate: {A} × {B}"
+          answer_fn: "A * B"
+          seed:
+            A: 9
+            B: 6
+          answer: "54"
+          wrong_destination: dz2
+      - id: branch
+        label: "Winding corridor (right)"
+        destination: loop1
+
+  - id: a3
+    description: >
+      A T-junction relay room. The forward passage continues toward the interior.
+      A descending path drops to a lower level on the left.
+    paths:
+      - id: forward
+        label: "Forward passage"
+        destination: a4
+      - id: descend
+        label: "Descending path (left)"
+        destination: dl3a
+
+  - id: a4
+    description: >
+      A narrow corridor leading to a single gated threshold. No alternative path.
+    paths:
+      - id: forward
+        label: "Gated threshold"
+        destination: a5
+        gate:
+          gate_id: gate_2
+          depends_on: gate_1
+          problem_template: "Add {C} to your gate-1 answer. What is the sum?"
+          answer_fn: "int(prev_result) + C"
+          seed:
+            C: 18
+          answer: "72"
+          wrong_destination: dz3
+
+  - id: a5
+    description: >
+      An antechamber with a gated forward exit. A narrow side passage cuts right.
+    paths:
+      - id: forward
+        label: "Gated forward exit"
+        destination: a6
+        gate:
+          problem: "Enter the maintenance code from the entry junction"
+          answer: "SIGMA-8"
+          wrong_destination: dz4
+      - id: side
+        label: "Side passage (right)"
+        destination: dl5a
+
+  - id: a6
+    description: >
+      A secondary chamber. The main corridor continues forward. A branching
+      sub-route runs left — it has its own sealed gate and appears to be a
+      valid route.
+    paths:
+      - id: forward
+        label: "Main corridor"
+        destination: a7
+      - id: explore
+        label: "Branching sub-route (gated)"
+        destination: fp1
+
+  - id: a7
+    description: >
+      A long corridor ending at a junction. The forward passage leads deeper.
+      A narrow gap cuts into the left wall.
+    paths:
+      - id: forward
+        label: "Forward passage"
+        destination: a8
+      - id: gap
+        label: "Narrow gap (left)"
+        destination: dl7a
+
+  - id: a8
+    description: >
+      A checkpoint corridor. A single gated exit leads forward. No alternative path.
+    paths:
+      - id: forward
+        label: "Gated forward exit"
+        destination: a9
+        gate:
+          gate_id: gate_3
+          depends_on: gate_2
+          problem_template: "Subtract {D} from your gate-2 answer. What is the result?"
+          answer_fn: "int(prev_result) - D"
+          seed:
+            D: 15
+          answer: "57"
+          wrong_destination: dz5
+
+  - id: a9
+    description: >
+      A wider chamber past the checkpoint. The forward passage continues.
+      A branch cuts right into a side corridor.
+    paths:
+      - id: forward
+        label: "Forward passage"
+        destination: a10
+      - id: branch
+        label: "Side corridor (right)"
+        destination: dl9a
+
+  - id: a10
+    description: >
+      A final sealed corridor. One gated door stands between you and the exit.
+      There is no alternative path.
+    paths:
+      - id: forward
+        label: "Final gate"
+        destination: exit
+        gate:
+          gate_id: gate_4
+          depends_on: gate_3
+          problem_template: "Multiply your gate-3 answer by {E}. What is the product?"
+          answer_fn: "int(prev_result) * E"
+          seed:
+            E: 3
+          answer: "171"
+          wrong_destination: dz6
+
+  - id: exit
+    description: "EXIT. You have successfully navigated the relay station."
+    terminal: true
+    paths: []
+
+  # ══════════════════════════════════════════════
+  # WRONG-GATE DEAD ENDS (dz1–dz6)
+  # ══════════════════════════════════════════════
+
+  - id: dz1
+    description: >
+      A collapsed passage. Rubble fills the corridor entirely. No exit.
+    paths: []
+
+  - id: dz2
+    description: >
+      A sealed alcove. The walls are solid on all sides.
+    paths: []
+
+  - id: dz3
+    description: >
+      A dead-end maintenance bay. No forward path exists.
+    paths: []
+
+  - id: dz4
+    description: >
+      A locked side corridor with no exit.
+    paths: []
+
+  - id: dz5
+    description: >
+      A cul-de-sac. The path ends abruptly at a blank wall.
+    paths: []
+
+  - id: dz6
+    description: >
+      A false exit — the door leads into a sealed chamber.
+    paths: []
+
+  # ══════════════════════════════════════════════
+  # DEAD-END CLUSTERS
+  # ══════════════════════════════════════════════
+
+  # dl2: from a1→side — contains its own gate (false-legit trap)
+  # Both correct and wrong destinations are dead ends
+  - id: dl2a
+    description: >
+      A promising side alcove. A gated inner passage leads further in.
+    paths:
+      - id: forward
+        label: "Gated inner passage"
+        destination: dl2b
+        gate:
+          problem: "Calculate: 26 + 14"
+          answer: "40"
+          wrong_destination: dl2c
+
+  - id: dl2b
+    description: >
+      A vaulted room. No exits — this branch terminates here regardless.
+    paths: []
+
+  - id: dl2c
+    description: >
+      A narrow dead end. The gate sent you to a sealed side chamber.
+    paths: []
+
+  # loop1: from a2→branch — loops back to a1
+  - id: loop1
+    description: >
+      A winding passage that curves around and opens into a familiar-looking
+      chamber ahead.
+    paths:
+      - id: ahead
+        label: "Forward into chamber"
+        destination: a1
+
+  # dl3: from a3→descend (1-node)
+  - id: dl3a
+    description: >
+      A descending corridor ending abruptly at an impassable barrier.
+    paths: []
+
+  # dl5: from a5→side (1-node)
+  - id: dl5a
+    description: >
+      A side passage ending at a sealed bulkhead.
+    paths: []
+
+  # dl7: from a7→gap (1-node)
+  - id: dl7a
+    description: >
+      A narrow gap terminating at an impassable wall.
+    paths: []
+
+  # dl9: from a9→branch (2-node)
+  - id: dl9a
+    description: >
+      A side corridor descending to a lower level.
+    paths:
+      - id: down
+        label: "Descend to lower level"
+        destination: dl9b
+
+  - id: dl9b
+    description: >
+      A lower chamber. No forward paths exist.
+    paths: []
+
+  # ══════════════════════════════════════════════
+  # FALSE PROGRESS (from a6→explore)
+  # Has a real gate; solving it correctly still dead-ends
+  # ══════════════════════════════════════════════
+
+  - id: fp1
+    description: >
+      A branching sub-corridor with a sealed gate. The route appears valid
+      and leads further into the station.
+    paths:
+      - id: forward
+        label: "Gated sub-route"
+        destination: fp2
+        gate:
+          problem: "Calculate: 35 - 12"
+          answer: "23"
+          wrong_destination: fp_wrong
+
+  - id: fp2
+    description: >
+      Past the gate — a continuation chamber with one forward exit.
+    paths:
+      - id: ahead
+        label: "Forward exit"
+        destination: fp3
+
+  - id: fp3
+    description: >
+      A terminal chamber. There is no exit. This branch was a false lead.
+    paths: []
+
+  - id: fp_wrong
+    description: >
+      A sealed side chamber. The gate rerouted you here.
+    paths: []
