@@ -4,6 +4,10 @@ services:
     container_name: labyrinth-bench
     ports:
       - "8090:8090"
+    # Lets the documented host.docker.internal base-URL resolve on Linux too
+    # (Docker Desktop on Mac/Windows resolves it natively).
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       DEGS_DIR: /app/degs
     volumes:
