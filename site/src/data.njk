@@ -9,15 +9,15 @@ permalink: /data/
 
 <h2>Results briefs</h2>
 <ul class="annex-list">
-  <li><strong>E1a paired campaign</strong> — 13-model cohort, paired control/wiped arms, pre-registered falsifier. <span class="pending">Brief lands here at release.</span></li>
-  <li><strong>E1a control baseline</strong> — the full-cohort unaided baseline table. <span class="pending">Brief lands here at release.</span></li>
+  <li><strong><a href="/data/e1a-paired/">E1a paired campaign</a></strong> — 13-model cohort, paired control/wiped arms, pre-registered falsifier.</li>
+  <li><strong><a href="/data/e1a-control/">E1a control baseline</a></strong> — the full-cohort unaided baseline table.</li>
   <li><strong>Look-discipline</strong> — instruction vs enforcement of the observe-before-commit loop (the <code>--look-gate</code> flag's origin). <span class="pending">Brief lands here at release.</span></li>
   <li><strong>Cohort onboarding record</strong> — how the cohort was assembled and gated, including the exclusions. <span class="pending">Lands here at release.</span></li>
 </ul>
 
 <h2>Pre-registrations</h2>
 <ul class="annex-list">
-  <li><strong>Cohort campaign + external anchor</strong> — locked 2026-07-06, before the campaign ran. <span class="pending">Verbatim copy lands here at release.</span></li>
+  <li><strong><a href="/data/prereg-cohort/">Cohort campaign + external anchor</a></strong> — locked 2026-07-06, before the campaign ran; verbatim copy with the approval line and Addenda A1/A2.</li>
   <li><strong>Context-strategy axes</strong> — locked 2026-07-15. <span class="pending">Verbatim copy lands here at release.</span></li>
 </ul>
 
@@ -40,5 +40,5 @@ permalink: /data/
 <ul class="annex-list">
   <li><a href="https://github.com/owl-fleet/labyrinth-bench/tree/main/results/e1a-table1">repo <code>results/e1a-table1/</code></a> — the E1a aggregate (<code>e1a_table1.json</code>) and campaign table sources.</li>
   <li><a href="/entries/">/entries/</a> — the leaderboard entry files served by this site, one JSON per entry, CI bounds included (regenerate with <code>cli/seed_entries.py</code>).</li>
-  <li><strong>Raw per-run JSONL logs</strong> — one line per run, per-turn traces included. <span class="pending">Download bundle lands here at release.</span></li>
+  <li><strong><a href="/assets/data/lb-e1a-raw-jsonl.zip">Raw per-run JSONL logs</a></strong> (zip, ~11 MB) — one line per run, per-turn traces included; 15 control + 9 wiped arms with a manifest. Model-host URLs in errored-attempt records are redacted to <code>[lan-host]</code>; every other byte is as-run.</li>
 </ul>

@@ -400,8 +400,8 @@ def render_stripplot(table, out_png, control_only=False, paired_only=True):
     ax.set_xticklabels(models, rotation=30, ha="right", fontsize=9)
     ax.set_ylabel(f"depth reached (of {CEILING})")
     ax.set_ylim(-0.5, CEILING + 1.5)
-    ax.set_title("E1a — control baseline: depth per model (nav-3)" if control_only
-                 else "E1a — the win is the wiping: control vs wiped-overlay per model (nav-3)",
+    ax.set_title("Control baseline: depth reached per model" if control_only
+                 else "Control vs. context-wiped runs, per model",
                  pad=(22 if excluded else 12))
     if excluded:
         ceil_ex = [s for s in excluded if table[s]["contrast"]["ceiling_row"]]
