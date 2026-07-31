@@ -14,9 +14,9 @@ shift 2 2>/dev/null || true
 
 LABEL="sandbox-${MODEL//[:\/]/-}-${DEG}-$(date +%Y%m%d-%H%M)"
 
-docker exec labyrinth-bench-sandbox python /app/cli/run_oracle.py \
+docker exec "${SANDBOX_CONTAINER:-lb-sandbox}" python /app/cli/run_oracle.py \
   --model "$MODEL" \
-  --base-url http://localhost:11434/v1 \
+  --base-url "${BASE_URL:-http://localhost:11434/v1}" \
   --deg "$DEG" \
   --output "/results/${LABEL}.jsonl" \
   --label "$LABEL" \

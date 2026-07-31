@@ -4,6 +4,7 @@
     "control": {
       "n_valid": 6,
       "n_error": 0,
+      "errors": [],
       "depths": [
         1,
         1,
@@ -14,10 +15,21 @@
       ],
       "depth_median": 1.0,
       "depth_mean": 1.5,
+      "depth_sem": 0.5,
       "depth_min": 1,
       "depth_max": 4,
       "n_exit": 0,
       "exit_rate": 0.0,
+      "turns_per_gate": [
+        5.0,
+        8.0,
+        6.0,
+        5.0,
+        5.0,
+        4.25
+      ],
+      "turns_per_gate_mean": 5.541666666666667,
+      "turns_per_gate_sem": 0.5416666666666666,
       "turns_mean": 7.666666666666667,
       "consistency_mean": 0.05555555555555555,
       "gate_acc_mean": 0.25925925925925924,
@@ -25,11 +37,12 @@
       "obs_commit_ratio": 0.14705882352941177,
       "total_obs": 5,
       "total_commit": 34,
-      "unobserved_guesses": 0
+      "unobserved_guesses": null
     },
     "wiped": {
       "n_valid": 6,
       "n_error": 0,
+      "errors": [],
       "depths": [
         20,
         20,
@@ -40,10 +53,21 @@
       ],
       "depth_median": 20.0,
       "depth_mean": 20.0,
+      "depth_sem": 0.0,
       "depth_min": 20,
       "depth_max": 20,
       "n_exit": 6,
       "exit_rate": 1.0,
+      "turns_per_gate": [
+        1.0,
+        1.05,
+        1.1,
+        1.0,
+        1.1,
+        1.05
+      ],
+      "turns_per_gate_mean": 1.05,
+      "turns_per_gate_sem": 0.018257418583505557,
       "turns_mean": 21.0,
       "consistency_mean": 0.9537037037037037,
       "gate_acc_mean": 0.9538239538239538,
@@ -51,13 +75,14 @@
       "obs_commit_ratio": 0.0,
       "total_obs": 0,
       "total_commit": 126,
-      "unobserved_guesses": 0
+      "unobserved_guesses": null
     },
     "contrast": {
       "control_median": 1.0,
       "wiped_median": 20.0,
       "delta_wiped_minus_control": 19.0,
       "meets_falsifier": true,
+      "turns_per_gate_ratio_wiped_over_control": 0.18947368421052632,
       "ceiling_row": false,
       "complete": true
     }
@@ -67,20 +92,32 @@
     "control": {
       "n_valid": 6,
       "n_error": 0,
+      "errors": [],
       "depths": [
-        1,
-        5,
-        9,
         19,
+        5,
+        1,
         20,
-        20
+        20,
+        9
       ],
       "depth_median": 14.0,
       "depth_mean": 12.333333333333334,
+      "depth_sem": 3.4415758664374154,
       "depth_min": 1,
       "depth_max": 20,
       "n_exit": 2,
       "exit_rate": 0.3333333333333333,
+      "turns_per_gate": [
+        2.1578947368421053,
+        2.6,
+        5.0,
+        2.0,
+        2.0,
+        2.2222222222222223
+      ],
+      "turns_per_gate_mean": 2.6633528265107214,
+      "turns_per_gate_sem": 0.47588834927719625,
       "turns_mean": 26.5,
       "consistency_mean": 0.6944444444444445,
       "gate_acc_mean": 0.6964520181911485,
@@ -88,11 +125,12 @@
       "obs_commit_ratio": 0.7362637362637363,
       "total_obs": 67,
       "total_commit": 91,
-      "unobserved_guesses": 0
+      "unobserved_guesses": null
     },
     "wiped": {
       "n_valid": 6,
       "n_error": 0,
+      "errors": [],
       "depths": [
         20,
         20,
@@ -103,10 +141,21 @@
       ],
       "depth_median": 20.0,
       "depth_mean": 20.0,
+      "depth_sem": 0.0,
       "depth_min": 20,
       "depth_max": 20,
       "n_exit": 6,
       "exit_rate": 1.0,
+      "turns_per_gate": [
+        1.05,
+        1.05,
+        1.1,
+        1.0,
+        1.0,
+        1.1
+      ],
+      "turns_per_gate_mean": 1.05,
+      "turns_per_gate_sem": 0.018257418583505557,
       "turns_mean": 21.0,
       "consistency_mean": 0.9444444444444443,
       "gate_acc_mean": 0.9538239538239538,
@@ -114,13 +163,14 @@
       "obs_commit_ratio": 0.0,
       "total_obs": 0,
       "total_commit": 126,
-      "unobserved_guesses": 0
+      "unobserved_guesses": null
     },
     "contrast": {
       "control_median": 14.0,
       "wiped_median": 20.0,
       "delta_wiped_minus_control": 6.0,
       "meets_falsifier": true,
+      "turns_per_gate_ratio_wiped_over_control": 0.39423991802678765,
       "ceiling_row": false,
       "complete": true
     }
@@ -130,20 +180,32 @@
     "control": {
       "n_valid": 6,
       "n_error": 0,
+      "errors": [],
       "depths": [
-        16,
         20,
         20,
         20,
         20,
-        20
+        20,
+        16
       ],
       "depth_median": 20.0,
       "depth_mean": 19.333333333333332,
+      "depth_sem": 0.6666666666666667,
       "depth_min": 16,
       "depth_max": 20,
       "n_exit": 5,
       "exit_rate": 0.8333333333333334,
+      "turns_per_gate": [
+        1.95,
+        1.95,
+        1.95,
+        1.95,
+        1.95,
+        2.1875
+      ],
+      "turns_per_gate_mean": 1.9895833333333333,
+      "turns_per_gate_sem": 0.039583333333333345,
       "turns_mean": 38.333333333333336,
       "consistency_mean": 0.9888888888888889,
       "gate_acc_mean": 0.9666666666666667,
@@ -151,16 +213,54 @@
       "obs_commit_ratio": 0.9166666666666666,
       "total_obs": 110,
       "total_commit": 120,
-      "unobserved_guesses": 0
+      "unobserved_guesses": null
     },
-    "wiped": null,
+    "wiped": {
+      "n_valid": 6,
+      "n_error": 0,
+      "errors": [],
+      "depths": [
+        10,
+        11,
+        14,
+        9,
+        10,
+        9
+      ],
+      "depth_median": 10.0,
+      "depth_mean": 10.5,
+      "depth_sem": 0.7637626158259734,
+      "depth_min": 9,
+      "depth_max": 14,
+      "n_exit": 0,
+      "exit_rate": 0.0,
+      "turns_per_gate": [
+        1.4,
+        1.3636363636363635,
+        1.2857142857142858,
+        1.4444444444444444,
+        1.4,
+        1.4444444444444444
+      ],
+      "turns_per_gate_mean": 1.3897065897065897,
+      "turns_per_gate_sem": 0.0242888383491419,
+      "turns_mean": 14.5,
+      "consistency_mean": 0.8143162393162392,
+      "gate_acc_mean": 0.7207163207163206,
+      "elapsed_mean": 497.69166666666666,
+      "obs_commit_ratio": 0.0,
+      "total_obs": 0,
+      "total_commit": 87,
+      "unobserved_guesses": null
+    },
     "contrast": {
       "control_median": 20.0,
-      "wiped_median": null,
-      "delta_wiped_minus_control": null,
+      "wiped_median": 10.0,
+      "delta_wiped_minus_control": -10.0,
       "meets_falsifier": false,
+      "turns_per_gate_ratio_wiped_over_control": 0.6984912702190189,
       "ceiling_row": true,
-      "complete": false
+      "complete": true
     }
   },
   "glm-4-7-flash": {
@@ -168,20 +268,32 @@
     "control": {
       "n_valid": 6,
       "n_error": 0,
+      "errors": [],
       "depths": [
-        2,
-        3,
-        4,
-        5,
         6,
-        7
+        7,
+        3,
+        2,
+        4,
+        5
       ],
       "depth_median": 4.5,
       "depth_mean": 4.5,
+      "depth_sem": 0.7637626158259734,
       "depth_min": 2,
       "depth_max": 7,
       "n_exit": 0,
       "exit_rate": 0.0,
+      "turns_per_gate": [
+        2.5,
+        2.2857142857142856,
+        3.0,
+        5.0,
+        2.75,
+        2.6
+      ],
+      "turns_per_gate_mean": 3.0226190476190475,
+      "turns_per_gate_sem": 0.40741601808395217,
       "turns_mean": 12.333333333333334,
       "consistency_mean": 0.7305555555555555,
       "gate_acc_mean": 0.5248436748436748,
@@ -189,11 +301,12 @@
       "obs_commit_ratio": 0.38461538461538464,
       "total_obs": 20,
       "total_commit": 52,
-      "unobserved_guesses": 0
+      "unobserved_guesses": null
     },
     "wiped": {
       "n_valid": 6,
       "n_error": 0,
+      "errors": [],
       "depths": [
         20,
         20,
@@ -204,10 +317,21 @@
       ],
       "depth_median": 20.0,
       "depth_mean": 20.0,
+      "depth_sem": 0.0,
       "depth_min": 20,
       "depth_max": 20,
       "n_exit": 6,
       "exit_rate": 1.0,
+      "turns_per_gate": [
+        1.0,
+        1.1,
+        1.05,
+        1.05,
+        1.05,
+        1.05
+      ],
+      "turns_per_gate_mean": 1.05,
+      "turns_per_gate_sem": 0.012909944487358068,
       "turns_mean": 21.0,
       "consistency_mean": 0.9537037037037037,
       "gate_acc_mean": 0.9531024531024531,
@@ -215,13 +339,14 @@
       "obs_commit_ratio": 0.0,
       "total_obs": 0,
       "total_commit": 126,
-      "unobserved_guesses": 0
+      "unobserved_guesses": null
     },
     "contrast": {
       "control_median": 4.5,
       "wiped_median": 20.0,
       "delta_wiped_minus_control": 15.5,
       "meets_falsifier": true,
+      "turns_per_gate_ratio_wiped_over_control": 0.3473808586057503,
       "ceiling_row": false,
       "complete": true
     }
@@ -231,6 +356,7 @@
     "control": {
       "n_valid": 6,
       "n_error": 0,
+      "errors": [],
       "depths": [
         13,
         20,
@@ -241,10 +367,21 @@
       ],
       "depth_median": 20.0,
       "depth_mean": 18.833333333333332,
+      "depth_sem": 1.1666666666666667,
       "depth_min": 13,
       "depth_max": 20,
       "n_exit": 5,
       "exit_rate": 0.8333333333333334,
+      "turns_per_gate": [
+        2.3076923076923075,
+        2.1,
+        2.15,
+        2.05,
+        2.05,
+        2.05
+      ],
+      "turns_per_gate_mean": 2.117948717948718,
+      "turns_per_gate_sem": 0.04131309550999555,
       "turns_mean": 39.666666666666664,
       "consistency_mean": 0.9305555555555555,
       "gate_acc_mean": 0.9153297682709448,
@@ -252,16 +389,54 @@
       "obs_commit_ratio": 0.9262295081967213,
       "total_obs": 113,
       "total_commit": 122,
-      "unobserved_guesses": 0
+      "unobserved_guesses": null
     },
-    "wiped": null,
+    "wiped": {
+      "n_valid": 6,
+      "n_error": 0,
+      "errors": [],
+      "depths": [
+        16,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "depth_median": 20.0,
+      "depth_mean": 19.333333333333332,
+      "depth_sem": 0.6666666666666667,
+      "depth_min": 16,
+      "depth_max": 20,
+      "n_exit": 5,
+      "exit_rate": 0.8333333333333334,
+      "turns_per_gate": [
+        1.8125,
+        1.4,
+        1.15,
+        1.5,
+        1.4,
+        1.0
+      ],
+      "turns_per_gate_mean": 1.3770833333333332,
+      "turns_per_gate_sem": 0.11539861471342618,
+      "turns_mean": 26.333333333333332,
+      "consistency_mean": 0.9537037037037037,
+      "gate_acc_mean": 0.931548174048174,
+      "elapsed_mean": 233.51833333333335,
+      "obs_commit_ratio": 0.0070921985815602835,
+      "total_obs": 1,
+      "total_commit": 141,
+      "unobserved_guesses": null
+    },
     "contrast": {
       "control_median": 20.0,
-      "wiped_median": null,
-      "delta_wiped_minus_control": null,
+      "wiped_median": 20.0,
+      "delta_wiped_minus_control": 0.0,
       "meets_falsifier": false,
+      "turns_per_gate_ratio_wiped_over_control": 0.6501967312348668,
       "ceiling_row": true,
-      "complete": false
+      "complete": true
     }
   },
   "hf-co-InternScience-Agents-A1-Q4_K_M-GGUF": {
@@ -269,20 +444,36 @@
     "control": {
       "n_valid": 6,
       "n_error": 3,
+      "errors": [
+        "Client error '400 Bad Request' for url 'http://[lan-host]:\u2026",
+        "Client error '400 Bad Request' for url 'http://[lan-host]:\u2026",
+        "Client error '400 Bad Request' for url 'http://[lan-host]:\u2026"
+      ],
       "depths": [
-        13,
-        17,
-        19,
-        19,
         20,
-        20
+        13,
+        20,
+        19,
+        19,
+        17
       ],
       "depth_median": 19.0,
       "depth_mean": 18.0,
+      "depth_sem": 1.0954451150103324,
       "depth_min": 13,
       "depth_max": 20,
       "n_exit": 2,
       "exit_rate": 0.3333333333333333,
+      "turns_per_gate": [
+        2.45,
+        2.3846153846153846,
+        2.1,
+        2.210526315789474,
+        2.4210526315789473,
+        3.3529411764705883
+      ],
+      "turns_per_gate_mean": 2.486522584742399,
+      "turns_per_gate_sem": 0.18186626189642366,
       "turns_mean": 44.5,
       "consistency_mean": 0.8761574074074074,
       "gate_acc_mean": 0.8479792443986818,
@@ -290,7 +481,7 @@
       "obs_commit_ratio": 1.0317460317460319,
       "total_obs": 130,
       "total_commit": 126,
-      "unobserved_guesses": 0
+      "unobserved_guesses": null
     },
     "wiped": null,
     "contrast": {
@@ -298,6 +489,7 @@
       "wiped_median": null,
       "delta_wiped_minus_control": null,
       "meets_falsifier": false,
+      "turns_per_gate_ratio_wiped_over_control": null,
       "ceiling_row": false,
       "complete": false
     }
@@ -307,20 +499,34 @@
     "control": {
       "n_valid": 6,
       "n_error": 1,
+      "errors": [
+        "unhashable type: 'dict'"
+      ],
       "depths": [
-        1,
+        4,
         1,
         1,
         2,
         2,
-        4
+        1
       ],
       "depth_median": 1.5,
       "depth_mean": 1.8333333333333333,
+      "depth_sem": 0.47726070210921184,
       "depth_min": 1,
       "depth_max": 4,
       "n_exit": 0,
       "exit_rate": 0.0,
+      "turns_per_gate": [
+        2.75,
+        31.0,
+        34.0,
+        4.0,
+        9.0,
+        12.0
+      ],
+      "turns_per_gate_mean": 15.458333333333334,
+      "turns_per_gate_sem": 5.573156147502459,
       "turns_mean": 19.0,
       "consistency_mean": 0.0,
       "gate_acc_mean": 0.37063492063492065,
@@ -328,11 +534,12 @@
       "obs_commit_ratio": 1.0789473684210527,
       "total_obs": 41,
       "total_commit": 38,
-      "unobserved_guesses": 0
+      "unobserved_guesses": null
     },
     "wiped": {
       "n_valid": 6,
       "n_error": 0,
+      "errors": [],
       "depths": [
         5,
         7,
@@ -343,10 +550,21 @@
       ],
       "depth_median": 7.0,
       "depth_mean": 6.666666666666667,
+      "depth_sem": 0.33333333333333337,
       "depth_min": 5,
       "depth_max": 7,
       "n_exit": 0,
       "exit_rate": 0.0,
+      "turns_per_gate": [
+        3.0,
+        3.142857142857143,
+        2.142857142857143,
+        2.0,
+        2.4285714285714284,
+        2.7142857142857144
+      ],
+      "turns_per_gate_mean": 2.5714285714285716,
+      "turns_per_gate_sem": 0.18808016817268094,
       "turns_mean": 17.0,
       "consistency_mean": 0.638888888888889,
       "gate_acc_mean": 0.6608391608391608,
@@ -354,13 +572,14 @@
       "obs_commit_ratio": 0.18309859154929578,
       "total_obs": 13,
       "total_commit": 71,
-      "unobserved_guesses": 0
+      "unobserved_guesses": null
     },
     "contrast": {
       "control_median": 1.5,
       "wiped_median": 7.0,
       "delta_wiped_minus_control": 5.5,
       "meets_falsifier": true,
+      "turns_per_gate_ratio_wiped_over_control": 0.16634578359645746,
       "ceiling_row": false,
       "complete": true
     }
@@ -370,20 +589,32 @@
     "control": {
       "n_valid": 6,
       "n_error": 0,
+      "errors": [],
       "depths": [
+        16,
         15,
         15,
         15,
         15,
-        15,
-        16
+        15
       ],
       "depth_median": 15.0,
       "depth_mean": 15.166666666666666,
+      "depth_sem": 0.16666666666666669,
       "depth_min": 15,
       "depth_max": 16,
       "n_exit": 0,
       "exit_rate": 0.0,
+      "turns_per_gate": [
+        2.25,
+        2.2666666666666666,
+        2.2666666666666666,
+        2.2666666666666666,
+        2.2666666666666666,
+        2.2666666666666666
+      ],
+      "turns_per_gate_mean": 2.263888888888889,
+      "turns_per_gate_sem": 0.0027777777777777683,
       "turns_mean": 34.333333333333336,
       "consistency_mean": 0.8587301587301587,
       "gate_acc_mean": 0.7912280701754386,
@@ -391,11 +622,12 @@
       "obs_commit_ratio": 0.7913043478260869,
       "total_obs": 91,
       "total_commit": 115,
-      "unobserved_guesses": 0
+      "unobserved_guesses": null
     },
     "wiped": {
       "n_valid": 6,
       "n_error": 0,
+      "errors": [],
       "depths": [
         9,
         9,
@@ -406,10 +638,21 @@
       ],
       "depth_median": 9.0,
       "depth_mean": 9.0,
+      "depth_sem": 0.0,
       "depth_min": 9,
       "depth_max": 9,
       "n_exit": 0,
       "exit_rate": 0.0,
+      "turns_per_gate": [
+        1.4444444444444444,
+        1.4444444444444444,
+        1.4444444444444444,
+        1.4444444444444444,
+        1.4444444444444444,
+        1.4444444444444444
+      ],
+      "turns_per_gate_mean": 1.4444444444444444,
+      "turns_per_gate_sem": 0.0,
       "turns_mean": 13.0,
       "consistency_mean": 0.875,
       "gate_acc_mean": 0.6923076923076922,
@@ -417,13 +660,14 @@
       "obs_commit_ratio": 0.0,
       "total_obs": 0,
       "total_commit": 78,
-      "unobserved_guesses": 0
+      "unobserved_guesses": null
     },
     "contrast": {
       "control_median": 15.0,
       "wiped_median": 9.0,
       "delta_wiped_minus_control": -6.0,
       "meets_falsifier": false,
+      "turns_per_gate_ratio_wiped_over_control": 0.6380368098159509,
       "ceiling_row": false,
       "complete": true
     }
@@ -433,20 +677,32 @@
     "control": {
       "n_valid": 6,
       "n_error": 0,
+      "errors": [],
       "depths": [
         7,
+        10,
+        10,
         7,
-        10,
-        10,
         10,
         10
       ],
       "depth_median": 10.0,
       "depth_mean": 9.0,
+      "depth_sem": 0.632455532033676,
       "depth_min": 7,
       "depth_max": 10,
       "n_exit": 0,
       "exit_rate": 0.0,
+      "turns_per_gate": [
+        2.5714285714285716,
+        2.4,
+        2.4,
+        2.5714285714285716,
+        2.4,
+        2.4
+      ],
+      "turns_per_gate_mean": 2.4571428571428573,
+      "turns_per_gate_sem": 0.03614031611621012,
       "turns_mean": 22.0,
       "consistency_mean": 0.6481481481481483,
       "gate_acc_mean": 0.6883116883116883,
@@ -454,11 +710,12 @@
       "obs_commit_ratio": 0.6923076923076923,
       "total_obs": 54,
       "total_commit": 78,
-      "unobserved_guesses": 0
+      "unobserved_guesses": null
     },
     "wiped": {
       "n_valid": 6,
       "n_error": 0,
+      "errors": [],
       "depths": [
         7,
         7,
@@ -469,10 +726,21 @@
       ],
       "depth_median": 7.0,
       "depth_mean": 7.0,
+      "depth_sem": 0.0,
       "depth_min": 7,
       "depth_max": 7,
       "n_exit": 0,
       "exit_rate": 0.0,
+      "turns_per_gate": [
+        2.2857142857142856,
+        1.8571428571428572,
+        3.142857142857143,
+        25.857142857142858,
+        13.428571428571429,
+        7.428571428571429
+      ],
+      "turns_per_gate_mean": 9.0,
+      "turns_per_gate_sem": 3.8151149446401122,
       "turns_mean": 63.0,
       "consistency_mean": 0.8,
       "gate_acc_mean": 0.6363636363636364,
@@ -480,13 +748,14 @@
       "obs_commit_ratio": 4.7384615384615385,
       "total_obs": 308,
       "total_commit": 65,
-      "unobserved_guesses": 0
+      "unobserved_guesses": null
     },
     "contrast": {
       "control_median": 10.0,
       "wiped_median": 7.0,
       "delta_wiped_minus_control": -3.0,
       "meets_falsifier": false,
+      "turns_per_gate_ratio_wiped_over_control": 3.6627906976744184,
       "ceiling_row": false,
       "complete": true
     }
@@ -496,20 +765,32 @@
     "control": {
       "n_valid": 6,
       "n_error": 0,
+      "errors": [],
       "depths": [
-        1,
-        1,
+        5,
         1,
         2,
         2,
-        5
+        1,
+        1
       ],
       "depth_median": 1.5,
       "depth_mean": 2.0,
+      "depth_sem": 0.632455532033676,
       "depth_min": 1,
       "depth_max": 5,
       "n_exit": 0,
       "exit_rate": 0.0,
+      "turns_per_gate": [
+        2.8,
+        7.0,
+        30.0,
+        32.0,
+        6.0,
+        7.0
+      ],
+      "turns_per_gate_mean": 14.133333333333333,
+      "turns_per_gate_sem": 5.37690534704779,
       "turns_mean": 26.333333333333332,
       "consistency_mean": 0.2916666666666667,
       "gate_acc_mean": 0.3259259259259259,
@@ -517,25 +798,37 @@
       "obs_commit_ratio": 4.142857142857143,
       "total_obs": 116,
       "total_commit": 28,
-      "unobserved_guesses": 0
+      "unobserved_guesses": null
     },
     "wiped": {
       "n_valid": 6,
       "n_error": 0,
+      "errors": [],
       "depths": [
         7,
+        13,
         7,
-        7,
-        9,
         12,
-        13
+        9,
+        7
       ],
       "depth_median": 8.0,
       "depth_mean": 9.166666666666666,
+      "depth_sem": 1.1080513425729777,
       "depth_min": 7,
       "depth_max": 13,
       "n_exit": 0,
       "exit_rate": 0.0,
+      "turns_per_gate": [
+        1.5714285714285714,
+        1.6153846153846154,
+        1.7142857142857142,
+        1.5833333333333333,
+        1.6666666666666667,
+        1.7142857142857142
+      ],
+      "turns_per_gate_mean": 1.6442307692307692,
+      "turns_per_gate_sem": 0.02592265318370882,
       "turns_mean": 15.0,
       "consistency_mean": 0.6780303030303031,
       "gate_acc_mean": 0.6860174139585905,
@@ -543,13 +836,14 @@
       "obs_commit_ratio": 0.12987012987012986,
       "total_obs": 10,
       "total_commit": 77,
-      "unobserved_guesses": 0
+      "unobserved_guesses": null
     },
     "contrast": {
       "control_median": 1.5,
       "wiped_median": 8.0,
       "delta_wiped_minus_control": 6.5,
       "meets_falsifier": true,
+      "turns_per_gate_ratio_wiped_over_control": 0.11633708272859217,
       "ceiling_row": false,
       "complete": true
     }
@@ -559,20 +853,32 @@
     "control": {
       "n_valid": 6,
       "n_error": 0,
+      "errors": [],
       "depths": [
         3,
-        3,
+        5,
         4,
         5,
-        5,
+        3,
         8
       ],
       "depth_median": 4.5,
       "depth_mean": 4.666666666666667,
+      "depth_sem": 0.760116950066092,
       "depth_min": 3,
       "depth_max": 8,
       "n_exit": 0,
       "exit_rate": 0.0,
+      "turns_per_gate": [
+        3.0,
+        2.4,
+        2.75,
+        2.6,
+        3.0,
+        2.25
+      ],
+      "turns_per_gate_mean": 2.6666666666666665,
+      "turns_per_gate_sem": 0.12627131283250542,
       "turns_mean": 12.0,
       "consistency_mean": 0.5496031746031745,
       "gate_acc_mean": 0.5224867724867724,
@@ -580,25 +886,37 @@
       "obs_commit_ratio": 0.36538461538461536,
       "total_obs": 19,
       "total_commit": 52,
-      "unobserved_guesses": 0
+      "unobserved_guesses": null
     },
     "wiped": {
       "n_valid": 6,
       "n_error": 0,
+      "errors": [],
       "depths": [
+        20,
+        20,
+        20,
         12,
-        20,
-        20,
-        20,
         20,
         20
       ],
       "depth_median": 20.0,
       "depth_mean": 18.666666666666668,
+      "depth_sem": 1.3333333333333335,
       "depth_min": 12,
       "depth_max": 20,
       "n_exit": 5,
       "exit_rate": 0.8333333333333334,
+      "turns_per_gate": [
+        1.1,
+        1.1,
+        1.0,
+        1.4166666666666667,
+        1.0,
+        1.15
+      ],
+      "turns_per_gate_mean": 1.1277777777777778,
+      "turns_per_gate_sem": 0.06275564998419085,
       "turns_mean": 20.666666666666668,
       "consistency_mean": 0.9203703703703704,
       "gate_acc_mean": 0.9062911725955204,
@@ -606,13 +924,14 @@
       "obs_commit_ratio": 0.0,
       "total_obs": 0,
       "total_commit": 123,
-      "unobserved_guesses": 0
+      "unobserved_guesses": null
     },
     "contrast": {
       "control_median": 4.5,
       "wiped_median": 20.0,
       "delta_wiped_minus_control": 15.5,
       "meets_falsifier": true,
+      "turns_per_gate_ratio_wiped_over_control": 0.42291666666666666,
       "ceiling_row": false,
       "complete": true
     }
@@ -622,20 +941,32 @@
     "control": {
       "n_valid": 6,
       "n_error": 0,
+      "errors": [],
       "depths": [
+        20,
+        20,
+        20,
+        20,
         12,
-        20,
-        20,
-        20,
-        20,
         20
       ],
       "depth_median": 20.0,
       "depth_mean": 18.666666666666668,
+      "depth_sem": 1.3333333333333335,
       "depth_min": 12,
       "depth_max": 20,
       "n_exit": 5,
       "exit_rate": 0.8333333333333334,
+      "turns_per_gate": [
+        2.0,
+        2.0,
+        2.1,
+        2.1,
+        2.3333333333333335,
+        2.0
+      ],
+      "turns_per_gate_mean": 2.088888888888889,
+      "turns_per_gate_sem": 0.05282161921779875,
       "turns_mean": 38.666666666666664,
       "consistency_mean": 0.8956228956228957,
       "gate_acc_mean": 0.8910455486542442,
@@ -643,124 +974,12 @@
       "obs_commit_ratio": 0.848,
       "total_obs": 106,
       "total_commit": 125,
-      "unobserved_guesses": 0
-    },
-    "wiped": null,
-    "contrast": {
-      "control_median": 20.0,
-      "wiped_median": null,
-      "delta_wiped_minus_control": null,
-      "meets_falsifier": false,
-      "ceiling_row": true,
-      "complete": false
-    }
-  },
-  "qwen3-5-27b": {
-    "safe": "qwen3-5-27b",
-    "control": {
-      "n_valid": 6,
-      "n_error": 1,
-      "depths": [
-        5,
-        9,
-        9,
-        10,
-        18,
-        20
-      ],
-      "depth_median": 9.5,
-      "depth_mean": 11.833333333333334,
-      "depth_min": 5,
-      "depth_max": 20,
-      "n_exit": 1,
-      "exit_rate": 0.16666666666666666,
-      "turns_mean": 30.5,
-      "consistency_mean": 0.7998366013071895,
-      "gate_acc_mean": 0.7302882302882302,
-      "elapsed_mean": 4530.221666666666,
-      "obs_commit_ratio": 0.7956989247311828,
-      "total_obs": 74,
-      "total_commit": 93,
-      "unobserved_guesses": 0
-    },
-    "wiped": null,
-    "contrast": {
-      "control_median": 9.5,
-      "wiped_median": null,
-      "delta_wiped_minus_control": null,
-      "meets_falsifier": false,
-      "ceiling_row": false,
-      "complete": false
-    }
-  },
-  "qwen3-5-9b": {
-    "safe": "qwen3-5-9b",
-    "control": {
-      "n_valid": 6,
-      "n_error": 0,
-      "depths": [
-        2,
-        2,
-        4,
-        5,
-        7,
-        8
-      ],
-      "depth_median": 4.5,
-      "depth_mean": 4.666666666666667,
-      "depth_min": 2,
-      "depth_max": 8,
-      "n_exit": 0,
-      "exit_rate": 0.0,
-      "turns_mean": 49.833333333333336,
-      "consistency_mean": 0.5047619047619047,
-      "gate_acc_mean": 0.5435120435120435,
-      "elapsed_mean": 523.5133333333333,
-      "obs_commit_ratio": 4.914893617021277,
-      "total_obs": 231,
-      "total_commit": 47,
-      "unobserved_guesses": 0
+      "unobserved_guesses": null
     },
     "wiped": {
       "n_valid": 6,
       "n_error": 0,
-      "depths": [
-        12,
-        16,
-        17,
-        17,
-        17,
-        18
-      ],
-      "depth_median": 17.0,
-      "depth_mean": 16.166666666666668,
-      "depth_min": 12,
-      "depth_max": 18,
-      "n_exit": 0,
-      "exit_rate": 0.0,
-      "turns_mean": 35.0,
-      "consistency_mean": 0.8009469696969697,
-      "gate_acc_mean": 0.8019098548510314,
-      "elapsed_mean": 5240.9366666666665,
-      "obs_commit_ratio": 0.6585365853658537,
-      "total_obs": 81,
-      "total_commit": 123,
-      "unobserved_guesses": 0
-    },
-    "contrast": {
-      "control_median": 4.5,
-      "wiped_median": 17.0,
-      "delta_wiped_minus_control": 12.5,
-      "meets_falsifier": true,
-      "ceiling_row": false,
-      "complete": true
-    }
-  },
-  "qwen3-6-27b": {
-    "safe": "qwen3-6-27b",
-    "control": {
-      "n_valid": 6,
-      "n_error": 0,
+      "errors": [],
       "depths": [
         20,
         20,
@@ -771,10 +990,212 @@
       ],
       "depth_median": 20.0,
       "depth_mean": 20.0,
+      "depth_sem": 0.0,
       "depth_min": 20,
       "depth_max": 20,
       "n_exit": 6,
       "exit_rate": 1.0,
+      "turns_per_gate": [
+        1.1,
+        1.05,
+        1.15,
+        1.0,
+        1.05,
+        1.1
+      ],
+      "turns_per_gate_mean": 1.075,
+      "turns_per_gate_sem": 0.021408720964441876,
+      "turns_mean": 21.5,
+      "consistency_mean": 0.9166666666666666,
+      "gate_acc_mean": 0.9320848233891712,
+      "elapsed_mean": 994.3133333333334,
+      "obs_commit_ratio": 0.0,
+      "total_obs": 0,
+      "total_commit": 129,
+      "unobserved_guesses": null
+    },
+    "contrast": {
+      "control_median": 20.0,
+      "wiped_median": 20.0,
+      "delta_wiped_minus_control": 0.0,
+      "meets_falsifier": false,
+      "turns_per_gate_ratio_wiped_over_control": 0.514627659574468,
+      "ceiling_row": true,
+      "complete": true
+    }
+  },
+  "qwen3-5-27b": {
+    "safe": "qwen3-5-27b",
+    "control": {
+      "n_valid": 6,
+      "n_error": 1,
+      "errors": [
+        "timed out"
+      ],
+      "depths": [
+        9,
+        5,
+        18,
+        10,
+        9,
+        20
+      ],
+      "depth_median": 9.5,
+      "depth_mean": 11.833333333333334,
+      "depth_sem": 2.386303510546059,
+      "depth_min": 5,
+      "depth_max": 20,
+      "n_exit": 1,
+      "exit_rate": 0.16666666666666666,
+      "turns_per_gate": [
+        2.5555555555555554,
+        3.0,
+        2.4444444444444446,
+        2.9,
+        2.7777777777777777,
+        2.35
+      ],
+      "turns_per_gate_mean": 2.6712962962962963,
+      "turns_per_gate_sem": 0.10642349467800208,
+      "turns_mean": 30.5,
+      "consistency_mean": 0.7998366013071895,
+      "gate_acc_mean": 0.7302882302882302,
+      "elapsed_mean": 4530.221666666666,
+      "obs_commit_ratio": 0.7956989247311828,
+      "total_obs": 74,
+      "total_commit": 93,
+      "unobserved_guesses": null
+    },
+    "wiped": null,
+    "contrast": {
+      "control_median": 9.5,
+      "wiped_median": null,
+      "delta_wiped_minus_control": null,
+      "meets_falsifier": false,
+      "turns_per_gate_ratio_wiped_over_control": null,
+      "ceiling_row": false,
+      "complete": false
+    }
+  },
+  "qwen3-5-9b": {
+    "safe": "qwen3-5-9b",
+    "control": {
+      "n_valid": 6,
+      "n_error": 0,
+      "errors": [],
+      "depths": [
+        4,
+        7,
+        2,
+        5,
+        8,
+        2
+      ],
+      "depth_median": 4.5,
+      "depth_mean": 4.666666666666667,
+      "depth_sem": 1.021980647783726,
+      "depth_min": 2,
+      "depth_max": 8,
+      "n_exit": 0,
+      "exit_rate": 0.0,
+      "turns_per_gate": [
+        3.75,
+        3.4285714285714284,
+        5.5,
+        7.4,
+        3.875,
+        90.5
+      ],
+      "turns_per_gate_mean": 19.075595238095236,
+      "turns_per_gate_sem": 14.297812449130074,
+      "turns_mean": 49.833333333333336,
+      "consistency_mean": 0.5047619047619047,
+      "gate_acc_mean": 0.5435120435120435,
+      "elapsed_mean": 523.5133333333333,
+      "obs_commit_ratio": 4.914893617021277,
+      "total_obs": 231,
+      "total_commit": 47,
+      "unobserved_guesses": null
+    },
+    "wiped": {
+      "n_valid": 6,
+      "n_error": 0,
+      "errors": [],
+      "depths": [
+        17,
+        12,
+        17,
+        17,
+        16,
+        18
+      ],
+      "depth_median": 17.0,
+      "depth_mean": 16.166666666666668,
+      "depth_sem": 0.8724168218868268,
+      "depth_min": 12,
+      "depth_max": 18,
+      "n_exit": 0,
+      "exit_rate": 0.0,
+      "turns_per_gate": [
+        2.0588235294117645,
+        2.0,
+        2.4705882352941178,
+        2.0,
+        2.3125,
+        2.111111111111111
+      ],
+      "turns_per_gate_mean": 2.158837145969499,
+      "turns_per_gate_sem": 0.07821764297642379,
+      "turns_mean": 35.0,
+      "consistency_mean": 0.8009469696969697,
+      "gate_acc_mean": 0.8019098548510314,
+      "elapsed_mean": 5240.9366666666665,
+      "obs_commit_ratio": 0.6585365853658537,
+      "total_obs": 81,
+      "total_commit": 123,
+      "unobserved_guesses": null
+    },
+    "contrast": {
+      "control_median": 4.5,
+      "wiped_median": 17.0,
+      "delta_wiped_minus_control": 12.5,
+      "meets_falsifier": true,
+      "turns_per_gate_ratio_wiped_over_control": 0.11317272771956059,
+      "ceiling_row": false,
+      "complete": true
+    }
+  },
+  "qwen3-6-27b": {
+    "safe": "qwen3-6-27b",
+    "control": {
+      "n_valid": 6,
+      "n_error": 0,
+      "errors": [],
+      "depths": [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      "depth_median": 20.0,
+      "depth_mean": 20.0,
+      "depth_sem": 0.0,
+      "depth_min": 20,
+      "depth_max": 20,
+      "n_exit": 6,
+      "exit_rate": 1.0,
+      "turns_per_gate": [
+        2.05,
+        2.05,
+        2.05,
+        2.0,
+        2.25,
+        1.95
+      ],
+      "turns_per_gate_mean": 2.058333333333333,
+      "turns_per_gate_sem": 0.04166666666666668,
       "turns_mean": 41.166666666666664,
       "consistency_mean": 0.9907407407407408,
       "gate_acc_mean": 0.9920634920634921,
@@ -782,16 +1203,54 @@
       "obs_commit_ratio": 0.9504132231404959,
       "total_obs": 115,
       "total_commit": 121,
-      "unobserved_guesses": 0
+      "unobserved_guesses": null
     },
-    "wiped": null,
+    "wiped": {
+      "n_valid": 6,
+      "n_error": 0,
+      "errors": [],
+      "depths": [
+        10,
+        9,
+        20,
+        15,
+        16,
+        13
+      ],
+      "depth_median": 14.0,
+      "depth_mean": 13.833333333333334,
+      "depth_sem": 1.661659144081936,
+      "depth_min": 9,
+      "depth_max": 20,
+      "n_exit": 1,
+      "exit_rate": 0.16666666666666666,
+      "turns_per_gate": [
+        1.4,
+        1.4444444444444444,
+        1.3,
+        1.2666666666666666,
+        1.3125,
+        1.3076923076923077
+      ],
+      "turns_per_gate_mean": 1.3385505698005697,
+      "turns_per_gate_sem": 0.027853097761838995,
+      "turns_mean": 18.333333333333332,
+      "consistency_mean": 0.8183201058201058,
+      "gate_acc_mean": 0.7717230317580297,
+      "elapsed_mean": 1625.6850000000002,
+      "obs_commit_ratio": 0.02830188679245283,
+      "total_obs": 3,
+      "total_commit": 106,
+      "unobserved_guesses": null
+    },
     "contrast": {
       "control_median": 20.0,
-      "wiped_median": null,
-      "delta_wiped_minus_control": null,
+      "wiped_median": 14.0,
+      "delta_wiped_minus_control": -6.0,
       "meets_falsifier": false,
+      "turns_per_gate_ratio_wiped_over_control": 0.6503079691338801,
       "ceiling_row": true,
-      "complete": false
+      "complete": true
     }
   }
 }

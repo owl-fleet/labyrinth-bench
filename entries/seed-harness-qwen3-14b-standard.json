@@ -1,0 +1,52 @@
+{
+ "schema_version": 1,
+ "entry_id": "seed-harness-qwen3-14b-standard",
+ "lane": "harness",
+ "origin": "board-seed",
+ "season": 0,
+ "source": {
+  "dataset": "results/e1a-table1/e1a_table1.json",
+  "arm": "control"
+ },
+ "artifacts": {
+  "harness_container": null,
+  "model_file": null
+ },
+ "pinned_model": {
+  "id": "qwen3-14b",
+  "display": "qwen3:14b",
+  "quantization": "Q4_K_M",
+  "digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8"
+ },
+ "harness": {
+  "name": "standard",
+  "summary": "Accumulating context, no intervention \u2014 the pinned baseline harness.",
+  "open": true
+ },
+ "runs": {
+  "n": 6,
+  "depths": [
+   3,
+   5,
+   4,
+   5,
+   3,
+   8
+  ],
+  "n_exit": 0,
+  "exit_rate": 0.0,
+  "turns_mean": 12.0,
+  "turns_per_gate_mean": 2.6666666666666665,
+  "consistency_mean": 0.5496031746031745,
+  "elapsed_mean_s": 124.61333333333333
+ },
+ "score": {
+  "depth_median": 4.5,
+  "ci_lower_median": 3.0,
+  "bootstrap": {
+   "B": 10000,
+   "level": 0.95,
+   "seed": 1337
+  }
+ }
+}

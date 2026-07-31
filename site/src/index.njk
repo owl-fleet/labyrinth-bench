@@ -1,0 +1,87 @@
+---
+layout: base.njk
+title: Leaderboard
+description: "LabyrinthBench leaderboard — deterministic multi-turn benchmark for local models. No judge; the goalpost is set: get to the exit."
+---
+
+<h1>LabyrinthBench</h1>
+<p class="lede">A deterministic multi-turn benchmark for local models. No judge anywhere in the loop. The goalpost is set: get to the <strong>exit</strong> — a run's score is the deepest <strong>gate</strong> it clears (a gate is one checkpoint in the maze; terms defined in the <a href="/methodology/">methodology</a>).</p>
+
+<p class="rules-note">Max depth is the defining metric of a single run; comparison <em>between</em> entries is meaningless without the statistics — rank is the bootstrap lower CI bound on median depth, so a lucky small-n entry self-limits: wide interval, low bound, modest rank until more evidence arrives. Every dealt run counts; aborts score their depth at last commit. Efficiency columns are metrics, never gates.</p>
+
+<div class="legend">
+  <span class="key"><span class="swatch filled" style="color:var(--series-1)"></span> one run, at the depth it reached</span>
+  <span class="key"><span class="curve-key" style="color:var(--series-1)"></span> distribution profile (drawn at n≥15)</span>
+  <span class="key"><span class="tickmark"></span> median</span>
+  <span class="key">▲ rank bound</span>
+  <span class="key">tap a row for the full plot + stats</span>
+</div>
+
+<h2>Model lane</h2>
+<p class="lede">Harness pinned (the standard accumulating-context harness in the <a href="https://github.com/owl-fleet/labyrinth-bench">repo</a>); models compete.</p>
+
+<div class="board" data-lane="model"></div>
+
+<details class="table-view">
+  <summary>Table view</summary>
+  <div class="table-wrap">
+  <table>
+    <thead><tr>
+      <th class="num">#</th><th>Model</th><th class="num">rank bound</th><th class="num">median depth</th><th class="num">n</th><th class="num">exit %</th><th class="num">turns/gate</th><th>status</th>
+    </tr></thead>
+    <tbody>
+    {% for e in entries.model %}
+      <tr>
+        <td class="num">{{ loop.index }}</td>
+        <td>{{ e.model.display }}</td>
+        <td class="num">{{ e.score.ci_lower_median }}</td>
+        <td class="num">{{ e.score.depth_median }}</td>
+        <td class="num">{{ e.runs.n }}</td>
+        <td class="num">{{ (e.runs.exit_rate * 100) | round }}%</td>
+        <td class="num">{{ e.runs.turns_per_gate_mean | round(2) }}</td>
+        <td><span class="badge">board-run seed</span>{% if e.ceiling_row %} <span class="badge ceiling">at map ceiling</span>{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</details>
+
+{% for id, div in entries.divisions %}
+<h2>Harness lane — division: {{ div.pinned.display }}</h2>
+<p class="lede">Model pinned to <strong>{{ div.pinned.display }}</strong>; context strategies compete. Open harness code is mandatory in this lane. The shipped wiping policy demonstrably doesn't win everywhere — beat it. <span style="color:var(--series-2)">●</span> marks the wiped-curated policy.</p>
+
+<div class="board" data-lane="harness" data-division="{{ id }}"></div>
+
+<details class="table-view">
+  <summary>Table view</summary>
+  <div class="table-wrap">
+  <table>
+    <thead><tr>
+      <th class="num">#</th><th>Harness</th><th class="num">rank bound</th><th class="num">median depth</th><th class="num">n</th><th class="num">exit %</th><th class="num">turns/gate</th><th>status</th>
+    </tr></thead>
+    <tbody>
+    {% for e in div.entries %}
+      <tr>
+        <td class="num">{{ loop.index }}</td>
+        <td>{{ e.harness.name }} — <span style="color:var(--ink-2)">{{ e.harness.summary }}</span></td>
+        <td class="num">{{ e.score.ci_lower_median }}</td>
+        <td class="num">{{ e.score.depth_median }}</td>
+        <td class="num">{{ e.runs.n }}</td>
+        <td class="num">{{ (e.runs.exit_rate * 100) | round }}%</td>
+        <td class="num">{{ e.runs.turns_per_gate_mean | round(2) }}</td>
+        <td><span class="badge">board-run seed</span></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</details>
+{% endfor %}
+
+<p class="rules-note">Seed entries are the board's own runs (pre-season, from the E1a campaign dataset — raw logs in the <a href="/data/">data annex</a>). They predate the dealer/runner flow, so they carry no artifact hashes; submitted entries will. Integrity ladder and submission flow: <a href="/methodology/">methodology</a>.</p>
+
+<script id="lb-data" type="application/json">{{ entries.all | jsonScript | safe }}</script>
+<script src="/assets/vendor/d3.min.js"></script>
+<script src="/assets/vendor/plot.umd.min.js"></script>
+<script src="/assets/leaderboard.js"></script>

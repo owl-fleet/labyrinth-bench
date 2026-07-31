@@ -1,0 +1,53 @@
+{
+ "schema_version": 1,
+ "entry_id": "seed-model-glm-4-7-flash",
+ "lane": "model",
+ "origin": "board-seed",
+ "season": 0,
+ "source": {
+  "dataset": "results/e1a-table1/e1a_table1.json",
+  "arm": "control"
+ },
+ "artifacts": {
+  "harness_container": null,
+  "model_file": null
+ },
+ "model": {
+  "id": "glm-4-7-flash",
+  "display": "glm-4.7-flash",
+  "quantization": null,
+  "digest": null
+ },
+ "harness": {
+  "name": "standard",
+  "summary": "Accumulating context, no intervention \u2014 the pinned baseline harness.",
+  "open": true
+ },
+ "ceiling_row": false,
+ "runs": {
+  "n": 6,
+  "depths": [
+   6,
+   7,
+   3,
+   2,
+   4,
+   5
+  ],
+  "n_exit": 0,
+  "exit_rate": 0.0,
+  "turns_mean": 12.333333333333334,
+  "turns_per_gate_mean": 3.0226190476190475,
+  "consistency_mean": 0.7305555555555555,
+  "elapsed_mean_s": 344.32166666666666
+ },
+ "score": {
+  "depth_median": 4.5,
+  "ci_lower_median": 3.0,
+  "bootstrap": {
+   "B": 10000,
+   "level": 0.95,
+   "seed": 1337
+  }
+ }
+}

@@ -2,8 +2,8 @@
 
 The organism-level LTM test: does an accumulating, self-curating KOS memory make the
 loop measurably better over repeated runs? This module is the *only* place the LB harness
-touches the real Knowledge OS — through the HTTP /search + /ingest/document API on
-dev-ingestion-worker, NOT the raw-SQL labyrinth_session path in run_oracle.py (which
+touches the real knowledge store — through the HTTP /search + /ingest/document API on
+the ingestion worker, NOT the raw-SQL labyrinth_session path in run_oracle.py (which
 bypasses embedding/geometry/the currency dam and would test a WHERE clause, not the organism).
 
 Three arms, one axis (cross-run memory). The WITHIN-run HUD config is held identical across
@@ -19,7 +19,7 @@ load-bearing and we never confound on "A2 wrote a richer record."
 Run the Gate 1a plumbing smoke (write one record -> retrieve it through /search, assert it
 round-trips, clears the 0.60 floor, and the A2 flags are honoured) with:
 
-    docker exec labyrinth-bench-sandbox python3 /app/cli/accum_mem.py
+    python3 cli/accum_mem.py
 """
 from __future__ import annotations
 
@@ -48,9 +48,8 @@ def _row_run_index(row: dict) -> int:
     m = _RUN_RE.search(row.get("raw_text", "") or "")
     return int(m.group(1)) if m else -1
 
-# dev-ingestion-worker is reachable by name over dev_net from the sandbox container,
-# or via the host port :8082 from the host CLI.
-DEFAULT_INGEST_URL = os.environ.get("MEM_INGEST_URL", "http://dev-ingestion-worker:8080")
+# Point MEM_INGEST_URL at your ingestion endpoint if it is not on localhost.
+DEFAULT_INGEST_URL = os.environ.get("MEM_INGEST_URL", "http://localhost:8080")
 
 # The score_threshold the in-maze query must clear. Kept explicit (not the server default)
 # so the recall-floor guard (B-6) is visible and tunable from the harness.
@@ -288,7 +287,7 @@ def retrieve_memory_block(
 
     if arm in ("A2", "A3", "A2W", "A2R"):
         # (1) THE CURRENCY DAM (server-side real oath_adjudicate, currency="current"): DROP records the
-        #     dam flagged stale vs FRESH oathd canon. The dam's verdict = do not trust this value now.
+        #     dam flagged stale vs FRESH fact-store canon. The dam's verdict = do not trust this value now.
         #     This is the mechanism that catches a stale-but-SUCCESSFUL record (outcome=exit) — the
         #     poison the outcome-demote structurally cannot see.
         before = len(results)

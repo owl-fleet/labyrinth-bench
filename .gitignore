@@ -1,3 +1,5 @@
+site/node_modules/
+site/_site/
 results/*.jsonl
 results/*.log
 results/.session_history.json

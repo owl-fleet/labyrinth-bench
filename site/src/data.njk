@@ -1,0 +1,44 @@
+---
+layout: base.njk
+title: Data
+permalink: /data/
+---
+
+<h1>Data annex</h1>
+<p class="lede">Everything on this site traces back to raw run logs, and this page is the index. Preregistrations carry their lock dates; briefs report the campaigns as run, including the arms that went against expectation.</p>
+
+<h2>Results briefs</h2>
+<ul class="annex-list">
+  <li><strong>E1a paired campaign</strong> — 13-model cohort, paired control/wiped arms, pre-registered falsifier. <span class="pending">Brief lands here at release.</span></li>
+  <li><strong>E1a control baseline</strong> — the full-cohort unaided baseline table. <span class="pending">Brief lands here at release.</span></li>
+  <li><strong>Look-discipline</strong> — instruction vs enforcement of the observe-before-commit loop (the <code>--look-gate</code> flag's origin). <span class="pending">Brief lands here at release.</span></li>
+  <li><strong>Cohort onboarding record</strong> — how the cohort was assembled and gated, including the exclusions. <span class="pending">Lands here at release.</span></li>
+</ul>
+
+<h2>Pre-registrations</h2>
+<ul class="annex-list">
+  <li><strong>Cohort campaign + external anchor</strong> — locked 2026-07-06, before the campaign ran. <span class="pending">Verbatim copy lands here at release.</span></li>
+  <li><strong>Context-strategy axes</strong> — locked 2026-07-15. <span class="pending">Verbatim copy lands here at release.</span></li>
+</ul>
+
+<h2>Figures</h2>
+<figure>
+  <img src="/assets/figures/e1a_table1_paired_stripplot.png" alt="Strip plot of paired control vs wiped run depths per model" loading="lazy">
+  <figcaption>E1a paired arms — every run, both arms, reversals plotted identically to hits.</figcaption>
+</figure>
+<figure>
+  <img src="/assets/figures/e1a_table1_control_stripplot.png" alt="Strip plot of control-arm run depths for the full cohort" loading="lazy">
+  <figcaption>Control baseline — the full cohort, unaided.</figcaption>
+</figure>
+<figure>
+  <img src="/assets/figures/run-trace-alpha2-gptoss120b.svg" alt="Graph rendering of a gpt-oss:120b run through the alpha-2 maze: blue route with numbered steps, two dead-end detours, exit reached at step 15" loading="lazy">
+  <figcaption>A single run, drawn: gpt-oss:120b traversing alpha-2 — dead-end detours, backtracks, exit at step 15.
+  The renderer that drew this (<code>scripts/render_trace.py</code>) was written by <strong>qwen3:14b</strong> (14.8B, Q4_K_M, running locally) inside this benchmark's own sandbox harness, wiped-curated arm: task spec and an 11-point automated checker were frozen first; qwen took 3 attempts (0/11, 10/11, then 11/11 with zero human edits to any of its output); the full per-turn transcripts of all three attempts ship in the raw logs (<code>results/renderer-cell/</code>).</figcaption>
+</figure>
+
+<h2>Raw data</h2>
+<ul class="annex-list">
+  <li><a href="https://github.com/owl-fleet/labyrinth-bench/tree/main/results/e1a-table1">repo <code>results/e1a-table1/</code></a> — the E1a aggregate (<code>e1a_table1.json</code>) and campaign table sources.</li>
+  <li><a href="/entries/">/entries/</a> — the leaderboard entry files served by this site, one JSON per entry, CI bounds included (regenerate with <code>cli/seed_entries.py</code>).</li>
+  <li><strong>Raw per-run JSONL logs</strong> — one line per run, per-turn traces included. <span class="pending">Download bundle lands here at release.</span></li>
+</ul>

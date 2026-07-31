@@ -33,6 +33,10 @@ class Rung:
     check: Callable[[Target], list[Check]]
     unreachable: Callable[[Target], bool] = lambda t: False  # catastrophic detector
     seed_params: dict = field(default_factory=dict)
+    # Optional overrides for non-sysadmin task shapes (renderer rung). Both keep
+    # the proven action protocol; only the surrounding text / state channel vary.
+    mechanics: str | None = None        # replaces _SANDBOX_MECHANICS (same %()s slots)
+    state_reader: Callable[[Target], str] | None = None  # replaces curator.read_state
 
 
 # Pre-registered benign side effects (part of the LOCKED footprint definition):

@@ -1,0 +1,333 @@
+{
+  "id": "alpha-2",
+  "nodes": [
+    {
+      "id": "start",
+      "terminal": false
+    },
+    {
+      "id": "a1",
+      "terminal": false
+    },
+    {
+      "id": "a2",
+      "terminal": false
+    },
+    {
+      "id": "a3",
+      "terminal": false
+    },
+    {
+      "id": "a4",
+      "terminal": false
+    },
+    {
+      "id": "a5",
+      "terminal": false
+    },
+    {
+      "id": "a6",
+      "terminal": false
+    },
+    {
+      "id": "a7",
+      "terminal": false
+    },
+    {
+      "id": "a8",
+      "terminal": false
+    },
+    {
+      "id": "exit",
+      "terminal": true
+    },
+    {
+      "id": "dz1",
+      "terminal": false
+    },
+    {
+      "id": "dz2",
+      "terminal": false
+    },
+    {
+      "id": "dz3",
+      "terminal": false
+    },
+    {
+      "id": "dz4",
+      "terminal": false
+    },
+    {
+      "id": "dz5",
+      "terminal": false
+    },
+    {
+      "id": "dz6",
+      "terminal": false
+    },
+    {
+      "id": "dl1a",
+      "terminal": false
+    },
+    {
+      "id": "dl1b",
+      "terminal": false
+    },
+    {
+      "id": "dl2a",
+      "terminal": false
+    },
+    {
+      "id": "dl2b",
+      "terminal": false
+    },
+    {
+      "id": "dl2c",
+      "terminal": false
+    },
+    {
+      "id": "loop1",
+      "terminal": false
+    },
+    {
+      "id": "dl3a",
+      "terminal": false
+    },
+    {
+      "id": "dl3b",
+      "terminal": false
+    },
+    {
+      "id": "dl3c",
+      "terminal": false
+    },
+    {
+      "id": "dl4a",
+      "terminal": false
+    },
+    {
+      "id": "dl5a",
+      "terminal": false
+    },
+    {
+      "id": "dl5b",
+      "terminal": false
+    },
+    {
+      "id": "fp1",
+      "terminal": false
+    },
+    {
+      "id": "fp2",
+      "terminal": false
+    },
+    {
+      "id": "fp3",
+      "terminal": false
+    },
+    {
+      "id": "dl7a",
+      "terminal": false
+    }
+  ],
+  "edges": [
+    {
+      "src": "start",
+      "dst": "a1",
+      "gated": true,
+      "wrong": false
+    },
+    {
+      "src": "start",
+      "dst": "dz1",
+      "gated": true,
+      "wrong": true
+    },
+    {
+      "src": "start",
+      "dst": "dl1a",
+      "gated": false,
+      "wrong": false
+    },
+    {
+      "src": "a1",
+      "dst": "a2",
+      "gated": false,
+      "wrong": false
+    },
+    {
+      "src": "a1",
+      "dst": "dl2a",
+      "gated": false,
+      "wrong": false
+    },
+    {
+      "src": "a2",
+      "dst": "a3",
+      "gated": true,
+      "wrong": false
+    },
+    {
+      "src": "a2",
+      "dst": "dz2",
+      "gated": true,
+      "wrong": true
+    },
+    {
+      "src": "a2",
+      "dst": "loop1",
+      "gated": false,
+      "wrong": false
+    },
+    {
+      "src": "a3",
+      "dst": "a4",
+      "gated": false,
+      "wrong": false
+    },
+    {
+      "src": "a3",
+      "dst": "dl3a",
+      "gated": false,
+      "wrong": false
+    },
+    {
+      "src": "a4",
+      "dst": "a5",
+      "gated": true,
+      "wrong": false
+    },
+    {
+      "src": "a4",
+      "dst": "dz3",
+      "gated": true,
+      "wrong": true
+    },
+    {
+      "src": "a4",
+      "dst": "dl4a",
+      "gated": false,
+      "wrong": false
+    },
+    {
+      "src": "a5",
+      "dst": "a6",
+      "gated": true,
+      "wrong": false
+    },
+    {
+      "src": "a5",
+      "dst": "dz4",
+      "gated": true,
+      "wrong": true
+    },
+    {
+      "src": "a5",
+      "dst": "dl5a",
+      "gated": false,
+      "wrong": false
+    },
+    {
+      "src": "a6",
+      "dst": "a7",
+      "gated": false,
+      "wrong": false
+    },
+    {
+      "src": "a6",
+      "dst": "fp1",
+      "gated": false,
+      "wrong": false
+    },
+    {
+      "src": "a7",
+      "dst": "a8",
+      "gated": true,
+      "wrong": false
+    },
+    {
+      "src": "a7",
+      "dst": "dz5",
+      "gated": true,
+      "wrong": true
+    },
+    {
+      "src": "a7",
+      "dst": "dl7a",
+      "gated": false,
+      "wrong": false
+    },
+    {
+      "src": "a8",
+      "dst": "exit",
+      "gated": true,
+      "wrong": false
+    },
+    {
+      "src": "a8",
+      "dst": "dz6",
+      "gated": true,
+      "wrong": true
+    },
+    {
+      "src": "dl1a",
+      "dst": "dl1b",
+      "gated": false,
+      "wrong": false
+    },
+    {
+      "src": "dl2a",
+      "dst": "dl2b",
+      "gated": true,
+      "wrong": false
+    },
+    {
+      "src": "dl2a",
+      "dst": "dl2c",
+      "gated": true,
+      "wrong": true
+    },
+    {
+      "src": "loop1",
+      "dst": "a1",
+      "gated": false,
+      "wrong": false
+    },
+    {
+      "src": "dl3a",
+      "dst": "dl3b",
+      "gated": false,
+      "wrong": false
+    },
+    {
+      "src": "dl3b",
+      "dst": "dl3c",
+      "gated": false,
+      "wrong": false
+    },
+    {
+      "src": "dl5a",
+      "dst": "dl5b",
+      "gated": false,
+      "wrong": false
+    },
+    {
+      "src": "fp1",
+      "dst": "fp2",
+      "gated": true,
+      "wrong": false
+    },
+    {
+      "src": "fp1",
+      "dst": "fp3",
+      "gated": true,
+      "wrong": true
+    },
+    {
+      "src": "fp2",
+      "dst": "fp3",
+      "gated": false,
+      "wrong": false
+    }
+  ]
+}

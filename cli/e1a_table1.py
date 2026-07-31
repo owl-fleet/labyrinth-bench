@@ -6,12 +6,15 @@ Reads the per-run ``e1a-<model>-<arm>.jsonl`` files a night/flat-out campaign wr
 pre-registered Table 1:
 
   * PRIMARY readout — depth reached of ``CEILING`` (``ramp_depth``), exact per-cell depths
-    published (prereg §3: "no summary-only cells").
+    published in run (file) order (prereg §3: "no summary-only cells"), with median and
+    mean ± SEM summaries.
   * SECONDARY — exit rate (``found_exit``).
   * REPORTED, NEVER GATING — turns, knowledge-state consistency, gate accuracy, wall-clock,
-    and the observe/commit mechanism ratio (from ``turns_log``). Unobserved-guess count is
-    enriched from ``classify_failures.py`` when it + the DEG ladder are importable
-    (``--degs-dir``); otherwise left null with a note (it is secondary).
+    the observe/commit mechanism ratio (from ``turns_log``), and Table 1c's turns-per-gate
+    efficiency contrast. Unobserved-guess count is enriched from ``classify_failures.py``
+    when it + the DEG ladder are importable (``--degs-dir``); otherwise left null with a
+    note (it is secondary). Error rows are counted and their causes summarized in a
+    footnote derived from the JSONLs themselves.
 
 For each model it computes the paired contrast ``wiped_median − control_median`` against the
 registered falsifier (``>= FALSIFIER_DELTA`` = 25% of the ceiling) and flags ceiling rows
@@ -54,8 +57,9 @@ def discover(results_dir):
 
 
 def load_cell(path):
-    """Return (valid_rows, error_count). Error rows are {model,deg_id,error,run_label}."""
-    valid, errors = [], 0
+    """Return (valid_rows, error_causes). Error rows are {model,deg_id,error,run_label};
+    their cause strings (first line) are kept so the footnote can be derived from the data."""
+    valid, errors = [], []
     with open(path) as fh:
         for line in fh:
             line = line.strip()
@@ -66,7 +70,10 @@ def load_cell(path):
             except json.JSONDecodeError:
                 continue  # partial trailing line from a run still in flight — skip, matches count_valid
             if "error" in row:
-                errors += 1
+                cause = str(row["error"]).splitlines()[0]
+                # error strings can embed endpoint URLs; the aggregate ships publicly
+                cause = re.sub(r"\b\d{1,3}(?:\.\d{1,3}){3}\b", "[lan-host]", cause)
+                errors.append(cause[:60] + "…" if len(cause) > 60 else cause)
             else:
                 valid.append(row)
     return valid, errors
@@ -94,21 +101,35 @@ def _median(xs):
     return statistics.median(xs) if xs else None
 
 
+def _sem(xs):
+    xs = [x for x in xs if x is not None]
+    return (statistics.stdev(xs) / len(xs) ** 0.5) if len(xs) >= 2 else None
+
+
 def cell_metrics(valid, errors):
-    depths = sorted(r["ramp_depth"] for r in valid if r.get("ramp_depth") is not None)
+    # depths kept in run (file) order — sorting them manufactures a warm-up curve that
+    # is not in the data (Table-1 review, 2026-07-14)
+    depths = [r["ramp_depth"] for r in valid if r.get("ramp_depth") is not None]
     exits = [bool(r.get("found_exit")) for r in valid]
     oc = [_obs_commit(r) for r in valid]
     tot_obs, tot_com = sum(o for o, _ in oc), sum(c for _, c in oc)
+    tpg = [r["turns"] / r["ramp_depth"] for r in valid
+           if r.get("turns") is not None and r.get("ramp_depth")]
     return {
         "n_valid": len(valid),
-        "n_error": errors,
+        "n_error": len(errors),
+        "errors": errors,
         "depths": depths,
         "depth_median": _median(depths),
         "depth_mean": _mean(depths),
+        "depth_sem": _sem(depths),
         "depth_min": min(depths) if depths else None,
         "depth_max": max(depths) if depths else None,
         "n_exit": sum(exits),
         "exit_rate": _mean([1.0 if e else 0.0 for e in exits]),
+        "turns_per_gate": tpg,
+        "turns_per_gate_mean": _mean(tpg),
+        "turns_per_gate_sem": _sem(tpg),
         "turns_mean": _mean([r.get("turns") for r in valid]),
         "consistency_mean": _mean([r.get("knowledge_state_consistency") for r in valid]),
         "gate_acc_mean": _mean([r.get("gate_accuracy") for r in valid]),
@@ -185,11 +206,15 @@ def build(results_dir, degs_dir=None, control_only=False):
         wm = w["depth_median"] if w else None
         delta = (wm - cm) if (cm is not None and wm is not None) else None
         ceiling_row = (cm is not None and cm >= CEILING)
+        tpg_ratio = (w["turns_per_gate_mean"] / c["turns_per_gate_mean"]
+                     if (c and w and c.get("turns_per_gate_mean") and w.get("turns_per_gate_mean"))
+                     else None)
         table[safe]["contrast"] = {
             "control_median": cm,
             "wiped_median": wm,
             "delta_wiped_minus_control": delta,
             "meets_falsifier": (delta is not None and delta >= FALSIFIER_DELTA),
+            "turns_per_gate_ratio_wiped_over_control": tpg_ratio,
             "ceiling_row": ceiling_row,
             "complete": (bool(c and c["n_valid"] >= 6) if control_only
                          else bool(c and w and c["n_valid"] >= 6 and w["n_valid"] >= 6)),
@@ -224,23 +249,33 @@ def render_markdown(table, control_only=False):
 
     # Table 1 — per cell
     lines.append("## Table 1 — per cell\n")
-    lines.append("| Model | Arm | n (valid/err) | depths (of 20) | median | exit | turns | consist. | obs/com |")
-    lines.append("|---|---|---|---|---|---|---|---|---|")
+    lines.append("| Model | Arm | n (valid/err) | depths (of 20, run order) | median | mean ± SEM | exit | turns | consist. | obs/com |")
+    lines.append("|---|---|---|---|---|---|---|---|---|---|")
     arms = ("control",) if control_only else ARMS
+    err_notes = []
     for safe in sorted(table):
         for arm in arms:
             c = table[safe].get(arm)
             name = safe if arm == "control" else ""
             if not c:
-                lines.append(f"| {name} | {arm} | — | — | — | — | — | — | — |")
+                lines.append(f"| {name} | {arm} | — | — | — | — | — | — | — | — |")
                 continue
             depths = ",".join(str(d) for d in c["depths"]) or "—"
+            mean_sem = (f"{_fmt(c['depth_mean'])} ± {_fmt(c['depth_sem'])}"
+                        if c["depth_sem"] is not None else _fmt(c["depth_mean"]))
             lines.append(
                 f"| {name} | {arm} | {c['n_valid']}/{c['n_error']} | {depths} | "
-                f"{_fmt(c['depth_median'])} | {_fmt(c['exit_rate'], pct=True)} | "
+                f"{_fmt(c['depth_median'])} | {mean_sem} | {_fmt(c['exit_rate'], pct=True)} | "
                 f"{_fmt(c['turns_mean'],1)} | {_fmt(c['consistency_mean'], pct=True)} | "
                 f"{_fmt(c['obs_commit_ratio'])} |")
+            for cause, k in sorted({e: c["errors"].count(e) for e in c["errors"]}.items()):
+                err_notes.append(f"{safe} ({arm}): {cause}" + (f" ×{k}" if k > 1 else ""))
     lines.append("")
+    lines.append("*n (valid/err) = completed runs / errored attempts. An errored attempt records "
+                 "only its failure cause — no partial depth data enters the table — and the "
+                 "campaign retried until n=6 valid.*"
+                 + (" Errors in this dataset: " + "; ".join(err_notes) + "." if err_notes else "")
+                 + "\n")
 
     if control_only:
         return "\n".join(lines)
@@ -254,9 +289,10 @@ def render_markdown(table, control_only=False):
         w = table[safe].get("wiped")
         notes = []
         if ct["ceiling_row"]:
-            note = "ceiling row (control at 20 — instrument range, not lever failure)"
             if w is None:
-                note += "; wiped arm not run"
+                note = "ceiling row (control at 20 — instrument range, not lever failure); wiped arm not run"
+            else:
+                note = "ceiling row — A3 efficiency arm (depth falsifier N/A; readout = Table 1c + exit non-inferiority)"
             notes.append(note)
         elif w is None:
             notes.append("control-only (no wiped arm run)")
@@ -269,6 +305,40 @@ def render_markdown(table, control_only=False):
             f"| {safe} | {_fmt(ct['control_median'])} | {_fmt(ct['wiped_median'])} | "
             f"{_fmt(ct['delta_wiped_minus_control'])} | "
             f"{'✅' if ct['meets_falsifier'] else '—'} | {'; '.join(notes) or ''} |")
+    lines.append("")
+
+    # Table 1c — turns-per-gate efficiency (reported, never gating; exit is the only objective)
+    lines.append("## Table 1c — turns-per-gate efficiency (reported, never gating)\n")
+    lines.append("*Per-run turns ÷ ramp depth (turns spent per gate cleared); cell mean ± SEM. "
+                 "Read jointly with depth — the ratio conflates progress rate with post-stall "
+                 "flailing, and lives/turn-budget truncation ends runs early. A lower wiped ratio "
+                 "at LOWER depth (e.g. a fast shallow stall) is not a win. Elapsed wall-clock is "
+                 "uncontrolled across arms (non-interleaved lanes, different hosts, and per-turn "
+                 "prefill differs: the wiped overlay changes the prompt prefix every turn) — turns "
+                 "is the load-independent readout.*\n")
+    lines.append("| Model | depth median (c→w) | turns/gate control | turns/gate wiped | w/c | elapsed mean, min (c→w) |")
+    lines.append("|---|---|---|---|---|---|")
+    for safe in sorted(table):
+        c, w, ct = table[safe].get("control"), table[safe].get("wiped"), table[safe]["contrast"]
+
+        def _ms(cell):
+            if not cell or cell["turns_per_gate_mean"] is None:
+                return "—"
+            sem = cell["turns_per_gate_sem"]
+            return (f"{_fmt(cell['turns_per_gate_mean'])} ± {_fmt(sem)}"
+                    if sem is not None else _fmt(cell["turns_per_gate_mean"]))
+
+        ratio = (w["turns_per_gate_mean"] / c["turns_per_gate_mean"]
+                 if c and w and c.get("turns_per_gate_mean") and w.get("turns_per_gate_mean")
+                 else None)
+        el = "—"
+        if c and c.get("elapsed_mean") is not None:
+            el = f"{c['elapsed_mean']/60:.1f}"
+            if w and w.get("elapsed_mean") is not None:
+                el += f" → {w['elapsed_mean']/60:.1f}"
+        depth_cw = _fmt(ct["control_median"]) + (f" → {_fmt(ct['wiped_median'])}"
+                                                 if ct["wiped_median"] is not None else "")
+        lines.append(f"| {safe} | {depth_cw} | {_ms(c)} | {_ms(w)} | {_fmt(ratio)} | {el} |")
     lines.append("")
 
     # consistency measurement-validity flag (do not interpret — surface it)

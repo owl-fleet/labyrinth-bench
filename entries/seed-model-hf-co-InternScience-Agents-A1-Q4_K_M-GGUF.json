@@ -1,0 +1,53 @@
+{
+ "schema_version": 1,
+ "entry_id": "seed-model-hf-co-InternScience-Agents-A1-Q4_K_M-GGUF",
+ "lane": "model",
+ "origin": "board-seed",
+ "season": 0,
+ "source": {
+  "dataset": "results/e1a-table1/e1a_table1.json",
+  "arm": "control"
+ },
+ "artifacts": {
+  "harness_container": null,
+  "model_file": null
+ },
+ "model": {
+  "id": "hf-co-InternScience-Agents-A1-Q4_K_M-GGUF",
+  "display": "InternScience Agents-A1 (Q4_K_M GGUF)",
+  "quantization": "Q4_K_M",
+  "digest": null
+ },
+ "harness": {
+  "name": "standard",
+  "summary": "Accumulating context, no intervention \u2014 the pinned baseline harness.",
+  "open": true
+ },
+ "ceiling_row": false,
+ "runs": {
+  "n": 6,
+  "depths": [
+   20,
+   13,
+   20,
+   19,
+   19,
+   17
+  ],
+  "n_exit": 2,
+  "exit_rate": 0.3333333333333333,
+  "turns_mean": 44.5,
+  "turns_per_gate_mean": 2.486522584742399,
+  "consistency_mean": 0.8761574074074074,
+  "elapsed_mean_s": 1994.8
+ },
+ "score": {
+  "depth_median": 19.0,
+  "ci_lower_median": 16.0,
+  "bootstrap": {
+   "B": 10000,
+   "level": 0.95,
+   "seed": 1337
+  }
+ }
+}

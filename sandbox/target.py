@@ -24,8 +24,8 @@ class Target:
     PIDS_LIMIT = 512
     MEMORY = "2g"
     CPUS = "2"
-    # Disk: `--storage-opt size=` is silently NOT enforced on Unraid's docker btrfs
-    # (no qgroups on the docker.img loopback — verified: a 3g write succeeded). So we
+    # Disk: `--storage-opt size=` is silently NOT enforced on some Docker storage
+    # drivers (btrfs without qgroups — verified: a 3g write succeeded). So we
     # enforce a real PER-FILE cap via `ulimit -f` in exec() instead (verified: caps at
     # 1.5g, SIGXFSZ). RESIDUAL: a multi-file write loop in one run is not hard-capped —
     # bounded only by EXEC_TIMEOUT per command + per-run `--rm` reset + Grafana cache-pool

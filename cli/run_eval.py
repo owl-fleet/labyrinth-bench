@@ -22,6 +22,15 @@ Options:
                   Observation] as a fresh cold prompt each turn. Eliminates context snowball.
                   Automatically tracks history and dead ends regardless of other flags.
   --num-ctx       Ollama num_ctx (KV cache size). Use 16384 for phi4-reasoning.
+  --context-policy  Named ContextPolicy (cli/context_policy.py) — arms as config, not a harness
+                  fork. Mutually exclusive with --overlay-only/--stateless/--inject-history/
+                  --kos-prompt (those stay as the untouched legacy flag matrix).
+  --policy-code-ref  Repo URL/commit for the exact policy code used this run (leaderboard
+                  integrity — auto-derived from this checkout's HEAD when omitted).
+  --n-ctx-slot    Journal-verified n_ctx_slot (int) for this run's base_url host — operator-
+                  supplied from `journalctl -u ollama | grep n_ctx_slot` (scripts/e1a-run-row.sh
+                  has the SSH+grep recipe). NOT auto-detected: ollama's /v1 endpoint silently
+                  drops --num-ctx (options), so the CLI flag can never be trusted as ground truth.
 """
 from __future__ import annotations
 
@@ -31,6 +40,7 @@ import os
 import re
 import sys
 import time
+from dataclasses import asdict
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -43,7 +53,16 @@ try:
 except ImportError:
     import accum_mem
 
+# Pluggable per-arm context management (lb-post-release chunk 02) — same import pattern.
+try:
+    from cli import context_policy
+except ImportError:
+    import context_policy
+
 _DEFAULT_DB_URL = os.environ.get("DB_URL", "")
+# Cold loads of large models (60-90 GB) can exceed 10 minutes before the first
+# byte arrives; a flat 600s read timeout cancels them mid-load. Override via env.
+_LLM_TIMEOUT_SECS = float(os.environ.get("LB_LLM_TIMEOUT", "1800"))
 _HEARTBEAT_STALE_SECS = 600  # lock is hung if heartbeat older than this
 
 
@@ -291,13 +310,13 @@ def _insert_run(db_url: str, score: dict, label: str | None) -> None:
                     found_exit, steps_to_exit, step_budget, optimal_commits,
                     normalized_efficiency, gate_accuracy, path_correctness,
                     recovery_rate, chain_gate_count, chain_accuracy, knowledge_state_consistency,
-                    note_used, elapsed_seconds, turns, run_label
+                    note_used, elapsed_seconds, turns, run_label, base_url, n_ctx_slot
                 ) VALUES (
                     %(session_id)s, %(model)s, %(deg_id)s,
                     %(found_exit)s, %(steps_to_exit)s, %(step_budget)s, %(optimal_commits)s,
                     %(normalized_efficiency)s, %(gate_accuracy)s, %(path_correctness)s,
                     %(recovery_rate)s, %(chain_gate_count)s, %(chain_accuracy)s, %(knowledge_state_consistency)s,
-                    %(note_used)s, %(elapsed_seconds)s, %(turns)s, %(run_label)s
+                    %(note_used)s, %(elapsed_seconds)s, %(turns)s, %(run_label)s, %(base_url)s, %(n_ctx_slot)s
                 )
                 """,
                 {
@@ -319,6 +338,11 @@ def _insert_run(db_url: str, score: dict, label: str | None) -> None:
                     "elapsed_seconds": score.get("elapsed_seconds"),
                     "turns": score.get("turns"),
                     "run_label": label,
+                    # Provenance columns (lb-post-release chunk 02 — the standing gate): base_url is
+                    # always known; n_ctx_slot is journal-verified by the operator, never the CLI flag
+                    # (ollama's /v1 endpoint silently drops --num-ctx — see run_eval.py --help).
+                    "base_url": score.get("base_url"),
+                    "n_ctx_slot": score.get("n_ctx_slot"),
                 },
             )
         conn.close()
@@ -327,13 +351,37 @@ def _insert_run(db_url: str, score: dict, label: str | None) -> None:
         print(f"  WARNING: DB insert failed — {e}")
 
 
+def _asdict_or_none(obj) -> dict | None:
+    return asdict(obj) if obj is not None else None
+
+
+def _native_usage(native_json: dict) -> dict | None:
+    """Normalize ollama's NATIVE /api/chat token counters (prompt_eval_count/eval_count) into an
+    OpenAI-ish usage dict, keeping the raw duration fields — same silent-shape-divergence class as
+    the documented `think`/`options` drops on /v1: the native and OpenAI-compat paths report usage
+    under different keys entirely, so a caller that only checks `resp["usage"]` silently gets None
+    on the native path unless this translation happens explicitly."""
+    pe, ee = native_json.get("prompt_eval_count"), native_json.get("eval_count")
+    if pe is None and ee is None:
+        return None
+    return {
+        "prompt_tokens": pe,
+        "completion_tokens": ee,
+        "total_tokens": (pe or 0) + (ee or 0),
+        "raw": {k: native_json.get(k) for k in (
+            "prompt_eval_count", "eval_count", "prompt_eval_duration", "eval_duration", "total_duration",
+        )},
+    }
+
+
 def _llm_call(llm: httpx.Client, model: str, messages: list, retries: int = 3, options: dict | None = None, think: bool | None = None) -> dict:
     """Call the model with retry. When `think` is set we MUST use Ollama's NATIVE /api/chat endpoint:
     the OpenAI-compat /v1/chat/completions SILENTLY IGNORES a top-level `think` field, so `think:false`
     there does NOT suppress reasoning (verified on qwen3:14b — reasoning_len ~600 via /v1 vs 0 via
     /api/chat). We translate the native response into the OpenAI-shaped dict the caller expects. Models
     that don't support `think` (e.g. llama3.3) 400 on /api/chat → we fall back to /v1 (they don't think
-    anyway)."""
+    anyway). The returned dict always carries `usage` (OpenAI-shaped) when the server reported one, on
+    either path — token-usage capture (todo-ai backlog item) reads this per turn."""
     last_exc = None
     _base = str(llm.base_url).rstrip("/")
     _native = (_base[:-3] if _base.endswith("/v1") else _base) + "/api/chat"
@@ -346,8 +394,12 @@ def _llm_call(llm: httpx.Client, model: str, messages: list, retries: int = 3, o
                         payload["options"] = options
                     r = llm.post(_native, json=payload)
                     r.raise_for_status()
-                    m = r.json().get("message", {})
-                    return {"choices": [{"message": {"content": m.get("content", ""), "reasoning": m.get("thinking", "")}}]}
+                    native_json = r.json()
+                    m = native_json.get("message", {})
+                    return {
+                        "choices": [{"message": {"content": m.get("content", ""), "reasoning": m.get("thinking", "")}}],
+                        "usage": _native_usage(native_json),
+                    }
                 except httpx.HTTPStatusError:
                     pass  # model likely doesn't support `think` → fall through to the OpenAI path
             payload = {"model": model, "messages": messages, "stream": False}
@@ -412,6 +464,9 @@ def run_session(
     look_gate: bool = False,
     recommend_observe: bool = False,
     observe_cap: bool = False,
+    context_policy_name: str | None = None,
+    policy_code_ref: str | None = None,
+    n_ctx_slot: int | None = None,
 ) -> dict:
     if overlay_only:
         stateless = True  # overlay-only = wipe the model's context each turn; the HUD is the entire context
@@ -419,7 +474,8 @@ def run_session(
                       else _null_state_line if null_ledger
                       else (lambda t: t))
     client = httpx.Client(base_url=maze_url, timeout=60.0)
-    llm = httpx.Client(base_url=base_url, timeout=600.0)
+    llm = httpx.Client(base_url=base_url,
+                       timeout=httpx.Timeout(_LLM_TIMEOUT_SECS, connect=30.0))
     t_start = time.monotonic()
 
     # Create session
@@ -468,6 +524,14 @@ def run_session(
         if mem_block:
             sys_prompt = sys_prompt + "\n\n" + mem_block
 
+    # Pluggable context policy (lb-post-release chunk 02). None = legacy flag-based construction
+    # below (overlay_only/stateless/else), fully untouched — every already-published historical
+    # arm keeps its exact code path. `messages` still exists for the legacy branches; a policy
+    # owns its own state instead (AccumulatePolicy._messages, WipeCuratedPolicy needs none).
+    policy: context_policy.ContextPolicy | None = None
+    if context_policy_name:
+        policy = context_policy.make_policy(context_policy_name, sys_prompt)
+
     messages = [{"role": "system", "content": sys_prompt}]
 
     # Bootstrap with observe
@@ -475,7 +539,9 @@ def run_session(
     obs.raise_for_status()
     obs_data = obs.json()
     current_engine_text = _maybe_corrupt(obs_data["text"])
-    if not stateless:
+    if policy is not None:
+        policy.seed(current_engine_text)
+    elif not stateless:
         messages.append({"role": "user", "content": current_engine_text})
 
     turn = 0
@@ -502,9 +568,21 @@ def run_session(
     completed = False
     while not completed:
         turn += 1
-        # Call model — overlay-only: the curated overlay (map+recall+node) IS the entire context;
-        # stateless: cold [NavState+History+Observation]; default: full accumulating conversation.
-        if overlay_only:
+        # Call model — context-policy (chunk 02): the named policy owns message construction.
+        # Legacy (policy is None): overlay-only wipes to the curated overlay; stateless cold-
+        # prompts [NavState+History+Observation]; default accumulates the full conversation.
+        turn_snap = None
+        turn_telem = None
+        if policy is not None:
+            turn_snap = context_policy.TurnSnapshot(turn=turn, sys_prompt=sys_prompt, engine_text=current_engine_text)
+            call_messages = policy.turn_start(turn_snap)
+            # Telemetry reflects what was actually SENT this turn — compute right after turn_start,
+            # not at turn_end, and stdout it immediately (extends wali/orchestrator.py's _hud_event
+            # live-log pattern; the Boundary-II lesson is that this per-turn line is the only true
+            # loss if a campaign dies mid-run and only the raw JSONL is recoverable after).
+            turn_telem = policy.telemetry(turn_snap, call_messages)
+            print(turn_telem.to_event(), end="")
+        elif overlay_only:
             call_messages = [
                 {"role": "system", "content": sys_prompt},
                 {"role": "user", "content": current_engine_text},
@@ -518,6 +596,7 @@ def run_session(
             call_messages = messages
         llm_json = _llm_call(llm, model, call_messages, options=options, think=False if no_think else None)
         _update_heartbeat(base_url)
+        usage = llm_json.get("usage")
         msg = llm_json["choices"][0]["message"]
         model_text = msg.get("content") or ""
         model_reasoning = msg.get("reasoning") or ""
@@ -527,7 +606,7 @@ def run_session(
         if verbose:
             print(f"  [turn {turn}] model: {model_text[:200]}")
 
-        if not stateless:
+        if policy is None and not stateless:
             messages.append({"role": "assistant", "content": model_text})
 
         # Parse action
@@ -632,11 +711,22 @@ def run_session(
                 fallback.raise_for_status()
                 act_data = fallback.json()
                 fallback_text = _maybe_corrupt(act_data.get("text", ""))
-                turns_log.append({"turn": turn, "model_text": model_text, "model_reasoning": model_reasoning, "action_parsed": action, "engine_text": f"[400→observe] {fallback_text}"})
+                if policy is not None:
+                    # Mirrors the legacy default path's combined effect (assistant appended earlier
+                    # in the turn + user=fallback_text appended here) as ONE turn_end call — see the
+                    # module docstring on why the combined call is behavior-identical.
+                    policy.turn_end(context_policy.TurnSnapshot(
+                        turn=turn, sys_prompt=sys_prompt, engine_text=fallback_text, model_text=model_text))
+                turns_log.append({
+                    "turn": turn, "model_text": model_text, "model_reasoning": model_reasoning,
+                    "action_parsed": action, "engine_text": f"[400→observe] {fallback_text}",
+                    "usage": usage,
+                    "context_telemetry": _asdict_or_none(turn_telem),
+                })
                 current_engine_text = fallback_text
                 observed_here = True  # the fallback dispatched an observe
                 consecutive_observes += 1  # counts toward the observe-cap like any other observe
-                if not stateless:
+                if policy is None and not stateless:
                     messages.append({"role": "user", "content": fallback_text})
                 completed = act_data.get("completed", False)
                 continue
@@ -681,7 +771,17 @@ def run_session(
         if "--- OBSERVE ---" in engine_text:
             last_observe_paths = _parse_available_paths(engine_text)
 
-        if stateless:
+        if policy is not None:
+            # Combined turn_end (assistant + this turn's observation) — see the module docstring
+            # on why one call replicates the two separate legacy append() sites exactly.
+            policy.turn_end(context_policy.TurnSnapshot(
+                turn=turn, sys_prompt=sys_prompt, engine_text=engine_text, model_text=model_text))
+            turns_log.append({
+                "turn": turn, "model_text": model_text, "model_reasoning": model_reasoning,
+                "action_parsed": action, "engine_text": engine_text,
+                "usage": usage, "context_telemetry": _asdict_or_none(turn_telem),
+            })
+        elif stateless:
             turns_log.append({"turn": turn, "model_text": model_text, "model_reasoning": model_reasoning, "action_parsed": action, "engine_text": engine_text, "injected_history": None})
         else:
             history_block = _build_history_block(decision_history) if inject_history else ""
@@ -696,11 +796,11 @@ def run_session(
         if completed:
             break
 
-        # overlay-only: refresh the overlay (map+recall+node) for the next cold prompt after a
-        # state-changing action, so the HUD the model sees is always current. Pull is exempt —
-        # its response IS a current view (STATE + observe) and must survive exactly one turn
-        # (the one-shot pull semantic: pull, then use it or lose it).
-        if overlay_only and action.get("action") not in ("observe", "pull"):
+        # overlay-only / any policy that cold-prompts each turn: refresh the overlay (map+recall+
+        # node) for the next turn after a state-changing action, so the HUD the model sees is
+        # always current. Pull is exempt — its response IS a current view (STATE + observe) and
+        # must survive exactly one turn (the one-shot pull semantic: pull, then use it or lose it).
+        if (overlay_only or (policy is not None and policy.needs_observe_refresh)) and action.get("action") not in ("observe", "pull"):
             _ob = client.post("/act", json={"session_id": session_id, "action": "observe", "path_id": "", "answer": "", "text": ""})
             if _ob.status_code == 200:
                 current_engine_text = _maybe_corrupt(_ob.json().get("text", current_engine_text))
@@ -754,6 +854,22 @@ def run_session(
     score_data["state_label"] = state_label
     score_data["turns_log"] = turns_log
 
+    # Provenance columns (lb-post-release chunk 02 — the standing gate): base_url is always
+    # known; n_ctx_slot is the operator-supplied journal-verified value (never the CLI flag —
+    # ollama's /v1 endpoint silently drops --num-ctx, same class as the documented `think` drop).
+    score_data["base_url"] = base_url
+    score_data["n_ctx_slot"] = n_ctx_slot
+
+    # Context-policy provenance + generality class (leaderboard integrity — Will, 2026-07-14):
+    # a run using the new interface declares which policy ran, its generality class, and the
+    # inspectable code that produced it — "no answer-key smuggling" rides on this, not on trust.
+    score_data["context_policy"] = context_policy_name
+    score_data["policy_provenance"] = (
+        context_policy.policy_provenance(context_policy_name, policy_code_ref)
+        if context_policy_name else None
+    )
+    score_data["policy_summary"] = policy.task_end() if policy is not None else None
+
     # ── Cross-run memory faculty (LB Design 2) — WRITE-BACK HOOK ──────────────────
     # EVERY arm (incl. A0) writes the byte-identical deterministic record so A0/A1/A2 share an
     # identical store; only the read policy varies (flattery audit A-5). A0's store is write-only.
@@ -804,10 +920,10 @@ def main():
                          "A0 control (write-only, never reads), A1 naive, A2 organism (route+dam+fork). "
                          "A2W = A2 + wide retrieval window (un-starve the dam); A2R = A2W + recency sort.")
     ap.add_argument("--mem-ingest-url", default=accum_mem.DEFAULT_INGEST_URL,
-                    help="dev-ingestion-worker base URL for the memory faculty (read/write KOS).")
+                    help="ingestion-worker base URL for the memory faculty (read/write memory store).")
     ap.add_argument("--deg-variant", default="v0", help="Variant tag stored in the run-record.")
     ap.add_argument("--macguffin-slot", default="",
-                    help="oathd fact slot for the currency-dam stale-twin test (Gate 4), e.g. fact://lab/macguffin/k")
+                    help="fact-slot URI for the currency-dam stale-twin test (Gate 4), e.g. fact://lab/macguffin/k")
     ap.add_argument("--inject-history", action="store_true",
                     help="Append harness-tracked decision history to each engine response (engine unchanged)")
     ap.add_argument("--kos-prompt", action="store_true",
@@ -847,8 +963,7 @@ def main():
     ap.add_argument("--look-gate", action="store_true",
                     help="Look-gate arm (cheapest-instrument baseline): deterministically intercept an "
                          "answer-bearing commit at a node not observed since arrival, replacing it with an "
-                         "observe (costs the turn, not a life). Implies --observe-cap. No memory help. See "
-                         "plans/lb-hud-orchestration/13-look-gate-and-cohort-addendum.md.")
+                         "observe (costs the turn, not a life). Implies --observe-cap. No memory help.")
     ap.add_argument("--recommend-observe", action="store_true",
                     help="Recommended-observe policy (prereg 15): add the locked observe-first rule to the "
                          "system prompt ('Before you answer any gate, observe it — each gate's problem is "
@@ -857,10 +972,29 @@ def main():
                     help="End the episode + score from /state after 5 consecutive observes at a node "
                          "(the observe-loop pathology guard). Decoupled from --look-gate so all observe-"
                          "policies (prereg 15) share identical termination. --look-gate implies it.")
+    # ── Pluggable context policy (lb-post-release chunk 02) ───────────────────────
+    ap.add_argument("--context-policy", choices=sorted(context_policy.POLICIES), default=None,
+                    help="Named ContextPolicy (cli/context_policy.py) — arms as config, not a "
+                         "harness fork. wipe-curated/accumulate reproduce --overlay-only/default; "
+                         "the rest are stubs that raise until their owning chunk lands. Mutually "
+                         "exclusive with --overlay-only/--stateless/--inject-history/--kos-prompt.")
+    ap.add_argument("--policy-code-ref", default=None,
+                    help="Repo URL/commit for the exact policy code used this run (leaderboard "
+                         "integrity, Will 2026-07-14). Auto-derived from this checkout's HEAD when "
+                         "omitted for built-in policies.")
+    ap.add_argument("--n-ctx-slot", type=int, default=None,
+                    help="Journal-verified n_ctx_slot for this run's base_url host (operator-"
+                         "supplied — see scripts/e1a-run-row.sh for the SSH+grep recipe). Never "
+                         "auto-detected: the --num-ctx flag is silently dropped by ollama's /v1 "
+                         "endpoint, so it cannot be trusted as ground truth.")
     args = ap.parse_args()
 
     if (args.state_stub or args.state_label) and not args.pull_state:
         ap.error("--state-stub/--state-label require --pull-state")
+
+    if args.context_policy and (args.overlay_only or args.stateless or args.inject_history or args.kos_prompt):
+        ap.error("--context-policy is mutually exclusive with --overlay-only/--stateless/"
+                 "--inject-history/--kos-prompt — those stay on the untouched legacy path.")
 
     llm_options = {"num_ctx": args.num_ctx} if args.num_ctx else None
 
@@ -900,6 +1034,9 @@ def main():
                     look_gate=args.look_gate,
                     recommend_observe=args.recommend_observe,
                     observe_cap=args.observe_cap,
+                    context_policy_name=args.context_policy,
+                    policy_code_ref=args.policy_code_ref,
+                    n_ctx_slot=args.n_ctx_slot,
                 )
             except Exception as e:
                 print(f"  ERROR: {e}")

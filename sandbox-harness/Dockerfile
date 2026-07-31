@@ -4,7 +4,7 @@
 # solely to spawn / exec / `docker diff` ephemeral `--network none` lb-target
 # containers (see sandbox/target.py). The MODEL never reaches this socket — it
 # only ever runs commands *inside* a target via `docker exec`. Kept separate
-# from the maze API container (labyrinth-bench-sandbox) so the privileged socket
+# from the maze API container so the privileged socket
 # is not co-located with a network-exposed service.
 FROM python:3.12-slim
 

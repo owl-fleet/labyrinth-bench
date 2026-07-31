@@ -1,0 +1,53 @@
+{
+ "schema_version": 1,
+ "entry_id": "seed-model-gemma4-31b",
+ "lane": "model",
+ "origin": "board-seed",
+ "season": 0,
+ "source": {
+  "dataset": "results/e1a-table1/e1a_table1.json",
+  "arm": "control"
+ },
+ "artifacts": {
+  "harness_container": null,
+  "model_file": null
+ },
+ "model": {
+  "id": "gemma4-31b",
+  "display": "gemma4:31b",
+  "quantization": null,
+  "digest": null
+ },
+ "harness": {
+  "name": "standard",
+  "summary": "Accumulating context, no intervention \u2014 the pinned baseline harness.",
+  "open": true
+ },
+ "ceiling_row": true,
+ "runs": {
+  "n": 6,
+  "depths": [
+   20,
+   20,
+   20,
+   20,
+   20,
+   16
+  ],
+  "n_exit": 5,
+  "exit_rate": 0.8333333333333334,
+  "turns_mean": 38.333333333333336,
+  "turns_per_gate_mean": 1.9895833333333333,
+  "consistency_mean": 0.9888888888888889,
+  "elapsed_mean_s": 1317.5083333333334
+ },
+ "score": {
+  "depth_median": 20.0,
+  "ci_lower_median": 18.0,
+  "bootstrap": {
+   "B": 10000,
+   "level": 0.95,
+   "seed": 1337
+  }
+ }
+}

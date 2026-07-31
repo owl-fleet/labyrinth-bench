@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1690 500">
+  <title>LabyrinthBench run — alpha-2 — gpt-oss:120b</title>
+  <style>
+    .edge { stroke: #888; stroke-width: 1.5; }
+    .edge.gated { stroke-dasharray: 6 3; }
+    .edge.wrong { stroke: #c0392b; opacity: 0.45; }
+    .route { fill: none; stroke: #2a78d6; stroke-width: 3.5; opacity: 0.85;
+             stroke-linejoin: round; }
+    .node { fill: #f4f4f4; stroke: #888; stroke-width: 1.5; }
+    .node.start { fill: #2a78d6; stroke: #1b4e8a; }
+    .node.exit { fill: #008300; stroke: #005200; }
+    .node.deadend { fill: #efd8d4; stroke: #c0392b; }
+    .step { font: bold 13px sans-serif; fill: #2a78d6; text-anchor: middle; }
+  </style>
+  <line class="edge gated" x1="80" y1="70" x2="250" y2="70"/>
+  <line class="edge gated wrong" x1="80" y1="70" x2="250" y2="250"/>
+  <line class="edge" x1="80" y1="70" x2="250" y2="160"/>
+  <line class="edge" x1="250" y1="70" x2="420" y2="70"/>
+  <line class="edge" x1="250" y1="70" x2="420" y2="250"/>
+  <line class="edge gated" x1="420" y1="70" x2="590" y2="70"/>
+  <line class="edge gated wrong" x1="420" y1="70" x2="590" y2="340"/>
+  <line class="edge" x1="420" y1="70" x2="590" y2="430"/>
+  <line class="edge" x1="590" y1="70" x2="760" y2="70"/>
+  <line class="edge" x1="590" y1="70" x2="760" y2="160"/>
+  <line class="edge gated" x1="760" y1="70" x2="930" y2="70"/>
+  <line class="edge gated wrong" x1="760" y1="70" x2="930" y2="340"/>
+  <line class="edge" x1="760" y1="70" x2="930" y2="250"/>
+  <line class="edge gated" x1="930" y1="70" x2="1100" y2="70"/>
+  <line class="edge gated wrong" x1="930" y1="70" x2="1100" y2="340"/>
+  <line class="edge" x1="930" y1="70" x2="1100" y2="250"/>
+  <line class="edge" x1="1100" y1="70" x2="1270" y2="70"/>
+  <line class="edge" x1="1100" y1="70" x2="1270" y2="250"/>
+  <line class="edge gated" x1="1270" y1="70" x2="1440" y2="70"/>
+  <line class="edge gated wrong" x1="1270" y1="70" x2="1440" y2="250"/>
+  <line class="edge" x1="1270" y1="70" x2="1440" y2="160"/>
+  <line class="edge gated" x1="1440" y1="70" x2="1610" y2="160"/>
+  <line class="edge gated wrong" x1="1440" y1="70" x2="1610" y2="70"/>
+  <line class="edge" x1="250" y1="160" x2="420" y2="160"/>
+  <line class="edge gated" x1="420" y1="250" x2="590" y2="160"/>
+  <line class="edge gated wrong" x1="420" y1="250" x2="590" y2="250"/>
+  <line class="edge" x1="590" y1="430" x2="250" y2="70"/>
+  <line class="edge" x1="760" y1="160" x2="930" y2="160"/>
+  <line class="edge" x1="930" y1="160" x2="1100" y2="160"/>
+  <line class="edge" x1="1100" y1="250" x2="1270" y2="160"/>
+  <line class="edge gated" x1="1270" y1="250" x2="1440" y2="340"/>
+  <line class="edge gated wrong" x1="1270" y1="250" x2="1440" y2="430"/>
+  <line class="edge" x1="1440" y1="340" x2="1440" y2="430"/>
+  <polyline class="route" points="80,70 250,160 420,160 250,160 80,70 250,70 420,70 590,70 760,70 930,250 760,70 930,70 1100,70 1270,70 1440,70 1610,160"/>
+  <circle class="node start" data-id="start" cx="80" cy="70" r="18"/>
+  <circle class="node" data-id="a1" cx="250" cy="70" r="18"/>
+  <circle class="node" data-id="a2" cx="420" cy="70" r="18"/>
+  <circle class="node" data-id="a3" cx="590" cy="70" r="18"/>
+  <circle class="node" data-id="a4" cx="760" cy="70" r="18"/>
+  <circle class="node" data-id="a5" cx="930" cy="70" r="18"/>
+  <circle class="node" data-id="a6" cx="1100" cy="70" r="18"/>
+  <circle class="node" data-id="a7" cx="1270" cy="70" r="18"/>
+  <circle class="node" data-id="a8" cx="1440" cy="70" r="18"/>
+  <circle class="node exit" data-id="exit" cx="1610" cy="160" r="18"/>
+  <circle class="node deadend" data-id="dz1" cx="250" cy="250" r="18"/>
+  <circle class="node deadend" data-id="dz2" cx="590" cy="340" r="18"/>
+  <circle class="node deadend" data-id="dz3" cx="930" cy="340" r="18"/>
+  <circle class="node deadend" data-id="dz4" cx="1100" cy="340" r="18"/>
+  <circle class="node deadend" data-id="dz5" cx="1440" cy="250" r="18"/>
+  <circle class="node deadend" data-id="dz6" cx="1610" cy="70" r="18"/>
+  <circle class="node" data-id="dl1a" cx="250" cy="160" r="18"/>
+  <circle class="node deadend" data-id="dl1b" cx="420" cy="160" r="18"/>
+  <circle class="node" data-id="dl2a" cx="420" cy="250" r="18"/>
+  <circle class="node deadend" data-id="dl2b" cx="590" cy="160" r="18"/>
+  <circle class="node deadend" data-id="dl2c" cx="590" cy="250" r="18"/>
+  <circle class="node" data-id="loop1" cx="590" cy="430" r="18"/>
+  <circle class="node" data-id="dl3a" cx="760" cy="160" r="18"/>
+  <circle class="node" data-id="dl3b" cx="930" cy="160" r="18"/>
+  <circle class="node deadend" data-id="dl3c" cx="1100" cy="160" r="18"/>
+  <circle class="node deadend" data-id="dl4a" cx="930" cy="250" r="18"/>
+  <circle class="node" data-id="dl5a" cx="1100" cy="250" r="18"/>
+  <circle class="node deadend" data-id="dl5b" cx="1270" cy="160" r="18"/>
+  <circle class="node" data-id="fp1" cx="1270" cy="250" r="18"/>
+  <circle class="node" data-id="fp2" cx="1440" cy="340" r="18"/>
+  <circle class="node deadend" data-id="fp3" cx="1440" cy="430" r="18"/>
+  <circle class="node deadend" data-id="dl7a" cx="1440" cy="160" r="18"/>
+  <text class="step" data-step="1" x="250" y="134">1</text>
+  <text class="step" data-step="2" x="420" y="134">2</text>
+  <text class="step" data-step="3" x="250" y="120">3</text>
+  <text class="step" data-step="4" x="80" y="44">4</text>
+  <text class="step" data-step="5" x="250" y="44">5</text>
+  <text class="step" data-step="6" x="420" y="44">6</text>
+  <text class="step" data-step="7" x="590" y="44">7</text>
+  <text class="step" data-step="8" x="760" y="44">8</text>
+  <text class="step" data-step="9" x="930" y="224">9</text>
+  <text class="step" data-step="10" x="760" y="30">10</text>
+  <text class="step" data-step="11" x="930" y="44">11</text>
+  <text class="step" data-step="12" x="1100" y="44">12</text>
+  <text class="step" data-step="13" x="1270" y="44">13</text>
+  <text class="step" data-step="14" x="1440" y="44">14</text>
+  <text class="step" data-step="15" x="1610" y="134">15</text>
+</svg>

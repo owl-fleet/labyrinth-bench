@@ -1,0 +1,53 @@
+{
+ "schema_version": 1,
+ "entry_id": "seed-model-qwen3-5-27b",
+ "lane": "model",
+ "origin": "board-seed",
+ "season": 0,
+ "source": {
+  "dataset": "results/e1a-table1/e1a_table1.json",
+  "arm": "control"
+ },
+ "artifacts": {
+  "harness_container": null,
+  "model_file": null
+ },
+ "model": {
+  "id": "qwen3-5-27b",
+  "display": "qwen3.5:27b",
+  "quantization": null,
+  "digest": null
+ },
+ "harness": {
+  "name": "standard",
+  "summary": "Accumulating context, no intervention \u2014 the pinned baseline harness.",
+  "open": true
+ },
+ "ceiling_row": false,
+ "runs": {
+  "n": 6,
+  "depths": [
+   9,
+   5,
+   18,
+   10,
+   9,
+   20
+  ],
+  "n_exit": 1,
+  "exit_rate": 0.16666666666666666,
+  "turns_mean": 30.5,
+  "turns_per_gate_mean": 2.6712962962962963,
+  "consistency_mean": 0.7998366013071895,
+  "elapsed_mean_s": 4530.221666666666
+ },
+ "score": {
+  "depth_median": 9.5,
+  "ci_lower_median": 7.5,
+  "bootstrap": {
+   "B": 10000,
+   "level": 0.95,
+   "seed": 1337
+  }
+ }
+}

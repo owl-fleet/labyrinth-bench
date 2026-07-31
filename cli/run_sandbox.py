@@ -16,7 +16,7 @@ The two labeled sections attack the rev-line failure (a model can't tell its own
 tokens from deterministic fact): notes = admitted-fallible working memory; state = ground truth.
 
 Scoring is deterministic (sub-goal depth + collateral via `docker diff` + efficiency); NO
-llm-judge. See plans/lb-hud-orchestration/08-external-validation-sandbox.md.
+llm-judge. Pre-registration: private lab notebook.
 
 Usage (inside lb-sandbox-harness, cwd /app):
   python cli/run_sandbox.py --rung 1 --arm managed-note --model qwen3:14b \\
@@ -33,6 +33,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 import time
@@ -90,9 +91,10 @@ _DONE_SYNS = {"done", "finish", "finished", "complete", "completed", "exit", "st
 _NOTE_SYNS = {"note", "notes", "todo", "plan", "remember", "scratchpad"}
 
 
-def build_system_prompt(briefing: str, arm: str, no_think: bool) -> str:
+def build_system_prompt(briefing: str, arm: str, no_think: bool,
+                        mechanics: str | None = None) -> str:
     has_np = arm in NOTEPAD_ARMS
-    mech = _SANDBOX_MECHANICS % {
+    mech = (mechanics or _SANDBOX_MECHANICS) % {
         "np_runfield": _NP_RUNFIELD if has_np else "",
         "np_actions": _NP_ACTIONS if has_np else "",
         "np_rules": _NP_RULES if has_np else "",
@@ -119,7 +121,7 @@ def run_session(rung_gen, base_url: str, model: str, arm: str, *,
                 no_think: bool, num_ctx: int | None, image: str,
                 seed: int | None, verbose: bool,
                 exec_timeout: int = 30, thrash_n: int = 4,
-                hard_backstop: int = 120,
+                hard_backstop: int = 120, stall_turns: int = 0,
                 stream_url: str | None = None, label: str | None = None) -> dict:
     rung = rung_gen(seed)
     has_np = arm in NOTEPAD_ARMS
@@ -128,7 +130,7 @@ def run_session(rung_gen, base_url: str, model: str, arm: str, *,
     backstop = max(rung.optimal_commits * 3, hard_backstop)
     options = {"num_ctx": num_ctx} if num_ctx else None
     llm = httpx.Client(base_url=base_url, timeout=600.0)
-    sys_prompt = build_system_prompt(rung.briefing, arm, no_think)
+    sys_prompt = build_system_prompt(rung.briefing, arm, no_think, rung.mechanics)
 
     target = Target(image=image)
     target.start()
@@ -142,6 +144,7 @@ def run_session(rung_gen, base_url: str, model: str, arm: str, *,
     turns_log: list[dict] = []
     cmd_count = malformed = malformed_streak = note_streak = notepad_updates = 0
     reasoning_total = est_ctx_peak = 0
+    best_progress, last_progress_turn = -1, 0   # stall detector (wipe arms, opt-in)
     overflow_turn: int | None = None
     failure_reason: str | None = None
     done = False
@@ -191,7 +194,8 @@ def run_session(rung_gen, base_url: str, model: str, arm: str, *,
                     c, rc, o, e = last_result
                     parts.append(f"[Last command]\n$ {c}\nexit={rc}\n"
                                  f"stdout:\n{_clip(o, 1200)}\nstderr:\n{_clip(e, 600)}")
-                state = read_state(target, rung.state_roots)
+                state = (rung.state_reader(target) if rung.state_reader
+                         else read_state(target, rung.state_roots))
                 parts.append(corrupt_state(state) if corrupt else state)
                 parts.append(f"[Task]\n{rung.briefing}")
                 call_messages = [{"role": "system", "content": sys_prompt},
@@ -202,6 +206,21 @@ def run_session(rung_gen, base_url: str, model: str, arm: str, *,
             est_ctx_peak = max(est_ctx_peak, est)
             if num_ctx and est > num_ctx and overflow_turn is None:
                 overflow_turn = turn
+
+            # Progress-aware stall detector (Will, 2026-07-18: iteration/failed
+            # experiments are free — only churn WITHOUT PROGRESS is a failure
+            # mode). Reads the "PASSED n/m" line a rung's state_reader pushes;
+            # kills only when best-checks-passed has not improved in
+            # `stall_turns` turns. Opt-in (--stall-turns), wipe-arms only.
+            if stall_turns and wipe:
+                m_prog = re.search(r"PASSED (\d+)/(\d+)", state)
+                if m_prog:
+                    cur = int(m_prog.group(1))
+                    if cur > best_progress:
+                        best_progress, last_progress_turn = cur, turn
+                    elif turn - last_progress_turn >= stall_turns:
+                        failure_reason = "stalled"
+                        break
 
             llm_json = _llm_call(llm, model, call_messages, options=options,
                                  think=False if no_think else None)
@@ -351,10 +370,16 @@ def main():
     ap.add_argument("--num-ctx", type=int, default=None)
     ap.add_argument("--image", default="lb-target:latest")
     ap.add_argument("--exec-timeout", type=int, default=30)
+    ap.add_argument("--backstop", type=int, default=120,
+                    help="hard turn ceiling (backstop = max(optimal_commits*3, this))")
+    ap.add_argument("--stall-turns", type=int, default=0,
+                    help="end the run 'stalled' if best-checks-passed (the PASSED n/m "
+                         "line in the curated state) hasn't improved in N turns; "
+                         "0 = off. Wipe arms with a verdict-pushing state_reader only.")
     ap.add_argument("--output", default="/results/sandbox.jsonl")
     ap.add_argument("--label", default=None)
     ap.add_argument("--stream-url", default=os.getenv("LB_STREAM_URL"),
-                    help="LB API base for live event relay (e.g. http://labyrinth-bench-sandbox:8090); "
+                    help="LB API base for live event relay (e.g. http://localhost:8090); "
                          "unset = no streaming (JSONL only)")
     ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
@@ -374,6 +399,7 @@ def main():
                     rung_gen, args.base_url, args.model, args.arm,
                     no_think=args.no_think, num_ctx=args.num_ctx, image=args.image,
                     seed=seed, verbose=args.verbose, exec_timeout=args.exec_timeout,
+                    hard_backstop=args.backstop, stall_turns=args.stall_turns,
                     stream_url=args.stream_url, label=args.label,
                 )
             except Exception as e:

@@ -1,0 +1,94 @@
+== Re-derivation pass: per-turn output volume (chars/turn, cell mean) ==
+model                                      arm        reason   text   total  turns  sec/turn
+deepseek-r1-70b                            control      1436    287    1723     46      89.1
+deepseek-r1-70b                            wiped        1623     64    1688    126     101.3
+
+gemma4-12b                                 control      3394     55    3449    159      16.5
+gemma4-12b                                 wiped        7181     70    7251    126      31.3
+
+gemma4-31b                                 control       386     43     429    230      34.4
+gemma4-31b                                 wiped         628     59     687     87      34.3
+
+glm-4-7-flash                              control      3879    130    4009     74      27.9
+glm-4-7-flash                              wiped        4092     63    4155    126      42.4
+
+gpt-oss-120b                               control       745     41     786    238      10.9
+gpt-oss-120b                               wiped         874     57     931    158       8.9
+
+hf-co-empero-ai-Qwythos-9B-Claude-Mythos-5-1M-GGUF-Q4_K_M control      1607    138    1745    114       3.8
+hf-co-empero-ai-Qwythos-9B-Claude-Mythos-5-1M-GGUF-Q4_K_M wiped        1358    122    1480    102       3.5
+
+llama3-3-70b                               control         0     42      42    206       4.7
+llama3-3-70b                               wiped           0     58      58     78       5.7
+
+llama4-scout                               control         0     48      48    132       6.2
+llama4-scout                               wiped           0     28      28    378       1.4
+
+ornith-9b                                  control      5313   2823    8136    158      12.6
+ornith-9b                                  wiped       17713  12766   30479     90      41.6
+
+qwen3-14b                                  control      2873     49    2922     72      10.4
+qwen3-14b                                  wiped        2588     58    2646    124       9.5
+
+qwen3-5-122b                               control      1822     43    1865    232      38.9
+qwen3-5-122b                               wiped        3262     61    3323    129      46.2
+
+qwen3-5-9b                                 control      3887   1344    5231    299      10.5
+qwen3-5-9b                                 wiped       63966  47152  111118    210     149.7
+
+qwen3-6-27b                                control       776     66     842    247      41.5
+qwen3-6-27b                                wiped        1863    171    2034    110      88.7
+
+== Perseveration pass: wrong-commit sequences (location, answer) ==
+llama3-3-70b control run0: depth=16 wrongs=[('n15', '153'), ('n15', '51'), ('n16', '326')]
+llama3-3-70b control run1: depth=15 wrongs=[('n14', '49'), ('n15', '153'), ('n15', '51')]
+llama3-3-70b control run2: depth=15 wrongs=[('n14', '49'), ('n15', '153'), ('n15', '51')]
+llama3-3-70b control run3: depth=15 wrongs=[('n14', '49'), ('n15', '153'), ('n15', '51')]
+llama3-3-70b control run4: depth=15 wrongs=[('n14', '49'), ('n15', '153'), ('n15', '51')]
+llama3-3-70b control run5: depth=15 wrongs=[('n14', '49'), ('n15', '153'), ('n15', '51')]
+llama3-3-70b wiped run0: depth=9 wrongs=[('n9', '35'), ('n9', '35'), ('n9', '35')]  <- PERSEVERATION (same gate, same answer)
+llama3-3-70b wiped run1: depth=9 wrongs=[('n9', '35'), ('n9', '35'), ('n9', '35')]  <- PERSEVERATION (same gate, same answer)
+llama3-3-70b wiped run2: depth=9 wrongs=[('n9', '35'), ('n9', '35'), ('n9', '35')]  <- PERSEVERATION (same gate, same answer)
+llama3-3-70b wiped run3: depth=9 wrongs=[('n9', '35'), ('n9', '35'), ('n9', '35')]  <- PERSEVERATION (same gate, same answer)
+llama3-3-70b wiped run4: depth=9 wrongs=[('n9', '35'), ('n9', '35'), ('n9', '35')]  <- PERSEVERATION (same gate, same answer)
+llama3-3-70b wiped run5: depth=9 wrongs=[('n9', '35'), ('n9', '35'), ('n9', '35')]  <- PERSEVERATION (same gate, same answer)
+
+llama4-scout control run0: depth=7 wrongs=[('n7', '46'), ('n7', '49'), ('n7', '10')]
+llama4-scout control run1: depth=10 wrongs=[('n7', '7+40'), ('n8', '19+47'), ('n9', '66-12')]
+llama4-scout control run2: depth=10 wrongs=[('n7', '7+40'), ('n8', '19+47'), ('n9', '66-12')]
+llama4-scout control run3: depth=7 wrongs=[('n7', '46'), ('n7', '49'), ('n7', '50')]
+llama4-scout control run4: depth=10 wrongs=[('n7', '7 + 40'), ('n8', '19 + 47'), ('n9', '66 - 12')]
+llama4-scout control run5: depth=10 wrongs=[('n7', '7+40'), ('n8', '19+47'), ('n9', '66-12')]
+llama4-scout wiped run0: depth=7 wrongs=[('n7', '7 + (no previous gate answer)'), ('n7', '15'), ('n7', '14')]
+llama4-scout wiped run1: depth=7 wrongs=[('n7', '7'), ('n7', '15'), ('n7', '14')]
+llama4-scout wiped run2: depth=7 wrongs=[('n7', '14'), ('n7', '7 + 40'), ('n7', '7 + (no previous gate answer)')]
+llama4-scout wiped run3: depth=7 wrongs=[('n6', '{"c1c": 18, "c2c": 22}'), ('n6', "{'function_name': 'add', 'args': [18, 22]}"), ('n6', '{"c1c": 18, "c2c": 22}')]
+llama4-scout wiped run4: depth=7 wrongs=[('n6', '{"c1c": 18, "c2c": 22}'), ('n7', '15'), ('n7', '7 + (no previous gate answer given)')]
+llama4-scout wiped run5: depth=7 wrongs=[('n7', '7'), ('n7', '15'), ('n7', '14')]
+
+gemma4-31b control run0: depth=20 wrongs=[]
+gemma4-31b control run1: depth=20 wrongs=[]
+gemma4-31b control run2: depth=20 wrongs=[]
+gemma4-31b control run3: depth=20 wrongs=[]
+gemma4-31b control run4: depth=20 wrongs=[]
+gemma4-31b control run5: depth=16 wrongs=[('n16', '6783'), ('n16', '6783'), ('n16', '6783')]  <- PERSEVERATION (same gate, same answer)
+gemma4-31b wiped run0: depth=10 wrongs=[('n10', '66'), ('n10', '66'), ('n10', '66')]  <- PERSEVERATION (same gate, same answer)
+gemma4-31b wiped run1: depth=11 wrongs=[('n9', '28'), ('n10', '66'), ('n11', '22')]
+gemma4-31b wiped run2: depth=14 wrongs=[('n11', '22'), ('n12', '62'), ('n14', '47')]
+gemma4-31b wiped run3: depth=9 wrongs=[('n9', '28'), ('n9', '28'), ('n9', '28')]  <- PERSEVERATION (same gate, same answer)
+gemma4-31b wiped run4: depth=10 wrongs=[('n9', '28'), ('n10', '66'), ('n10', '66')]
+gemma4-31b wiped run5: depth=9 wrongs=[('n9', '28'), ('n9', '28'), ('n9', '28')]  <- PERSEVERATION (same gate, same answer)
+
+qwen3-6-27b control run0: depth=20 wrongs=[]
+qwen3-6-27b control run1: depth=20 wrongs=[]
+qwen3-6-27b control run2: depth=20 wrongs=[('n7', '31')]
+qwen3-6-27b control run3: depth=20 wrongs=[]
+qwen3-6-27b control run4: depth=20 wrongs=[]
+qwen3-6-27b control run5: depth=20 wrongs=[]
+qwen3-6-27b wiped run0: depth=10 wrongs=[('n8', '59'), ('n8', '59'), ('n8', '59')]  <- PERSEVERATION (same gate, same answer)
+qwen3-6-27b wiped run1: depth=9 wrongs=[('n9', '28'), ('n9', '28'), ('n9', '28')]  <- PERSEVERATION (same gate, same answer)
+qwen3-6-27b wiped run2: depth=20 wrongs=[('n7', '29'), ('n9', '28'), ('n11', '22')]
+qwen3-6-27b wiped run3: depth=15 wrongs=[('n8', '59'), ('n8', '59'), ('n15', '280')]
+qwen3-6-27b wiped run4: depth=16 wrongs=[('n7', '29'), ('n12', '62'), ('n15', '280')]
+qwen3-6-27b wiped run5: depth=13 wrongs=[('n12', '62'), ('n12', '62'), ('n12', '62')]  <- PERSEVERATION (same gate, same answer)
+

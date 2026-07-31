@@ -1,5 +1,5 @@
 """Rung registry. Each module exposes `generate(seed=None) -> Rung`."""
-from sandbox.rungs import rung0, rung1, rung2, rung3
+from sandbox.rungs import rung0, rung1, rung2, rung3, rung_renderer
 
 REGISTRY = {
     "0": rung0.generate,
@@ -10,6 +10,7 @@ REGISTRY = {
     "rung2": rung2.generate,
     "3": rung3.generate,
     "rung3": rung3.generate,
+    "renderer": rung_renderer.generate,   # needs --image lb-target-py:latest
 }
 
 

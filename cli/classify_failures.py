@@ -1,7 +1,7 @@
 """classify_failures.py — wrong-answer mechanism classifier over rev-2 results JSONL.
 
 The registered mechanism metric for the look-gate + cohort addendum
-(plans/lb-hud-orchestration/13-look-gate-and-cohort-addendum.md). Promoted from the
+(private lab notebook). Promoted from the
 2026-07-05 Wali-navigator failure postmortem, which found 46/48 wrong answers across
 both arms were UNOBSERVED GUESSES (a commit answering a gate at a node never observed
 since arrival, on gates whose answers are stated in the problem text).
@@ -15,7 +15,7 @@ For each wrong commit in each run it classifies:
 Reads the DEG yaml (for the ladder + variable timeline) and one-or-more results JSONL
 files; prints per-run rows and per-file aggregates. Read-only.
 
-  docker exec labyrinth-bench-sandbox python cli/classify_failures.py \
+  python cli/classify_failures.py \
       --deg rev-2 /results/rev2-look-gate-14b.jsonl /results/rev2-control-14b-topup.jsonl
 """
 from __future__ import annotations

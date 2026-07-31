@@ -1,0 +1,186 @@
+{
+  "session_id": "e014d52f-418d-4d1e-a628-5a364132f812",
+  "deg_id": "alpha-2",
+  "model": "gpt-oss:120b",
+  "found_exit": true,
+  "steps_to_exit": 15,
+  "step_budget": 36,
+  "optimal_commits": 9,
+  "events": [
+    {
+      "action": "observe",
+      "node_id": "start",
+      "steps_used": 0,
+      "outcome": null,
+      "gate_correct": null
+    },
+    {
+      "action": "commit",
+      "node_id": "dl1a",
+      "steps_used": 1,
+      "outcome": "ok",
+      "gate_correct": null
+    },
+    {
+      "action": "observe",
+      "node_id": "dl1a",
+      "steps_used": 1,
+      "outcome": null,
+      "gate_correct": null
+    },
+    {
+      "action": "commit",
+      "node_id": "dl1b",
+      "steps_used": 2,
+      "outcome": "dead_end",
+      "gate_correct": null
+    },
+    {
+      "action": "commit",
+      "node_id": "dl1a",
+      "steps_used": 3,
+      "outcome": "back",
+      "gate_correct": null
+    },
+    {
+      "action": "commit",
+      "node_id": "start",
+      "steps_used": 4,
+      "outcome": "back",
+      "gate_correct": null
+    },
+    {
+      "action": "commit",
+      "node_id": "a1",
+      "steps_used": 5,
+      "outcome": "ok",
+      "gate_correct": true
+    },
+    {
+      "action": "observe",
+      "node_id": "a1",
+      "steps_used": 5,
+      "outcome": null,
+      "gate_correct": null
+    },
+    {
+      "action": "commit",
+      "node_id": "a2",
+      "steps_used": 6,
+      "outcome": "ok",
+      "gate_correct": null
+    },
+    {
+      "action": "observe",
+      "node_id": "a2",
+      "steps_used": 6,
+      "outcome": null,
+      "gate_correct": null
+    },
+    {
+      "action": "commit",
+      "node_id": "a3",
+      "steps_used": 7,
+      "outcome": "ok",
+      "gate_correct": true
+    },
+    {
+      "action": "observe",
+      "node_id": "a3",
+      "steps_used": 7,
+      "outcome": null,
+      "gate_correct": null
+    },
+    {
+      "action": "commit",
+      "node_id": "a4",
+      "steps_used": 8,
+      "outcome": "ok",
+      "gate_correct": null
+    },
+    {
+      "action": "observe",
+      "node_id": "a4",
+      "steps_used": 8,
+      "outcome": null,
+      "gate_correct": null
+    },
+    {
+      "action": "commit",
+      "node_id": "dl4a",
+      "steps_used": 9,
+      "outcome": "dead_end",
+      "gate_correct": null
+    },
+    {
+      "action": "commit",
+      "node_id": "a4",
+      "steps_used": 10,
+      "outcome": "back",
+      "gate_correct": null
+    },
+    {
+      "action": "commit",
+      "node_id": "a5",
+      "steps_used": 11,
+      "outcome": "ok",
+      "gate_correct": true
+    },
+    {
+      "action": "observe",
+      "node_id": "a5",
+      "steps_used": 11,
+      "outcome": null,
+      "gate_correct": null
+    },
+    {
+      "action": "commit",
+      "node_id": "a6",
+      "steps_used": 12,
+      "outcome": "ok",
+      "gate_correct": true
+    },
+    {
+      "action": "observe",
+      "node_id": "a6",
+      "steps_used": 12,
+      "outcome": null,
+      "gate_correct": null
+    },
+    {
+      "action": "commit",
+      "node_id": "a7",
+      "steps_used": 13,
+      "outcome": "ok",
+      "gate_correct": null
+    },
+    {
+      "action": "observe",
+      "node_id": "a7",
+      "steps_used": 13,
+      "outcome": null,
+      "gate_correct": null
+    },
+    {
+      "action": "commit",
+      "node_id": "a8",
+      "steps_used": 14,
+      "outcome": "ok",
+      "gate_correct": true
+    },
+    {
+      "action": "observe",
+      "node_id": "a8",
+      "steps_used": 14,
+      "outcome": null,
+      "gate_correct": null
+    },
+    {
+      "action": "commit",
+      "node_id": "exit",
+      "steps_used": 15,
+      "outcome": "exit",
+      "gate_correct": true
+    }
+  ]
+}

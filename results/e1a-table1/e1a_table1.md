@@ -4,38 +4,40 @@
 
 ## Table 1 — per cell
 
-| Model | Arm | n (valid/err) | depths (of 20) | median | exit | turns | consist. | obs/com |
-|---|---|---|---|---|---|---|---|---|
-| deepseek-r1-70b | control | 6/0 | 1,1,1,1,1,4 | 1.00 | 0% | 7.7 | 6% | 0.15 |
-|  | wiped | 6/0 | 20,20,20,20,20,20 | 20.00 | 100% | 21.0 | 95% | 0.00 |
-| gemma4-12b | control | 6/0 | 1,5,9,19,20,20 | 14.00 | 33% | 26.5 | 69% | 0.74 |
-|  | wiped | 6/0 | 20,20,20,20,20,20 | 20.00 | 100% | 21.0 | 94% | 0.00 |
-| gemma4-31b | control | 6/0 | 16,20,20,20,20,20 | 20.00 | 83% | 38.3 | 99% | 0.92 |
-|  | wiped | — | — | — | — | — | — | — |
-| glm-4-7-flash | control | 6/0 | 2,3,4,5,6,7 | 4.50 | 0% | 12.3 | 73% | 0.38 |
-|  | wiped | 6/0 | 20,20,20,20,20,20 | 20.00 | 100% | 21.0 | 95% | 0.00 |
-| gpt-oss-120b | control | 6/0 | 13,20,20,20,20,20 | 20.00 | 83% | 39.7 | 93% | 0.93 |
-|  | wiped | — | — | — | — | — | — | — |
-| hf-co-InternScience-Agents-A1-Q4_K_M-GGUF | control | 6/3 | 13,17,19,19,20,20 | 19.00 | 33% | 44.5 | 88% | 1.03 |
-|  | wiped | — | — | — | — | — | — | — |
-| hf-co-empero-ai-Qwythos-9B-Claude-Mythos-5-1M-GGUF-Q4_K_M | control | 6/1 | 1,1,1,2,2,4 | 1.50 | 0% | 19.0 | 0% | 1.08 |
-|  | wiped | 6/0 | 5,7,7,7,7,7 | 7.00 | 0% | 17.0 | 64% | 0.18 |
-| llama3-3-70b | control | 6/0 | 15,15,15,15,15,16 | 15.00 | 0% | 34.3 | 86% | 0.79 |
-|  | wiped | 6/0 | 9,9,9,9,9,9 | 9.00 | 0% | 13.0 | 88% | 0.00 |
-| llama4-scout | control | 6/0 | 7,7,10,10,10,10 | 10.00 | 0% | 22.0 | 65% | 0.69 |
-|  | wiped | 6/0 | 7,7,7,7,7,7 | 7.00 | 0% | 63.0 | 80% | 4.74 |
-| ornith-9b | control | 6/0 | 1,1,1,2,2,5 | 1.50 | 0% | 26.3 | 29% | 4.14 |
-|  | wiped | 6/0 | 7,7,7,9,12,13 | 8.00 | 0% | 15.0 | 68% | 0.13 |
-| qwen3-14b | control | 6/0 | 3,3,4,5,5,8 | 4.50 | 0% | 12.0 | 55% | 0.37 |
-|  | wiped | 6/0 | 12,20,20,20,20,20 | 20.00 | 83% | 20.7 | 92% | 0.00 |
-| qwen3-5-122b | control | 6/0 | 12,20,20,20,20,20 | 20.00 | 83% | 38.7 | 90% | 0.85 |
-|  | wiped | — | — | — | — | — | — | — |
-| qwen3-5-27b | control | 6/1 | 5,9,9,10,18,20 | 9.50 | 17% | 30.5 | 80% | 0.80 |
-|  | wiped | — | — | — | — | — | — | — |
-| qwen3-5-9b | control | 6/0 | 2,2,4,5,7,8 | 4.50 | 0% | 49.8 | 50% | 4.91 |
-|  | wiped | 6/0 | 12,16,17,17,17,18 | 17.00 | 0% | 35.0 | 80% | 0.66 |
-| qwen3-6-27b | control | 6/0 | 20,20,20,20,20,20 | 20.00 | 100% | 41.2 | 99% | 0.95 |
-|  | wiped | — | — | — | — | — | — | — |
+| Model | Arm | n (valid/err) | depths (of 20, run order) | median | mean ± SEM | exit | turns | consist. | obs/com |
+|---|---|---|---|---|---|---|---|---|---|
+| deepseek-r1-70b | control | 6/0 | 1,1,1,1,1,4 | 1.00 | 1.50 ± 0.50 | 0% | 7.7 | 6% | 0.15 |
+|  | wiped | 6/0 | 20,20,20,20,20,20 | 20.00 | 20.00 ± 0.00 | 100% | 21.0 | 95% | 0.00 |
+| gemma4-12b | control | 6/0 | 19,5,1,20,20,9 | 14.00 | 12.33 ± 3.44 | 33% | 26.5 | 69% | 0.74 |
+|  | wiped | 6/0 | 20,20,20,20,20,20 | 20.00 | 20.00 ± 0.00 | 100% | 21.0 | 94% | 0.00 |
+| gemma4-31b | control | 6/0 | 20,20,20,20,20,16 | 20.00 | 19.33 ± 0.67 | 83% | 38.3 | 99% | 0.92 |
+|  | wiped | 6/0 | 10,11,14,9,10,9 | 10.00 | 10.50 ± 0.76 | 0% | 14.5 | 81% | 0.00 |
+| glm-4-7-flash | control | 6/0 | 6,7,3,2,4,5 | 4.50 | 4.50 ± 0.76 | 0% | 12.3 | 73% | 0.38 |
+|  | wiped | 6/0 | 20,20,20,20,20,20 | 20.00 | 20.00 ± 0.00 | 100% | 21.0 | 95% | 0.00 |
+| gpt-oss-120b | control | 6/0 | 13,20,20,20,20,20 | 20.00 | 18.83 ± 1.17 | 83% | 39.7 | 93% | 0.93 |
+|  | wiped | 6/0 | 16,20,20,20,20,20 | 20.00 | 19.33 ± 0.67 | 83% | 26.3 | 95% | 0.01 |
+| hf-co-InternScience-Agents-A1-Q4_K_M-GGUF | control | 6/3 | 20,13,20,19,19,17 | 19.00 | 18.00 ± 1.10 | 33% | 44.5 | 88% | 1.03 |
+|  | wiped | — | — | — | — | — | — | — | — |
+| hf-co-empero-ai-Qwythos-9B-Claude-Mythos-5-1M-GGUF-Q4_K_M | control | 6/1 | 4,1,1,2,2,1 | 1.50 | 1.83 ± 0.48 | 0% | 19.0 | 0% | 1.08 |
+|  | wiped | 6/0 | 5,7,7,7,7,7 | 7.00 | 6.67 ± 0.33 | 0% | 17.0 | 64% | 0.18 |
+| llama3-3-70b | control | 6/0 | 16,15,15,15,15,15 | 15.00 | 15.17 ± 0.17 | 0% | 34.3 | 86% | 0.79 |
+|  | wiped | 6/0 | 9,9,9,9,9,9 | 9.00 | 9.00 ± 0.00 | 0% | 13.0 | 88% | 0.00 |
+| llama4-scout | control | 6/0 | 7,10,10,7,10,10 | 10.00 | 9.00 ± 0.63 | 0% | 22.0 | 65% | 0.69 |
+|  | wiped | 6/0 | 7,7,7,7,7,7 | 7.00 | 7.00 ± 0.00 | 0% | 63.0 | 80% | 4.74 |
+| ornith-9b | control | 6/0 | 5,1,2,2,1,1 | 1.50 | 2.00 ± 0.63 | 0% | 26.3 | 29% | 4.14 |
+|  | wiped | 6/0 | 7,13,7,12,9,7 | 8.00 | 9.17 ± 1.11 | 0% | 15.0 | 68% | 0.13 |
+| qwen3-14b | control | 6/0 | 3,5,4,5,3,8 | 4.50 | 4.67 ± 0.76 | 0% | 12.0 | 55% | 0.37 |
+|  | wiped | 6/0 | 20,20,20,12,20,20 | 20.00 | 18.67 ± 1.33 | 83% | 20.7 | 92% | 0.00 |
+| qwen3-5-122b | control | 6/0 | 20,20,20,20,12,20 | 20.00 | 18.67 ± 1.33 | 83% | 38.7 | 90% | 0.85 |
+|  | wiped | 6/0 | 20,20,20,20,20,20 | 20.00 | 20.00 ± 0.00 | 100% | 21.5 | 92% | 0.00 |
+| qwen3-5-27b | control | 6/1 | 9,5,18,10,9,20 | 9.50 | 11.83 ± 2.39 | 17% | 30.5 | 80% | 0.80 |
+|  | wiped | — | — | — | — | — | — | — | — |
+| qwen3-5-9b | control | 6/0 | 4,7,2,5,8,2 | 4.50 | 4.67 ± 1.02 | 0% | 49.8 | 50% | 4.91 |
+|  | wiped | 6/0 | 17,12,17,17,16,18 | 17.00 | 16.17 ± 0.87 | 0% | 35.0 | 80% | 0.66 |
+| qwen3-6-27b | control | 6/0 | 20,20,20,20,20,20 | 20.00 | 20.00 ± 0.00 | 100% | 41.2 | 99% | 0.95 |
+|  | wiped | 6/0 | 10,9,20,15,16,13 | 14.00 | 13.83 ± 1.66 | 17% | 18.3 | 82% | 0.03 |
+
+*n (valid/err) = completed runs / errored attempts. An errored attempt records only its failure cause — no partial depth data enters the table — and the campaign retried until n=6 valid.* Errors in this dataset: hf-co-InternScience-Agents-A1-Q4_K_M-GGUF (control): Client error '400 Bad Request' from the model host endpoint ×3; hf-co-empero-ai-Qwythos-9B-Claude-Mythos-5-1M-GGUF-Q4_K_M (control): unhashable type: 'dict'; qwen3-5-27b (control): timed out.
 
 ## Table 1b — paired contrast (the headline test)
 
@@ -43,16 +45,38 @@
 |---|---|---|---|---|---|
 | deepseek-r1-70b | 1.00 | 20.00 | 19.00 | ✅ |  |
 | gemma4-12b | 14.00 | 20.00 | 6.00 | ✅ |  |
-| gemma4-31b | 20.00 | — | — | — | ceiling row (control at 20 — instrument range, not lever failure); wiped arm not run |
+| gemma4-31b | 20.00 | 10.00 | -10.00 | — | ceiling row — A3 efficiency arm (depth falsifier N/A; readout = Table 1c + exit non-inferiority) |
 | glm-4-7-flash | 4.50 | 20.00 | 15.50 | ✅ |  |
-| gpt-oss-120b | 20.00 | — | — | — | ceiling row (control at 20 — instrument range, not lever failure); wiped arm not run |
+| gpt-oss-120b | 20.00 | 20.00 | 0.00 | — | ceiling row — A3 efficiency arm (depth falsifier N/A; readout = Table 1c + exit non-inferiority) |
 | hf-co-InternScience-Agents-A1-Q4_K_M-GGUF | 19.00 | — | — | — | control-only (no wiped arm run) |
 | hf-co-empero-ai-Qwythos-9B-Claude-Mythos-5-1M-GGUF-Q4_K_M | 1.50 | 7.00 | 5.50 | ✅ |  |
 | llama3-3-70b | 15.00 | 9.00 | -6.00 | — |  |
 | llama4-scout | 10.00 | 7.00 | -3.00 | — |  |
 | ornith-9b | 1.50 | 8.00 | 6.50 | ✅ |  |
 | qwen3-14b | 4.50 | 20.00 | 15.50 | ✅ |  |
-| qwen3-5-122b | 20.00 | — | — | — | ceiling row (control at 20 — instrument range, not lever failure); wiped arm not run |
+| qwen3-5-122b | 20.00 | 20.00 | 0.00 | — | ceiling row — A3 efficiency arm (depth falsifier N/A; readout = Table 1c + exit non-inferiority) |
 | qwen3-5-27b | 9.50 | — | — | — | control-only (no wiped arm run) |
 | qwen3-5-9b | 4.50 | 17.00 | 12.50 | ✅ |  |
-| qwen3-6-27b | 20.00 | — | — | — | ceiling row (control at 20 — instrument range, not lever failure); wiped arm not run |
+| qwen3-6-27b | 20.00 | 14.00 | -6.00 | — | ceiling row — A3 efficiency arm (depth falsifier N/A; readout = Table 1c + exit non-inferiority) |
+
+## Table 1c — turns-per-gate efficiency (reported, never gating)
+
+*Per-run turns ÷ ramp depth (turns spent per gate cleared); cell mean ± SEM. Read jointly with depth — the ratio conflates progress rate with post-stall flailing, and lives/turn-budget truncation ends runs early. A lower wiped ratio at LOWER depth (e.g. a fast shallow stall) is not a win. Elapsed wall-clock is uncontrolled across arms (non-interleaved lanes, different hosts, and per-turn prefill differs: the wiped overlay changes the prompt prefix every turn) — turns is the load-independent readout.*
+
+| Model | depth median (c→w) | turns/gate control | turns/gate wiped | w/c | elapsed mean, min (c→w) |
+|---|---|---|---|---|---|
+| deepseek-r1-70b | 1.00 → 20.00 | 5.54 ± 0.54 | 1.05 ± 0.02 | 0.19 | 11.4 → 35.4 |
+| gemma4-12b | 14.00 → 20.00 | 2.66 ± 0.48 | 1.05 ± 0.02 | 0.39 | 7.3 → 11.0 |
+| gemma4-31b | 20.00 → 10.00 | 1.99 ± 0.04 | 1.39 ± 0.02 | 0.70 | 22.0 → 8.3 |
+| glm-4-7-flash | 4.50 → 20.00 | 3.02 ± 0.41 | 1.05 ± 0.01 | 0.35 | 5.7 → 14.9 |
+| gpt-oss-120b | 20.00 → 20.00 | 2.12 ± 0.04 | 1.38 ± 0.12 | 0.65 | 7.2 → 3.9 |
+| hf-co-InternScience-Agents-A1-Q4_K_M-GGUF | 19.00 | 2.49 ± 0.18 | — | — | 33.2 |
+| hf-co-empero-ai-Qwythos-9B-Claude-Mythos-5-1M-GGUF-Q4_K_M | 1.50 → 7.00 | 15.46 ± 5.57 | 2.57 ± 0.19 | 0.17 | 1.2 → 1.0 |
+| llama3-3-70b | 15.00 → 9.00 | 2.26 ± 0.00 | 1.44 ± 0.00 | 0.64 | 2.7 → 1.2 |
+| llama4-scout | 10.00 → 7.00 | 2.46 ± 0.04 | 9.00 ± 3.82 | 3.66 | 2.3 → 1.4 |
+| ornith-9b | 1.50 → 8.00 | 14.13 ± 5.38 | 1.64 ± 0.03 | 0.12 | 5.5 → 10.4 |
+| qwen3-14b | 4.50 → 20.00 | 2.67 ± 0.13 | 1.13 ± 0.06 | 0.42 | 2.1 → 3.3 |
+| qwen3-5-122b | 20.00 → 20.00 | 2.09 ± 0.05 | 1.07 ± 0.02 | 0.51 | 25.1 → 16.6 |
+| qwen3-5-27b | 9.50 | 2.67 ± 0.11 | — | — | 75.5 |
+| qwen3-5-9b | 4.50 → 17.00 | 19.08 ± 14.30 | 2.16 ± 0.08 | 0.11 | 8.7 → 87.3 |
+| qwen3-6-27b | 20.00 → 14.00 | 2.06 ± 0.04 | 1.34 ± 0.03 | 0.65 | 28.5 → 27.1 |

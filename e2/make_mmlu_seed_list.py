@@ -2,8 +2,8 @@
 
 Produces mmlu_seed_list.json: a stratified 150-item subset of classic MMLU
 (cais/mmlu, split=test, 14,042 items, 57 subjects), committed BEFORE any E2 run
-per the approved pre-registration (plans/lb-cohort-campaign-prereg.md, LOCKED
-2026-07-06). Deterministic: fixed seed, sorted subject order, sorted sample
+per the approved pre-registration (LOCKED 2026-07-06; published in the data
+annex). Deterministic: fixed seed, sorted subject order, sorted sample
 indices; the JSON records the dataset revision and a content sha256 so any
 drift in the upstream dataset is detectable.
 
@@ -14,8 +14,7 @@ order.
 
   python3 e2/make_mmlu_seed_list.py
 
-Read-only against Hugging Face's datasets-server REST API; no LLM calls, so it
-talks directly to an OpenAI-compatible endpoint.
+Read-only against Hugging Face's datasets-server REST API; makes no LLM calls.
 """
 from __future__ import annotations
 

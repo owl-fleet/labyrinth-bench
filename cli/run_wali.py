@@ -1,6 +1,6 @@
 """run_wali.py — treatment-arm driver for the Wali-as-navigator experiment.
 
-Inverted driver: one LB session + ONE chat request to the dedicated wali-eval container,
+Inverted driver: one LB session + ONE chat request to the dedicated Wali navigator endpoint,
 whose own ReAct loop drives maze_act calls against the LB /act API. This harness never
 resends history — Wali's loop owns the context management, which is the variable under
 test. LB scores the session externally (GET /score — the guardian's verdict).
@@ -9,11 +9,10 @@ Writes one results-JSONL row per run, schema-compatible with run_eval.py's score
 (same field names → pooled analysis unchanged) plus the validity-gate fields the prereg
 requires: wali_parse_failures, divergent_turns, pct_invalid_turns.
 
-Prereg (LOCKED): recorded in the lab notebook (private pre-registration of record)
-Runbook:        private lab notebook
+Prereg (LOCKED) and runbook: private lab notebook.
 
-Usage (inside the labyrinth-bench-sandbox container — it resolves wali-eval on `ai`
-and mounts /results):
+Usage (inside a sandbox container that can reach the navigator endpoint and
+mounts /results):
 
   python cli/run_wali.py --deg alpha-1 --output /results/wali-smoke.jsonl --label wali-smoke
   python cli/run_wali.py --deg rev-2 --output /results/rev2-wali-14b.jsonl --label rev2-wali-14b
@@ -282,7 +281,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--deg", default="alpha-1")
     ap.add_argument("--lb-url", default="http://localhost:8090")
-    ap.add_argument("--wali-url", default="http://wali-eval:11440")
+    ap.add_argument("--wali-url", default="http://localhost:11440")
     ap.add_argument("--model", default="qwen3:14b")
     ap.add_argument("--runs", type=int, default=1)
     ap.add_argument("--output", default="/results/results.jsonl")

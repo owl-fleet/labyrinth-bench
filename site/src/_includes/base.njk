@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ title }} · LabyrinthBench</title>
+<meta name="description" content="{{ description or 'LabyrinthBench — a deterministic multi-turn benchmark for local models.' }}">
+<link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+<header class="site-header">
+  <nav>
+    <a class="brand" href="/">LabyrinthBench</a>
+    <a href="/" {% if page.url == '/' %}aria-current="page"{% endif %}>Leaderboard</a>
+    <a href="/methodology/" {% if page.url == '/methodology/' %}aria-current="page"{% endif %}>Methodology</a>
+    <a href="/data/" {% if page.url == '/data/' %}aria-current="page"{% endif %}>Data</a>
+    <a href="https://github.com/owl-fleet/labyrinth-bench">Repo</a>
+  </nav>
+</header>
+<main>
+{{ content | safe }}
+</main>
+<footer class="site-footer">
+  <p>Deterministic scoring — no LLM anywhere in the judging loop. Every number on this site traces to a raw run log in the <a href="/data/">data annex</a>.</p>
+</footer>
+</body>
+</html>

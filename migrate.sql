@@ -1,6 +1,6 @@
 -- LabyrinthBench TimescaleDB schema
--- Run once against the existing timescaledb instance (ai stack)
--- Pattern mirrors thunderdome_results; one run row per session.
+-- Run once against your TimescaleDB/Postgres instance.
+-- One run row per session.
 
 CREATE TABLE IF NOT EXISTS labyrinth_runs (
     ts               TIMESTAMPTZ     NOT NULL DEFAULT NOW(),
@@ -36,3 +36,10 @@ CREATE INDEX IF NOT EXISTS lb_label_ts      ON labyrinth_runs (run_label, ts DES
 ALTER TABLE labyrinth_runs ADD COLUMN IF NOT EXISTS chain_gate_count INT;
 ALTER TABLE labyrinth_runs ADD COLUMN IF NOT EXISTS chain_accuracy FLOAT;
 ALTER TABLE labyrinth_runs ADD COLUMN IF NOT EXISTS knowledge_state_consistency FLOAT;
+
+-- lb-post-release chunk 02 (2026-07-15): provenance columns — the standing gate. base_url is
+-- always known; n_ctx_slot is the operator-supplied journal-verified context window (never the
+-- CLI --num-ctx flag, which ollama's /v1 endpoint silently drops — the effective-context confound
+-- has burned two result sets already).
+ALTER TABLE labyrinth_runs ADD COLUMN IF NOT EXISTS base_url TEXT;
+ALTER TABLE labyrinth_runs ADD COLUMN IF NOT EXISTS n_ctx_slot INT;

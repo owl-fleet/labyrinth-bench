@@ -1,0 +1,52 @@
+{
+ "schema_version": 1,
+ "entry_id": "seed-harness-qwen3-14b-wiped-curated",
+ "lane": "harness",
+ "origin": "board-seed",
+ "season": 0,
+ "source": {
+  "dataset": "results/e1a-table1/e1a_table1.json",
+  "arm": "wiped"
+ },
+ "artifacts": {
+  "harness_container": null,
+  "model_file": null
+ },
+ "pinned_model": {
+  "id": "qwen3-14b",
+  "display": "qwen3:14b",
+  "quantization": "Q4_K_M",
+  "digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8"
+ },
+ "harness": {
+  "name": "wiped-curated",
+  "summary": "History wiped each turn; a curated note overlay is the only carried state.",
+  "open": true
+ },
+ "runs": {
+  "n": 6,
+  "depths": [
+   20,
+   20,
+   20,
+   12,
+   20,
+   20
+  ],
+  "n_exit": 5,
+  "exit_rate": 0.8333333333333334,
+  "turns_mean": 20.666666666666668,
+  "turns_per_gate_mean": 1.1277777777777778,
+  "consistency_mean": 0.9203703703703704,
+  "elapsed_mean_s": 197.15666666666667
+ },
+ "score": {
+  "depth_median": 20.0,
+  "ci_lower_median": 16.0,
+  "bootstrap": {
+   "B": 10000,
+   "level": 0.95,
+   "seed": 1337
+  }
+ }
+}

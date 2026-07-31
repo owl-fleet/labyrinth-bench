@@ -1,0 +1,53 @@
+{
+ "schema_version": 1,
+ "entry_id": "seed-model-llama4-scout",
+ "lane": "model",
+ "origin": "board-seed",
+ "season": 0,
+ "source": {
+  "dataset": "results/e1a-table1/e1a_table1.json",
+  "arm": "control"
+ },
+ "artifacts": {
+  "harness_container": null,
+  "model_file": null
+ },
+ "model": {
+  "id": "llama4-scout",
+  "display": "llama4:scout",
+  "quantization": null,
+  "digest": null
+ },
+ "harness": {
+  "name": "standard",
+  "summary": "Accumulating context, no intervention \u2014 the pinned baseline harness.",
+  "open": true
+ },
+ "ceiling_row": false,
+ "runs": {
+  "n": 6,
+  "depths": [
+   7,
+   10,
+   10,
+   7,
+   10,
+   10
+  ],
+  "n_exit": 0,
+  "exit_rate": 0.0,
+  "turns_mean": 22.0,
+  "turns_per_gate_mean": 2.4571428571428573,
+  "consistency_mean": 0.6481481481481483,
+  "elapsed_mean_s": 135.61666666666667
+ },
+ "score": {
+  "depth_median": 10.0,
+  "ci_lower_median": 7.0,
+  "bootstrap": {
+   "B": 10000,
+   "level": 0.95,
+   "seed": 1337
+  }
+ }
+}
