@@ -1,81 +1,159 @@
+<div align="center">
+
 # LabyrinthBench
 
-A deterministic multi-turn benchmark for language-model agents. The model navigates a maze of **gates** — checkpoints with mechanically verifiable answers — toward a single objective, the **exit**. No LLM sits anywhere in the judging loop: a run's score is the deepest gate it cleared, re-derivable from its trace by anyone.
+**A deterministic multi-turn benchmark for language-model agents — no LLM judge anywhere — with a built-in harness for testing whatever context-management strategy you can imagine.**
 
-**Who it's for:** people running local models who want to know what an agent actually does over 30 turns.
-**What it is:** a deterministic multi-turn benchmark. No judge. The goalpost is set: get to the exit.
+[**Leaderboard**](https://labyrinthbench.ai) · [**Data annex**](https://labyrinthbench.ai/data) · [**Board rules**](METHODOLOGY.md) · [**Quickstart**](QUICKSTART.md)
+
+</div>
+
+If you've ever played a text based game, you already have a pretty good idea of how this benchmark works. The model wakes up in a maze it can't see, reads what the current room gives it, types commands, and hunts for the exit. Between it and the exit stand a number of **gates** that are impassable until solved. Gate problems have objective answers that are scored deterministically and range in difficulty from simple arithmetic to complex multistep recall and synthesis. A run's score is the deepest gate it cleared, re-derivable by anyone from the trace — the full recorded log of the run.
+
+That's the whole benchmark: can a model carry what it learned at gate 3 into a decision at gate 19, and act on it when it counts? I went looking for a test that measured that and couldn't find one, so I built it.
+
+Here's what a run looks like, live — a 14B model exploring one of the maze maps, the route drawing itself on the map as the action log fills in below:
+
+![A live run in the watch view: the map above, the action log below](docs/assets/watch.gif)
+
+**Who it's for:** people who run agentic AI models and want to know what one actually does 30 turns into a task.
+**What it is:** a deterministically scored multi-turn benchmark.
 **When to use it:** before trusting a model in a long-horizon loop; when tuning a context strategy.
-**Where it runs:** any OpenAI-compatible endpoint; Ollama on your own rig is the designed case.
-**Why it exists:** it measures retention under interference — the thing accumulating-context chat benchmarks can't see — and scores it without an LLM anywhere in the loop.
-
-Leaderboard: [labyrinthbench.ai](https://labyrinthbench.ai) · Data annex: [labyrinthbench.ai/data](https://labyrinthbench.ai/data) · Board rules: [METHODOLOGY.md](METHODOLOGY.md)
+**Where it runs:** any OpenAI-compatible endpoint (Ollama, LM Studio, llama.cpp, etc.)
+**Why it exists:** it measures what an agent retains — and correctly reuses — as its own context piles up against it, scored without an LLM judge; the built-in harness lets you test the context strategies that are supposed to help.
 
 ---
 
-## The headline result: wiping history beat keeping it — in 7 of 9 models
+## Why I built it
 
-On a 20-gate maze where later gates reference earlier answers, wiping a model's context every turn and re-injecting only its own recorded gate answers raised median depth by ≥5 gates — the pre-registered threshold, committed before any wiped run — in **7 of 9** models whose unaided baseline sat below the ceiling (n = 6 runs per model per condition, 13-model cohort).
+I think just about everyone who's used AI for any meaningful amount of time has run into this scenario: you make a great plan with the AI and get most of the way through it — then you hit the context limit. You reluctantly hit "compact" or equivalent and keep going, and everything eventually comes off the rails, because the compaction removed something weight-bearing. Compaction has to decide what gets cut and what gets carried forward — and what comes out the other side is effectively a new session. It isn't THAT big of a surprise when the AI starts to do something that is clearly based on a misunderstanding or miscommunication: "It's time for me to come clean. You expressly told me not to do that and I did it anyway". This is an unfortunately common user experience, and personally makes me want to see how far I can throw my keyboard in the aftermath.
 
-![Paired control vs wiped runs, per model](results/e1a-table1/e1a_table1_paired_stripplot.png)
+I want to know if we can objectively measure what breaks when context gets cut — and whether deterministic tools can stop it breaking. I didn't feel confident that it could be done with any of the current benchmarks, and I have felt pretty strongly that we can and **should** be benchmarking AI models with deterministic tests that can be objectively scored without the involvement of any type of AI judge. So, I built a new benchmark that:
 
-- **The gains are large.** deepseek-r1:70b +19 (median 1 → 20), glm-4.7-flash +15.5, qwen3:14b +15.5, qwen3.5:9b +12.5, gemma4:12b +6, ornith:9b +6.5, Qwythos-9B +5.5. Four of the seven reached the exit outright — control exit rates of 0–33% became 83–100%.
-- **Two models got worse.** llama3.3:70b −6 (15 → 9) and llama4:scout −3 (10 → 7). Parameter count does not predict the direction — deepseek-r1:70b (70B, baseline 1) gained the most while llama3.3:70b (70B, baseline 15) lost the most. The observable gradient is unaided baseline on this task: the two reversals belong to the two highest baselines in the band.
-- **The mechanism is in the traces.** llama3.3:70b's wiped failure is confirmed perseveration: the re-injected answers carry no record of what already failed, and in every run it burns all four lives re-submitting the identical wrong answer. Its unwiped runs, with feedback intact, never perseverate — they fail later, differently.
-- **Scope:** wiping lifted qwen3:14b to a 20/20 median (83% exits) — the same ceiling the 120B-class rows occupy unaided on this map. That sentence is the whole claim; on tasks where the decisive facts live outside what gets re-injected, the same lever inverts.
-- **Cost, in the same table:** threshold-clearing models cut turns per gate cleared to 0.11–0.42× control, but per-turn cost can rise steeply — qwen3.5:9b re-derives its whole reasoning chain from the re-injected answers every turn: 21× the output volume, 10.5 → 150 s per turn.
+* Is scored objectively and deterministically — no LLM judge anywhere.
+* Includes a harness to manage context accumulation across turns.
+* Makes sure a single lucky run can't top the leaderboard — rank is a conservative statistical bound, so evidence moves you up, not variance.
+* Allows for cross model comparison of performance and failure pathology.
 
-Full brief, run-order tables, prereg with lock dates, and raw run logs: [results/e1a-table1/](results/e1a-table1/) and the [data annex](https://labyrinthbench.ai/data).
+I don't have a degree in computer science, but I do have a PhD in Exercise Physiology. If there is a way to measure something objectively and deterministically, then why would we ever settle for measuring it subjectively and probabilistically? So I lean into what I know, and that just happens to be objective testing of probabilistic output generators. They used to be mice, rats, and cells. Now I toss AI models into a maze and see which ones can stay on task and recall previously pertinent information until the very end.
 
-## You can't prompt the loop in
+The maze on its own isn't novel, but couple the navigation with simple, deterministically scored questions and different context management strategies, and some really interesting things start to shake out.
 
-The harness ships a `--look-gate` flag, and the reason it's a flag and not a prompt is a measured result. On a 34-gate maze where values change and byte-identical questions recur, qwen3:14b answers before looking — median depth 5.5 of 34, every wrong answer an unobserved guess. *Telling* it to observe first (a registered one-line imperative) bought about one gate of median — inside noise, with every wrong answer still an unobserved guess. *Forcing* it — a five-line interceptor that converts any answer at an unobserved gate into an observation — took the same model to median 21+, zero guesses in all 12 forced runs. Full brief in the [annex](https://labyrinthbench.ai/data).
+TL;DR: using an LLM judge to score benchmarks makes my head spin with all of the different flaws and biases that are possible. Ask the right questions in the right way, and you don't need a judge.
 
-## Run it
+## Run it (~10 minutes)
 
-### Rung 1 — taste (~10 minutes)
+What you need:
 
-Two commands. Point `--base-url` at whatever OpenAI-compatible endpoint you already run (Ollama shown; LM Studio serves on port 1234).
+* **Docker** (Desktop or engine) — the benchmark is a couple of small containers.
+* **Any OpenAI-compatible endpoint** serving a model — the only hardware requirement is whatever your model needs.
+* **git — only if you plan to enter the harness lane** with code-linked runs; running the benchmark itself needs none.
+
+Two commands. Point `--base-url` at whatever endpoint you already run (Ollama shown; LM Studio serves on port 1234), and swap `qwen3:14b` for any model tag your server actually has.
 
 ```bash
 docker compose -f docker-compose.standalone.yml up -d
 
 docker compose -f docker-compose.standalone.yml exec labyrinth-bench \
-  python cli/run_eval.py --model qwen3:14b \
+  python cli/run_eval.py --model qwen3:14b --no-think \
   --base-url http://host.docker.internal:11434/v1
 ```
 
-Then open **<http://localhost:8090/watch>** and watch the run live, turn by turn.
+Then open **<http://localhost:8090/watch>** and watch your run live, turn by turn — the same view as the GIF up top.
 
-On Linux, `host.docker.internal` needs `--add-host` support or your machine's LAN IP in its place. Qwen3-family thinking models want `--no-think` for comparable runs.
+The three things most likely to bite on a first run:
 
-### Rung 2 — the full paired cell
+* **Linux:** `host.docker.internal` works — the compose file maps it to your host gateway. If the connection refuses, your endpoint isn't listening on a host interface (bind it, or swap in your machine's LAN IP).
+* **Qwen3-family thinking models** want `--no-think` for comparable runs (that's why it's in the example — drop it for non-thinking models).
+* **Context window:** some models need more than your server's default — 8k+ recommended.
 
-Reproduce the headline contrast on your own hardware: six runs with accumulating history, six with the per-turn wipe, same model, same maze.
+No accounts, no API keys, no `.env` — Docker plus the model server you already run is the whole setup. No git or Python either: [QUICKSTART.md](QUICKSTART.md) walks the whole thing step by step, LM Studio included, with a fuller troubleshooting list.
+
+## How it works
+
+A run is a sequence of turns. The model sees only what the current room shows (fog — a couple of steps ahead), issues a command, and the engine answers. Gates are locks with objective answers: a wrong answer doesn't open the gate — you stay put and it costs one of a small budget of lives (four, on the launch maps).
+
+The first map family is a real maze — dead ends, a loop trap, one exit. Here's an actual run through one of them (`alpha-2`), drawn from its trace: a 120B-class model, detours and backtracks included, exit at step 15. (The renderer that drew it was written by qwen3:14b — one of the benchmarked models, working under the wipe policy described below. It draws pictures; it scores nothing. Receipts in `results/renderer-cell/`.)
+
+![A rendered run trace through the alpha-2 maze](site/src/assets/figures/run-trace-alpha2-gptoss120b.svg)
+
+The corridor family removes navigation entirely, so there is no excuse left but memory. `nav-3` is 20 gates in a straight line: gate 1 is simple arithmetic, every later gate builds on the running total, and from gate 8 on each gate also asks for one specific earlier answer — the reach-backs rotate, so the model must be able to recall any prior answer on demand. Trivial with clean notes; brutal from a chat history full of its own noise.
+
+The third family attacks the notes themselves. In `rev-2` (34 gates), eight variables change value as you climb — and change *back*, so a variable may return to a value it held earlier and several variables may share a value. Every gate asks about the **current** value: the most recent time you saw a value is not necessarily current, and the same question can recur with a change in between — recompute, don't reuse. Gate 1 is `"Variable A is initialized to 3. What is the value of A?"`; later gates ask things like `"Add the current value of C to the current value of D."` — same arithmetic, but only if your record of C and D is current rather than merely familiar.
+
+| Family | Shape | What it isolates |
+|---|---|---|
+| `alpha` | branching maze — dead ends, a loop trap | navigation and recall together, the agent case |
+| `nav-3` | corridor, 20 gates | retention: every gate reaches back to a named earlier answer |
+| `rev-2` | corridor, 34 gates, values change mid-run | currency under interference: is the note current, or just familiar? |
+
+A map (a **DEG** — deterministic evaluation graph) is structure plus gate content; the mint (`engine/mint.py`) deals *instances* — same structure, different seeded values, byte-deterministic from the seed. The board can deal you an instance no one has seen and still re-derive your entire run from the trace.
+
+These three families are a launch set, not a finished taxonomy — maps and map types will keep evolving, and each season's competition instances are minted fresh and stay sealed until the season closes (season cadence and rules: [METHODOLOGY.md](METHODOLOGY.md)).
+
+## The harness
+
+The other half of the benchmark: every run goes through a **context policy** — a swappable layer that decides what the model sees each turn. Two ship with the repo. The default is what every chat framework does: the full conversation accumulates. The alternative wipes the model's context every turn and re-injects only its own recorded gate answers — the policy behind the headline experiment further down this page. Both are small classes in one file (`cli/context_policy.py`), selected with `--context-policy`; testing your own strategy is subclassing that file, not forking the harness.
+
+Two things make a strategy measurable rather than anecdotal:
+
+* **Per-turn telemetry.** Every character injected into the model's context is counted by source and emitted in the live log — so what a policy actually did is verifiable from the run record, not inferred from its description.
+* **Code-linked runs.** Every run records the exact commit of the policy code that produced it (`--policy-code-ref`, auto-derived when you run from a git clone; ZIP users pass it explicitly). The leaderboard has a lane where context strategies compete under a pinned model — the harness lane, rules in [The board](#the-board) — and entries there link to their code; a strategy you can't read doesn't rank.
+
+Enforcement flags stack on top of any policy. `--look-gate` is the shipped example, and it exists because instruction demonstrably wasn't enough:
+
+### Why `--look-gate` is a flag, not a prompt
+
+Information alone kept failing: inject the full authoritative game state every turn and every scored model answers every gate correctly — and the models that couldn't find the exit still can't. Same story at the instruction level: on the 34-gate map, qwen3:14b answers before looking — median depth 4.5, every wrong answer an unobserved guess. A one-line instruction to observe first — with the pass bar locked before it ran, same as every experiment here — moved the median to 5.5, inside noise, guesses intact. A five-line interceptor that converts any answer at an unobserved gate into an observation took the same model to median 21+, zero guesses across all 12 forced runs. That's why the harness ships `--look-gate` as a flag and not as a suggestion in the system prompt. Full brief in the [annex](https://labyrinthbench.ai/data).
+
+## What the first experiment found
+
+It surprised me in both directions. On the 20-gate corridor, I ran 13 local models twice over: once keeping the full chat history, once with context wiped every turn and only the model's own recorded gate answers re-injected — six runs per model per condition. The pass bar — median depth up 5 or more gates — was locked before any wiped run existed.
+
+![Paired control vs wiped runs, per model](results/e1a-table1/e1a_table1_paired_stripplot.png)
+
+**Wiping won in 7 of the 9 models that had room to show a gain — and backfired in the other 2.** (The remaining four — gemma4:31b, gpt-oss:120b, qwen3.5:122b, qwen3.6:27b — already ran at the map's ceiling, a control median of 20, so a 5-gate gain is unreachable by construction. Those four got their own wiped arms in a registered follow-up; that brief lands in the [data annex](https://labyrinthbench.ai/data).) deepseek-r1:70b went from a median of 1 to 20: five of its six control runs cleared exactly one gate; wiped, it exited all six. glm-4.7-flash and qwen3:14b both gained 15.5 gates of median, and four of the seven winners went from exiting 0–33% of their runs to 83–100%. Wiping lifted qwen3:14b to a 20/20 median (83% exits) — the same ceiling the 120B-class models occupy unaided on this map. That sentence is the whole claim: where the re-injected record doesn't carry what a task needs, the same lever inverts.
+
+**The two reversals:** llama3.3:70b fell from a median of 15 to 9; llama4:scout from 10 to 7. Parameter count doesn't predict the direction — the biggest gainer and the biggest loser are both 70B models; what the two reversals share is the highest unaided starting scores of the nine. The traces say why for one of them: the re-injected answers carry no record of what already *failed*, and llama3.3:70b burns all four lives re-submitting the identical wrong answer in every wiped run. With history intact it never does that.
+
+The costs are measured too: models that cleared the bar used 0.11–0.42× the control's turns per gate — but qwen3.5:9b (one of the seven winners) pays for its depth per turn, re-deriving its whole reasoning chain from the notes every single turn: 21× the output tokens, 10.5 → 150 seconds per turn.
+
+Full brief, run tables, the pre-registration with its lock dates visible, and raw run logs: [results/e1a-table1/](results/e1a-table1/) and the [data annex](https://labyrinthbench.ai/data).
+
+### Reproduce it on your rig
+
+Six runs where the model keeps its full chat history, six where the harness wipes it every turn — same model, same map.
 
 ```bash
-# control: accumulating history
-... cli/run_eval.py --model <M> --deg nav-3 --runs 6 --output /results/control.jsonl
+# control: the model keeps its full chat history
+docker compose -f docker-compose.standalone.yml exec labyrinth-bench \
+  python cli/run_eval.py --model <your-model> --deg nav-3 --runs 6 \
+  --base-url http://host.docker.internal:11434/v1 --output /results/control.jsonl
 
-# wiped: context cleared each turn, recorded gate answers re-injected
-... cli/run_eval.py --model <M> --deg nav-3 --runs 6 --overlay-only --show-recall --output /results/wiped.jsonl
+# wiped: context cleared every turn; only the model's own recorded gate answers are re-injected
+docker compose -f docker-compose.standalone.yml exec labyrinth-bench \
+  python cli/run_eval.py --model <your-model> --deg nav-3 --runs 6 \
+  --base-url http://host.docker.internal:11434/v1 --overlay-only --show-recall --output /results/wiped.jsonl
 ```
 
-Compare median depths. Δ ≥ 5 is the same pre-registered threshold the cohort was scored against. Whichever direction your model moves, that's a datum — the board wants both.
+(`--overlay-only --show-recall` is the exact flag pair the 13-model comparison above ran, kept so your runs match the published record; it's equivalent to `--context-policy wipe-curated`, which is the interface to reach for in your own experiments.)
 
-### Rung 3 — submit
-
-Until the dealer service and runner CLI ship (post-release), the board accepts entries as pull requests carrying the results JSONL — plus, for the harness lane, the harness code. Submission flow and verification: [METHODOLOGY.md §5](METHODOLOGY.md).
+Compare median depths. A gain of 5 or more gates is the same bar the comparison above was scored against — set and published before any wiped run existed. Whichever direction your model moves, that's a datum — the leaderboard wants both.
 
 ## The board
 
-Two lanes, per [METHODOLOGY.md](METHODOLOGY.md):
+The leaderboard at [labyrinthbench.ai](https://labyrinthbench.ai) — the board, from here on — runs two lanes, per [METHODOLOGY.md](METHODOLOGY.md):
 
-- **Model lane** — harness pinned, models compete.
-- **Harness lane** — model pinned (launch division: qwen3:14b at Q4_K_M, digest-tracked), context strategies compete. Open harness code is mandatory: an entry is code, and the board links it.
+* **Model lane** — harness pinned, models compete.
+* **Harness lane** — model pinned, context strategies compete. At launch the pinned model is qwen3:14b at Q4_K_M, the exact weights recorded by digest so a mutable tag can't drift. Open policy code is mandatory: an entry is code, and the board links it. Want a different pinned model? Adding one is a data change, not a redesign — open an issue.
 
-Rank is a conservative bound — the one-sided 95% bootstrap lower confidence bound on median depth — so large-n evidence tightens rank and a lucky small-n entry self-limits. Every dealt instance counts, aborts included. Efficiency columns (turns, pulls, lives) are metrics, never gates: exit is the only objective. Every entry sits on a displayed rung of the integrity ladder — replay-consistent → open → board-reproduced → contested.
+The pin is Q4_K_M because I checked what the pin costs: Q8_0 landed on the same median, and FP16 bought one gate — inside noise at n=3 — for 3.4× the wall-clock.
 
-The shipped wiping policy demonstrably doesn't win everywhere — two of nine cohort models got worse under it. Beat it.
+Rank is a conservative bound — the one-sided 95% bootstrap lower confidence bound on median depth — so large-n evidence tightens rank and a lucky small-n entry self-limits. You also get eyeball outlier detection for free: after enough runs, a point that sits far outside an entry's distribution and never reproduces is visibly luck, whether anyone labels it or not — and the bound has already priced it in. Entries never pool: every entry ranks alone on its own recorded runs, so nobody else's runs — however bad — can touch yours. Seed entries ran every model at its shipped default sampling settings; the harness itself passes none. Every dealt instance counts, aborts included (an abandoned run scores at the depth it reached). Efficiency columns (turns taken, lives spent) are metrics, never gates: exit is the only objective. Every entry sits on a displayed rung of the integrity ladder: replay-consistent (the submitted trace re-walks cleanly against the map) → open (policy code and artifact hashes public) → board-reproduced (the board reran it and got a compatible result) → contested (a reproduction failed; the receipts stay attached).
+
+**Getting on it:** automated submission tooling ships after launch. For now, the board accepts entries as pull requests carrying the results file — plus, for the harness lane, your policy code. Submission flow and verification: [METHODOLOGY.md §5](METHODOLOGY.md).
+
+The wiping policy I ship demonstrably doesn't win everywhere — two of nine cohort models got worse under it. I'm looking forward to someone beating my attempt with their own harness. I have my own ideas for a few improvements here and there.
 
 ## What's in the repo
 
@@ -86,6 +164,30 @@ The shipped wiping policy demonstrably doesn't win everywhere — two of nine co
 | `api/` | Scoring API + the live `/watch` view |
 | `degs/` | Maze manifests |
 | `results/e1a-table1/` | The headline cell: tables, figure, raw pass outputs |
+| `results/renderer-cell/` | The maze image above, sourced: `scripts/render_trace.py` was written by qwen3:14b — all three attempts, full transcripts, the automated checker |
 | `METHODOLOGY.md` | Board rules: lanes, integrity ladder, scoring, verification limits |
+
+## FAQ
+
+**My first run immediately shows DNF with barely any steps.**
+The model was never reached — a connection failure or an unknown model tag records a DNF row rather than crashing. Check that your server is running, the port in `--base-url` matches, and the tag exists on your server (`ollama list`); on Linux, see the networking note under Run it.
+
+**I hit Ctrl-C but it says a session is still running.**
+The run keeps going server-side, and a lock blocks a new run until it finishes. Watch it wind down at `/watch`, or wait it out. Either way it ends up scored — an abandoned run counts at the depth it reached.
+
+**My model degrades or dies late in long runs.**
+Runs that keep full chat history grow the prompt every turn (the wiped policy stays flat). Give the model 8k+ of context — and set it **server-side** (Modelfile, app settings): Ollama's OpenAI-compatible endpoint silently ignores a per-request context-size option, so a client flag can't be trusted.
+
+**Can I set temperature / top_k?**
+The harness passes no sampling parameters — your server's settings apply, whatever they are. Seed entries ran every model at its shipped defaults. If you tune settings server-side, declare it in your entry: replay verification checks the trace, not your sampler.
+
+**Do I need git?**
+Not to run anything — the ZIP download works. A harness-lane board entry links its policy code, and `--policy-code-ref` fills itself in from a git checkout; from a ZIP, pass it explicitly.
+
+**Can I run a 4B model? A 200B? A cloud model?**
+Any size, against any endpoint that speaks the OpenAI chat API without an auth key — local servers, LAN boxes, proxies. Key-authed cloud APIs need a small proxy in front (LiteLLM-class) for now. Board divisions for other pinned models open on demand.
+
+**Could someone flood bad runs to drag a model down the board?**
+No — entries never pool. Every entry ranks alone on its own recorded runs, so a bad-faith submission can only create its own low, attributed row, wearing its integrity rung. It can't touch anyone else's.
 
 License: MIT.
