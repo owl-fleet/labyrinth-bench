@@ -1,0 +1,55 @@
+---
+layout: base.njk
+title: Sample questions
+permalink: /data/questions/
+---
+
+<h1>Sample questions</h1>
+<p class="lede">Every question below is quoted verbatim from the launch map manifests (<code>degs/</code> in the repo). The launch maps are the open practice set; competition instances are minted fresh per season, with the same structure and different seeded values, and stay sealed until the season closes.</p>
+
+<h2>Maze family (<code>alpha-2</code>) — navigation carries the difficulty</h2>
+<p>Gates are standalone problems; the challenge is the map itself — dead ends, a loop trap, one exit, and a small budget of lives.</p>
+<ul class="annex-list">
+  <li><code>Calculate: 38 + 17</code></li>
+  <li><code>Evaluate: (TRUE AND FALSE) OR TRUE</code></li>
+  <li><code>Calculate: 144 ÷ 12</code></li>
+  <li><code>Evaluate: NOT(FALSE OR FALSE)</code></li>
+  <li><code>Calculate: 7 × 8</code></li>
+</ul>
+
+<h2>Corridor family (<code>nav-3</code>) — retention carries the difficulty</h2>
+<p>No branches, no dead ends: 20 gates in a straight line, and the questions chain. Later gates reach back to specific earlier answers, rotating through all of them — the model must recall any prior answer on demand. The full ramp, in order:</p>
+<ol class="annex-list">
+  <li><code>Calculate 3 + 4</code></li>
+  <li><code>Add 5 to your c1a answer</code></li>
+  <li><code>Add 6 to your c1b answer</code></li>
+  <li><code>Calculate 11 + 8</code></li>
+  <li><code>Add 7 to your c2a answer</code></li>
+  <li><code>Subtract 4 from your c2b answer</code></li>
+  <li><code>Add your c1c answer to your c2c answer</code></li>
+  <li><code>Add your c1a answer to the previous gate's answer</code></li>
+  <li><code>Add your c2a answer to the previous gate's answer</code></li>
+  <li><code>Subtract your c1b answer from the previous gate's answer</code></li>
+  <li><code>Add your c2b answer to the previous gate's answer</code></li>
+  <li><code>Subtract your c1c answer from the previous gate's answer</code></li>
+  <li><code>Add your c2c answer to the previous gate's answer</code></li>
+  <li><code>Subtract your s1 answer from the previous gate's answer</code></li>
+  <li><code>Add your c1a answer to the previous gate's answer</code></li>
+  <li><code>Multiply the previous gate's answer by your c1a answer</code></li>
+  <li><code>Subtract your c2a answer from the previous gate's answer</code></li>
+  <li><code>Multiply the previous gate's answer by your c1b answer</code></li>
+  <li><code>Add your c2c answer to the previous gate's answer</code></li>
+  <li><code>Multiply the previous gate's answer by your c1a answer</code></li>
+</ol>
+<p>Each gate id (<code>c1a</code>, <code>c2b</code>, <code>s1</code>, …) names an earlier answer. Trivial with clean notes; brutal from an accumulating context full of its own noise.</p>
+
+<h2>Revision family (<code>rev-2</code>) — currency carries the difficulty</h2>
+<p>Eight variables change value as you climb — and change <em>back</em>. Every gate asks about the <strong>current</strong> value; the same question can recur with a change in between. Recompute, don't reuse. A representative sequence:</p>
+<ul class="annex-list">
+  <li><code>Variable A is initialized to 3. What is the value of A?</code></li>
+  <li><code>Add the current value of F to the current value of C.</code></li>
+  <li><code>E changes: E is now 4. Answer 4 to set it.</code></li>
+  <li><code>Add the current value of E to the current value of D.</code> — asked again later, after E has changed</li>
+</ul>
+
+<p>Question variety is a roadmap axis: template-generated prose gates with seeded values keep the deterministic scoring while making the surface text effectively inexhaustible. Board rules and season cadence: <a href="/methodology/">methodology</a>.</p>
