@@ -8,4 +8,5 @@ module.exports = () => ({
   paired: read("e1a-table1-paired.md"),
   control: read("e1a-table1-control.md"),
   prereg: read("prereg-cohort-campaign.md"),
+  a3: read("a3-ceiling-arm.md"),
 });

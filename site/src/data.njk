@@ -17,7 +17,7 @@ permalink: /data/
   <li><strong><a href="/data/e1a-paired/">E1a paired campaign</a></strong> — 13-model cohort, paired control/wiped arms, pre-registered falsifier.</li>
   <li><strong><a href="/data/e1a-control/">E1a control baseline</a></strong> — the full-cohort unaided baseline table.</li>
   <li><strong>Look-discipline</strong> — instruction vs enforcement of the observe-before-commit loop (the <code>--look-gate</code> flag's origin). <span class="pending">Brief lands here at release.</span></li>
-  <li><strong>A3 ceiling-arm efficiency</strong> — the four ceiling models' wiped arms, from a registered follow-up. <span class="pending">Brief lands here at release.</span></li>
+  <li><strong><a href="/data/a3-ceiling/">A3 ceiling-arm efficiency</a></strong> — the four ceiling models' wiped arms, from a registered follow-up: one met the efficiency falsifier, two resolved against the overlay.</li>
   <li><strong>Cohort onboarding record</strong> — how the cohort was assembled and gated, including the exclusions. <span class="pending">Lands here at release.</span></li>
 </ul>
 
@@ -46,5 +46,5 @@ permalink: /data/
 <ul class="annex-list">
   <li><a href="https://github.com/owl-fleet/labyrinth-bench/tree/main/results/e1a-table1">repo <code>results/e1a-table1/</code></a> — the E1a aggregate (<code>e1a_table1.json</code>) and campaign table sources.</li>
   <li><a href="/entries/">/entries/</a> — the leaderboard entry files served by this site, one JSON per entry, CI bounds included (regenerate with <code>cli/seed_entries.py</code>).</li>
-  <li><strong><a href="/assets/data/lb-e1a-raw-jsonl.zip">Raw per-run JSONL logs</a></strong> (zip, ~11 MB) — one line per run, per-turn traces included; 15 control + 9 wiped arms with a manifest. Model-host URLs in errored-attempt records are redacted to <code>[lan-host]</code>; every other byte is as-run.</li>
+  <li><strong><a href="/assets/data/lb-e1a-raw-jsonl.zip">Raw per-run JSONL logs</a></strong> (zip, ~11 MB) — one line per run, per-turn traces included; 15 control + 13 wiped arms (9 sub-ceiling per Addendum A2, 4 ceiling per Addendum A3) with a manifest. Model-host URLs in errored-attempt records are redacted to <code>[lan-host]</code>; every other byte is as-run.</li>
 </ul>
