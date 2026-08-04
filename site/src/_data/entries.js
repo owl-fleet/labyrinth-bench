@@ -14,10 +14,11 @@ function rank(entries) {
 
 module.exports = () => {
   const dir = path.join(__dirname, "..", "..", "..", "entries");
-  const all = fs
+  const files = fs
     .readdirSync(dir)
     .filter((f) => f.endsWith(".json"))
-    .map((f) => JSON.parse(fs.readFileSync(path.join(dir, f), "utf8")));
+    .sort();
+  const all = files.map((f) => JSON.parse(fs.readFileSync(path.join(dir, f), "utf8")));
 
   const model = rank(all.filter((e) => e.lane === "model"));
 
@@ -27,5 +28,5 @@ module.exports = () => {
   }
   for (const d of Object.values(divisions)) d.entries = rank(d.entries);
 
-  return { all, model, divisions };
+  return { all, model, divisions, files };
 };

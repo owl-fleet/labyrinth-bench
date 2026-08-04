@@ -1,0 +1,15 @@
+---
+layout: base.njk
+title: Leaderboard entry files
+permalink: /entries/
+---
+
+<div class="methodology-body">
+<h1>Leaderboard entry files</h1>
+<p class="lede">One JSON per board entry — the exact files the leaderboard renders, CI bounds included. Regenerate from the aggregate with <code>cli/seed_entries.py</code>; source of truth in the repo's <a href="https://github.com/owl-fleet/labyrinth-bench/tree/main/entries">entries/</a>.</p>
+<ul class="annex-list">
+{% for f in entries.files %}
+  <li><a href="/entries/{{ f }}">{{ f }}</a></li>
+{% endfor %}
+</ul>
+</div>
