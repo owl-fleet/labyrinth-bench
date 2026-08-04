@@ -322,6 +322,8 @@ h1 { color:#00ffcc; margin:0 0 14px; font-size:18px; letter-spacing:2px; }
 .ev-commit.budget_exhausted,.ev-commit.dead_end_trapped,.ev-commit.loop_trapped { color:#ff4444; }
 .ev-observe { color:#555; }
 .ev-observe.trapped { color:#ff2222; }
+.thinking { color:#00ffcc; animation: thinkpulse 1.2s ease-in-out infinite; }
+@keyframes thinkpulse { 0%,100% { opacity:0.25; } 50% { opacity:0.85; } }
 .ev-note { color:#888855; }
 #banner { display:none; margin-top:14px; padding:12px 18px; border:1px solid #ffdd00; color:#ffdd00; font-size:14px; }
 #banner.dnf { border-color:#ff4444; color:#ff4444; }
@@ -462,10 +464,34 @@ startPulse(OPTIMAL_PATH[0]); // Highlight start immediately
 var cg=0, tg=0;
 var logEl = document.getElementById('log');
 
+// "model thinking…" indicator: the server only emits events on client actions,
+// so a quiet-but-open stream means the harness is waiting on the model. Shown
+// after 2.5s of silence; heartbeats (sent only during silence) don't reset it.
+var thinkEl = document.createElement('div');
+thinkEl.className = 'ev thinking';
+thinkEl.textContent = '  model thinking…';
+thinkEl.style.display = 'none';
+logEl.appendChild(thinkEl);
+var lastEvt = Date.now(), streamDone = false;
+setInterval(function() {
+  var waiting = !streamDone && (Date.now() - lastEvt > 2500);
+  if (waiting && thinkEl.style.display === 'none') {
+    logEl.appendChild(thinkEl);
+    thinkEl.style.display = 'block';
+    logEl.scrollTop = logEl.scrollHeight;
+  } else if (!waiting) {
+    thinkEl.style.display = 'none';
+  }
+}, 1000);
+function endStream() { streamDone = true; thinkEl.style.display = 'none'; es.close(); }
+
 var es = new EventSource('/stream/' + SID);
+es.onerror = function() { streamDone = true; thinkEl.style.display = 'none'; };
 es.onmessage = function(e) {
   var d = JSON.parse(e.data);
   if (d.heartbeat) return;
+  lastEvt = Date.now();
+  thinkEl.style.display = 'none';
 
   // Update map
   if (d.outcome === 'dead_end' || d.outcome === 'wrong') {
@@ -522,13 +548,13 @@ es.onmessage = function(e) {
     document.getElementById('s-status').textContent = 'EXIT ✓';
     showBanner('EXIT ✓  steps=' + d.steps_used + '  optimal=' + OPTIMAL +
                '  efficiency=' + Math.round(OPTIMAL/d.steps_used*100) + '%', false);
-    es.close();
+    endStream();
   } else if (d.outcome === 'budget_exhausted' || d.outcome === 'dead_end_trapped' || d.outcome === 'loop_trapped' || d.budget_exhausted) {
     stopPulse(currentNode);
     document.getElementById('s-status').style.color = '#ff4444';
     document.getElementById('s-status').textContent = 'DNF';
     showBanner('DNF — ' + (d.outcome || 'budget exhausted'), true);
-    es.close();
+    endStream();
   }
 };
 
