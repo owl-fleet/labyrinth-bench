@@ -82,6 +82,12 @@ _history: list[dict] = []
 # Wall-clock start time per live session (in-memory; mirrors _sessions lifetime).
 _session_started: dict[str, float] = {}
 
+# Wall-clock time of the last /act per live session — lets the watch list mark a
+# session whose client vanished (abandoned/errored) as stalled instead of
+# "running..." forever. Display-layer only; the engine has no timeout semantics.
+_session_last_act: dict[str, float] = {}
+STALE_AFTER_S = 600
+
 
 def _load_history() -> None:
     global _history
@@ -230,28 +236,34 @@ def _short_label(nid: str) -> str:
 
 def _build_cy_elements(deg) -> tuple[list, list]:
     """Build Cytoscape nodes + edges for a DEG. Back-edges (cycles) are omitted from layout."""
-    # Detect back-edges via DFS so dagre doesn't break on the loop1→a1 cycle
+    # Detect back-edges via DFS so dagre doesn't break on the loop1→a1 cycle.
+    # Only a destination on the CURRENT DFS STACK is a cycle; a node merely
+    # visited earlier is path convergence (two routes into the same node — e.g.
+    # alpha-1's n4→exit shortcut), and that edge must stay in the layout.
     visited: set[str] = set()
+    on_stack: set[str] = set()
     back_edges: set[tuple[str, str]] = set()
 
     def dfs(nid: str) -> None:
         visited.add(nid)
+        on_stack.add(nid)
         for path in deg.nodes[nid].paths:
             dest = path.destination
             if dest is not None:
-                if dest in visited:
+                if dest in on_stack:
                     back_edges.add((nid, dest))
-                else:
+                elif dest not in visited:
                     dfs(dest)
             if path.is_gated:
                 wdest = path.gate.wrong_destination
                 # A None wrong_destination is the gate-LOCK design (wrong answer = stay
                 # put) — there is no wrong-edge to traverse or draw.
                 if wdest is not None:
-                    if wdest in visited:
+                    if wdest in on_stack:
                         back_edges.add((nid, wdest))
-                    else:
+                    elif wdest not in visited:
                         dfs(wdest)
+        on_stack.discard(nid)
 
     dfs(deg.start_node_id)
 
@@ -600,15 +612,19 @@ def watch_list(page: int = Query(1, ge=1)):
     live_ids = set()
     for s in reversed(list(_sessions.values())):
         live_ids.add(s.session_id)
-        status_cls = "exit" if s.found_exit else ("dnf" if s.completed else "running")
+        last_seen = _session_last_act.get(s.session_id) or _session_started.get(s.session_id) or time.time()
+        stale = (not s.completed) and (time.time() - last_seen > STALE_AFTER_S)
+        status_cls = "exit" if s.found_exit else ("dnf" if (s.completed or stale) else "running")
         all_rows.append({
             "session_id": s.session_id,
             "model": s.model or "unknown",
             "deg_id": s.deg.id,
             "steps": f"{s.steps_used}&nbsp;/&nbsp;{s.deg.step_budget}",
-            "status": ("EXIT ✓" if s.found_exit else ("DNF" if s.completed else "running...")),
+            "status": ("EXIT ✓" if s.found_exit else ("DNF" if s.completed else ("stalled (no client activity)" if stale else "running..."))),
             "status_cls": status_cls,
-            "link": f'<a href="/watch/{s.session_id}">watch</a>' if not s.completed else "",
+            # Completed sessions still in memory replay fine — the stream sends
+            # full history then closes — so the watch link stays.
+            "link": f'<a href="/watch/{s.session_id}">watch</a>',
         })
     for entry in reversed(_history):
         if entry["session_id"] in live_ids:
@@ -716,6 +732,7 @@ def create_session(req: CreateSessionRequest):
 @app.post("/act")
 def act(req: ActRequest):
     session = _get_session(req.session_id)
+    _session_last_act[req.session_id] = time.time()
 
     if session.completed and req.action != "score":
         return {"ok": False, "error": "Session already ended.", "completed": True}
