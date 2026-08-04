@@ -1,0 +1,10 @@
+// Cloudflare Workers static-assets config — the git-connected build runs
+// `npm ci && npm run build` in this directory, then `npx wrangler deploy`
+// serves the Eleventy output below as a static site.
+{
+  "name": "labyrinthbench-site",
+  "compatibility_date": "2026-08-01",
+  "assets": {
+    "directory": "./_site"
+  }
+}
