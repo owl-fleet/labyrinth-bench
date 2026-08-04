@@ -35,7 +35,7 @@ I want to know if we can objectively measure what breaks when context gets cut �
 * Makes sure a single lucky run can't top the leaderboard — rank is a conservative statistical bound, so evidence moves you up, not variance.
 * Allows for cross model comparison of performance and failure pathology.
 
-I don't have a degree in computer science, but I do have a PhD in Exercise Physiology. If there is a way to measure something objectively and deterministically, then why would we ever settle for measuring it subjectively and probabilistically? So I lean into what I know, and that just happens to be objective testing of probabilistic output generators. They used to be mice, rats, and cells. Now I toss AI models into a maze and see which ones can stay on task and recall previously pertinent information until the very end.
+My name is John William Deaver — everyone calls me Will. I don't have a degree in computer science, but I do have a PhD in Exercise Physiology. If there is a way to measure something objectively and deterministically, then why would we ever settle for measuring it subjectively and probabilistically? So I lean into what I know, and that just happens to be objective testing of probabilistic output generators. They used to be mice, rats, and cells. Now I toss AI models into a maze and see which ones can stay on task and recall previously pertinent information until the very end.
 
 The maze on its own isn't novel, but couple the navigation with simple, deterministically scored questions and different context management strategies, and some really interesting things start to shake out.
 
@@ -71,7 +71,7 @@ No accounts, no API keys, no `.env` — Docker plus the model server you already
 
 ## How it works
 
-A run is a sequence of turns. The model sees only what the current room shows (fog — a couple of steps ahead), issues a command, and the engine answers. Gates are locks with objective answers: a wrong answer doesn't open the gate — you stay put and it costs one of a small budget of lives (four, on the launch maps).
+A run is a sequence of turns. The model sees only what the current room shows (fog — a couple of steps ahead), issues a command, and the engine answers. Gates are locks with objective answers: a wrong answer doesn't open the gate — you stay put and it costs one of a small budget of lives (four, on the 20-gate corridor; each map sets its own).
 
 The first map family is a real maze — dead ends, a loop trap, one exit. Here's an actual run through one of them (`alpha-2`), drawn from its trace: a 120B-class model, detours and backtracks included, exit at step 15. (The renderer that drew it was written by qwen3:14b — one of the benchmarked models, working under the wipe policy described below. It draws pictures; it scores nothing. Receipts in `results/renderer-cell/`.)
 
@@ -166,6 +166,10 @@ The wiping policy I ship demonstrably doesn't win everywhere — two of nine coh
 | `results/e1a-table1/` | The headline cell: tables, figure, raw pass outputs |
 | `results/renderer-cell/` | The maze image above, sourced: `scripts/render_trace.py` was written by qwen3:14b — all three attempts, full transcripts, the automated checker |
 | `METHODOLOGY.md` | Board rules: lanes, integrity ladder, scoring, verification limits |
+
+## How this was built
+
+I'm the solo human contributor, and nearly every commit in this project's development was AI-assisted — drafted by AI under my direction, reviewed line by line, corrected constantly. I directed the work in excruciating detail; every design decision, every experimental call, and every error is mine. The public repo's history starts at a fresh extraction (the development history stays private for credential-hygiene reasons), so commits from release day onward carry explicit AI co-author trailers. The case where the AI's authorship *is* the point — a local 14B writing this repo's trace renderer under a frozen 11-check gate — is documented with full transcripts in `results/renderer-cell/`. Fittingly, almost every failure along the way was a context-management failure — which is what this benchmark measures.
 
 ## FAQ
 
