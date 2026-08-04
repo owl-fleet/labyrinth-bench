@@ -124,5 +124,8 @@ tbody tr:hover { background: color-mix(in srgb, var(--series-1) 6%, transparent)
 .annex-list .pending { color: var(--muted); }
 figure { margin: 1rem 0; }
 figure img { max-width: 100%; border: 1px solid var(--border); border-radius: 6px; }
+/* The run-trace SVG draws dark strokes on a transparent ground — give it a
+   white card so its step numbers stay legible in dark mode. */
+figure img[src$=".svg"] { background: #ffffff; padding: 8px; }
 .methodology-body h2 { border-bottom: 1px solid var(--grid); padding-bottom: 0.25rem; }
 .methodology-body code { background: var(--surface); border: 1px solid var(--grid); border-radius: 4px; padding: 0 0.25rem; }
