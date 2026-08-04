@@ -32,7 +32,7 @@ First run takes a few minutes while the image builds. When it returns, Labyrinth
 docker compose -f docker-compose.standalone.yml exec labyrinth-bench python cli/run_eval.py --model <your-model-id> --base-url http://host.docker.internal:1234/v1
 ```
 
-Replace `<your-model-id>` with the identifier from Step 1. If it's a Qwen3-family "thinking" model (e.g. `qwen3-14b`), add `--no-think` for comparable runs. The terminal prints progress as the model plays.
+Replace `<your-model-id>` with the identifier from Step 1. The terminal prints progress as the model plays. **Do not use `--no-think` with LM Studio** — that flag speaks Ollama's native API and produces empty responses everywhere else; LM Studio separates a thinking model's reasoning from its answer automatically, so thinking models work here without it (they just spend time thinking).
 
 ## Step 4 — watch
 
@@ -58,4 +58,4 @@ Ollama serves on port **11434** and uses its own model tags:
 docker compose -f docker-compose.standalone.yml exec labyrinth-bench python cli/run_eval.py --model qwen3:14b --base-url http://host.docker.internal:11434/v1
 ```
 
-Qwen3-family "thinking" models: add `--no-think` for comparable runs.
+Qwen3-family "thinking" models: add `--no-think` for comparable runs. (`--no-think` is Ollama-only — it uses Ollama's native API; on any other server, run without it.)

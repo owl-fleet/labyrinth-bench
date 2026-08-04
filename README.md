@@ -64,7 +64,7 @@ Then open **<http://localhost:8090/watch>** and watch your run live, turn by tur
 The three things most likely to bite on a first run:
 
 * **Linux:** `host.docker.internal` works — the compose file maps it to your host gateway. If the connection refuses, your endpoint isn't listening on a host interface (bind it, or swap in your machine's LAN IP).
-* **Qwen3-family thinking models** want `--no-think` for comparable runs (that's why it's in the example — drop it for non-thinking models).
+* **Qwen3-family thinking models** want `--no-think` for comparable runs (that's why it's in the example — drop it for non-thinking models). The flag is **Ollama-only** (it uses Ollama's native API); on LM Studio or any other server, run without it — thinking models still work, they just spend turns thinking.
 * **Context window:** some models need more than your server's default — 8k+ recommended.
 
 No accounts, no API keys, no `.env` — Docker plus the model server you already run is the whole setup. No git or Python either: [QUICKSTART.md](QUICKSTART.md) walks the whole thing step by step, LM Studio included, with a fuller troubleshooting list.
