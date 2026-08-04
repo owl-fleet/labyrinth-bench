@@ -32,7 +32,7 @@ First run takes a few minutes while the image builds. When it returns, Labyrinth
 docker compose -f docker-compose.standalone.yml exec labyrinth-bench python cli/run_eval.py --model <your-model-id> --base-url http://host.docker.internal:1234/v1
 ```
 
-Replace `<your-model-id>` with the identifier from Step 1. The terminal prints progress as the model plays.
+Replace `<your-model-id>` with the identifier from Step 1. If it's a Qwen3-family "thinking" model (e.g. `qwen3-14b`), add `--no-think` for comparable runs. The terminal prints progress as the model plays.
 
 ## Step 4 — watch
 
@@ -42,8 +42,9 @@ A run ends when the model reaches the exit, runs out of wrong-answer budget, or 
 
 ## If something breaks
 
-- **`connection refused` / model errors mid-run** — the model server isn't reachable from Docker. Check LM Studio's server is running and the port in `--base-url` matches it.
+- **`connection refused` / a run that immediately records DNF with barely any steps** — the model server isn't reachable from Docker (a failed connection scores as a DNF row rather than crashing). Most common cause: **the server is listening on localhost only, which containers can't reach.** In LM Studio, enable **Serve on Local Network** in the server settings (headless CLI installs: set `"networkInterface": "0.0.0.0"` in `~/.lmstudio/.internal/http-server-config.json`, then `lms server stop && lms server start`). For Ollama: `OLLAMA_HOST=0.0.0.0`. Also check the port in `--base-url` matches the server.
 - **`host.docker.internal` not found** (mostly Linux) — replace it with your machine's LAN IP, e.g. `http://192.168.1.50:1234/v1`.
+- **You hit Ctrl-C but a session is still running** — the run continues server-side and a lock blocks new runs until it finishes; watch it wind down at `localhost:8090/watch` or wait it out. It still scores at the depth it reached.
 - **Nothing at localhost:8090** — `docker compose -f docker-compose.standalone.yml ps` should show the container up; if not, re-run Step 2 and read the error.
 - **The model answers gibberish or instantly fails** — some models need a bigger context window than the server default; raise it in LM Studio's model settings (8k+ recommended).
 
