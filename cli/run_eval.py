@@ -599,7 +599,7 @@ def run_session(
         usage = llm_json.get("usage")
         msg = llm_json["choices"][0]["message"]
         model_text = msg.get("content") or ""
-        model_reasoning = msg.get("reasoning") or ""
+        model_reasoning = msg.get("reasoning") or msg.get("reasoning_content") or ""
         if not model_text:
             model_text = model_reasoning
 
