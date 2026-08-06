@@ -174,7 +174,7 @@ I'm the solo human contributor, and nearly every commit in this project's develo
 ## FAQ
 
 **My first run immediately shows DNF with barely any steps.**
-The model was never reached — a connection failure or an unknown model tag records a DNF row rather than crashing. Check that your server is running, the port in `--base-url` matches, and the tag exists on your server (`ollama list`); on Linux, see the networking note under Run it.
+The model was never reached — a connection failure or an unknown model tag records a DNF row rather than crashing. Check that your server is running, the port in `--base-url` matches, and the tag exists on your server (`ollama list`); on Linux, see the networking note under Run it. Or catch all of it before spending a token: `python3 cli/doctor.py --model <tag> --base-url <url>` checks the endpoint, the tag, and the context-size trap in one shot.
 
 **I hit Ctrl-C but it says a session is still running.**
 The run keeps going server-side, and a lock blocks a new run until it finishes. Watch it wind down at `/watch`, or wait it out. Either way it ends up scored — an abandoned run counts at the depth it reached.
@@ -193,5 +193,11 @@ Any size, against any endpoint that speaks the OpenAI chat API without an auth k
 
 **Could someone flood bad runs to drag a model down the board?**
 No — entries never pool. Every entry ranks alone on its own recorded runs, so a bad-faith submission can only create its own low, attributed row, wearing its integrity rung. It can't touch anyone else's.
+
+**Why should I believe any number on the board?**
+Don't. Re-derive it. `python3 cli/verify.py <results.jsonl>` re-walks any trace against the map: every transition checked as a legal edge, every score field recomputed, and where the full turn log is present, the whole session re-driven through the engine until the regenerated event stream matches the submitted one exactly. `python3 cli/verify.py --entry <entry.json>` recomputes an entry's median and bootstrap bound from its own run distribution. The seed is recorded in the file. CI runs both on every pull request. What this does *not* prove: that the claimed model produced the trace, or that unfavorable runs were also submitted. That part falls to the artifact hashes and board-reproduction rungs ([METHODOLOGY.md §4](METHODOLOGY.md)).
+
+**Could a model just guess its way through the gates?**
+Measured, not assumed: the board carries a null control. 200 seeded random-walk runs (random path, random answer, no model) reached depth 0 in all 200. It sits on the board unranked, and its trace file is replay-verified in CI like any other entry. Regenerate it yourself with `python3 cli/run_null_baseline.py`.
 
 License: MIT.
