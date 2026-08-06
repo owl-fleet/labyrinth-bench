@@ -26,7 +26,9 @@ jobs:
       - name: DEG manifests — load, BFS parity, corridor walk
         run: python3 cli/validate_degs.py
       - name: Traces — replay against manifests
-        run: python3 cli/verify.py results/results.jsonl results/null-baseline/null_random_walk.jsonl
+        # results/results.jsonl is the LOCAL run ledger and is gitignored — CI verifies
+        # committed traces only (the 2026-08-06 exit-2: a working-tree file isn't a repo file)
+        run: python3 cli/verify.py results/null-baseline/null_random_walk.jsonl
       - name: Entries — score blocks re-derive
         run: |
           args=""
