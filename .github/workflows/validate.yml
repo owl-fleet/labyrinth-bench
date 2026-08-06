@@ -1,0 +1,34 @@
+# Repo integrity gate — every PR and every push to main re-derives what the repo claims:
+#   1. DEG manifests load, BFS parity holds, corridors full-walk (cli/validate_degs.py) —
+#      the same checks every minted instance passes at mint time, applied to the map sources.
+#   2. Committed run traces replay against the manifests (cli/verify.py L1, plus the full
+#      engine re-drive where a turns_log is present).
+#   3. Every board entry's score block re-derives from its own run distribution (seeded
+#      bootstrap, recorded seed) — an entry the board renders is an entry CI has re-computed.
+# No model, no network, stdlib + pyyaml only. This is the manual-PR-era submission gate:
+# an entry PR that fails replay does not exist for the board (METHODOLOGY §2 rung 1).
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - name: DEG manifests — load, BFS parity, corridor walk
+        run: python3 cli/validate_degs.py
+      - name: Traces — replay against manifests
+        run: python3 cli/verify.py results/results.jsonl results/null-baseline/null_random_walk.jsonl
+      - name: Entries — score blocks re-derive
+        run: |
+          args=""
+          for e in entries/*.json; do args="$args --entry $e"; done
+          python3 cli/verify.py $args

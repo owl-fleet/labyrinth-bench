@@ -3,9 +3,11 @@ const path = require("path");
 
 // Rank = the bootstrap lower CI bound on median depth (the conservative bound);
 // ties break toward the larger n (more evidence), then the higher median.
+// Control rows (null baselines) always sort last — floor calibration, not competitors.
 function rank(entries) {
   return [...entries].sort(
     (a, b) =>
+      (a.control_row === true) - (b.control_row === true) ||
       b.score.ci_lower_median - a.score.ci_lower_median ||
       b.runs.n - a.runs.n ||
       b.score.depth_median - a.score.depth_median

@@ -110,11 +110,15 @@ def runs_block(arm):
     }
 
 
-def score_block(arm, rng):
+def score_block(arm, seed_string):
+    # The recorded seed is the FULL derived string handed to random.Random — not the base
+    # constant — so the bound re-derives from the entry file alone (cli/verify.py --entry),
+    # without this script's per-entry derivation convention.
+    rng = random.Random(seed_string)
     return {
         "depth_median": arm["depth_median"],
         "ci_lower_median": bootstrap_ci_lower(arm["depths"], rng),
-        "bootstrap": {"B": BOOTSTRAP_B, "level": BOOTSTRAP_LEVEL, "seed": BOOTSTRAP_SEED},
+        "bootstrap": {"B": BOOTSTRAP_B, "level": BOOTSTRAP_LEVEL, "seed": seed_string},
     }
 
 
@@ -126,6 +130,10 @@ def base_entry(entry_id, lane, src_rel, arm_name):
         "origin": "board-seed",
         "season": 0,
         "source": {"dataset": src_rel, "arm": arm_name},
+        # Completeness declaration: the cohort size fixed BEFORE any run. The board badges
+        # an entry whose runs.n falls short of its declaration — shortfall is visible, never
+        # silent (fail-closed publication; the E1a campaign pre-registered n=6 per cell).
+        "declared": {"planned_n": 6, "source": "docs/annex/prereg-cohort-campaign.md"},
         "artifacts": {"harness_container": None, "model_file": None},
     }
 
@@ -146,13 +154,12 @@ def main():
         control = row.get("control")
         if not control or not control.get("n_valid"):
             continue
-        rng = random.Random(f"{BOOTSTRAP_SEED}:{key}:control")
         entry = base_entry(f"seed-model-{key}", "model", str(src), "control")
         entry["model"] = model_block(key)
         entry["harness"] = {**HARNESS_DESC["control"], "open": True}
         entry["ceiling_row"] = bool(row.get("contrast", {}).get("ceiling_row"))
         entry["runs"] = runs_block(control)
-        entry["score"] = score_block(control, rng)
+        entry["score"] = score_block(control, f"{BOOTSTRAP_SEED}:{key}:control")
         path = out / f"{entry['entry_id']}.json"
         path.write_text(json.dumps(entry, indent=1) + "\n")
         written.append(path.name)
@@ -162,7 +169,6 @@ def main():
                 arm = row.get(arm_name)
                 if not arm or not arm.get("n_valid"):
                     continue
-                rng = random.Random(f"{BOOTSTRAP_SEED}:{key}:harness:{arm_name}")
                 h = base_entry(
                     f"seed-harness-{key}-{HARNESS_DESC[arm_name]['name']}",
                     "harness",
@@ -172,7 +178,7 @@ def main():
                 h["pinned_model"] = model_block(key)
                 h["harness"] = {**HARNESS_DESC[arm_name], "open": True}
                 h["runs"] = runs_block(arm)
-                h["score"] = score_block(arm, rng)
+                h["score"] = score_block(arm, f"{BOOTSTRAP_SEED}:{key}:harness:{arm_name}")
                 path = out / f"{h['entry_id']}.json"
                 path.write_text(json.dumps(h, indent=1) + "\n")
                 written.append(path.name)

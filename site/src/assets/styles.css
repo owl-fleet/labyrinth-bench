@@ -69,6 +69,8 @@ tbody tr:hover { background: color-mix(in srgb, var(--series-1) 6%, transparent)
   border: 1px solid var(--baseline); color: var(--ink-2);
 }
 .badge.ceiling { border-style: dashed; }
+.badge.control { border-style: dotted; color: var(--muted); }
+.badge.partial { border-color: var(--series-2); color: var(--series-2); }
 
 .chart { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin: 1rem 0; overflow-x: auto; }
 .chart figcaption { color: var(--muted); font-size: 0.82rem; margin-top: 0.5rem; }

@@ -8,6 +8,10 @@
   "dataset": "results/e1a-table1/e1a_table1.json",
   "arm": "control"
  },
+ "declared": {
+  "planned_n": 6,
+  "source": "docs/annex/prereg-cohort-campaign.md"
+ },
  "artifacts": {
   "harness_container": null,
   "model_file": null
@@ -47,7 +51,7 @@
   "bootstrap": {
    "B": 10000,
    "level": 0.95,
-   "seed": 1337
+   "seed": "1337:ornith-9b:control"
   }
  }
 }

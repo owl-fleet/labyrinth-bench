@@ -19,7 +19,10 @@
   const cssVar = (n) =>
     getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 
+  // Control rows (null baselines) always sort last and never take a rank number —
+  // they calibrate the board's floor, they don't compete on it.
   const rankSort = (a, b) =>
+    (a.control_row === true) - (b.control_row === true) ||
     b.score.ci_lower_median - a.score.ci_lower_median ||
     b.runs.n - a.runs.n ||
     b.score.depth_median - a.score.depth_median;
@@ -150,7 +153,12 @@
     const s = [
       ["rank bound", entry.score.ci_lower_median],
       ["median depth", entry.score.depth_median],
-      ["runs (n)", entry.runs.n],
+      [
+        "runs (n)",
+        entry.declared
+          ? `${entry.runs.n} of ${entry.declared.planned_n} declared`
+          : entry.runs.n,
+      ],
       ["exit rate", fmtPct(entry.runs.exit_rate)],
       ["turns/gate", fmt(entry.runs.turns_per_gate_mean)],
       ["turns (mean)", fmt(entry.runs.turns_mean, 1)],
@@ -210,9 +218,11 @@
     entries.sort(rankSort);
 
     const colorOf = (e) =>
-      lane === "harness" && e.harness.name.startsWith("wiped")
-        ? cssVar("--series-2")
-        : cssVar("--series-1");
+      e.control_row
+        ? cssVar("--muted")
+        : lane === "harness" && e.harness.name.startsWith("wiped")
+          ? cssVar("--series-2")
+          : cssVar("--series-1");
     const nameOf = (e) => (lane === "model" ? e.model.display : e.harness.name);
 
     container.replaceChildren();
@@ -230,7 +240,8 @@
     axisLabel.textContent = "depth (gates cleared) →";
     axisSlot.append(axisLabel, axisHeader(stripW));
 
-    for (const [i, e] of entries.entries()) {
+    let rankNo = 0;
+    for (const e of entries) {
       const row = document.createElement("div");
       row.className = "board-row entry";
       row.setAttribute("role", "button");
@@ -239,7 +250,7 @@
 
       const rk = document.createElement("span");
       rk.className = "rk";
-      rk.textContent = i + 1;
+      rk.textContent = e.control_row ? "—" : ++rankNo;
       const nm = document.createElement("span");
       nm.className = "nm";
       nm.textContent = nameOf(e);
@@ -247,6 +258,18 @@
         const b = document.createElement("span");
         b.className = "badge ceiling";
         b.textContent = "at map ceiling";
+        nm.appendChild(b);
+      }
+      if (e.control_row) {
+        const b = document.createElement("span");
+        b.className = "badge control";
+        b.textContent = "null control";
+        nm.appendChild(b);
+      }
+      if (e.declared && e.runs.n < e.declared.planned_n) {
+        const b = document.createElement("span");
+        b.className = "badge partial";
+        b.textContent = `partial cohort ${e.runs.n}/${e.declared.planned_n}`;
         nm.appendChild(b);
       }
       const strip = document.createElement("span");

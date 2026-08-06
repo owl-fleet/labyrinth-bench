@@ -24,6 +24,7 @@ Trust is a property of the screening chain, not the producer. Every entry sits o
 ## 3. Scoring
 
 - **Every dealt instance counts.** No run caps, no self-selected subsets — the deal ledger is the registry, so selection is not restricted, it is undefined. Large-n batches are welcome: more runs mean a tighter estimate, and evidence is a contribution.
+- **Cohorts are declared before they run.** An entry carries its planned run count (`declared.planned_n`); the board badges any shortfall — a partial cohort is visible, never silent.
 - **Rank = a conservative bound**: the one-sided 95% bootstrap lower confidence bound on median depth (B=10,000, seeded — the computation is deterministic and re-runnable from the entry's data file). The board displays median, n, the bound, and the full run distribution. A lucky small-n entry self-limits: wide interval, low bound, modest rank until more evidence arrives. Compute buys precision, never inflation.
 - **Aborts are data**: an abandoned instance scores its depth at last commit into the entry's distribution.
 - **Within-run vs between-run**: max depth is the defining metric of a single run; comparison between entries is meaningless without the statistics. The board header says so.
@@ -36,7 +37,9 @@ Replay verification proves a trace is consistent with the maze — not that a mo
 Board reproduction proves the submitted code reproduces the claimed results — the strongest guarantee replication offers anyone, including science.
 We make no cryptographic claim about model provenance; hashes authenticate artifacts (manifests, containers, model files), never processes.
 The runner and dealer make honest running the cheapest path; the statistics make luck unrankable; reproduction settles the rest.
-Selection is structurally impossible: every dealt episode is on the ledger and every ledger entry counts.
+Once the dealer is live, selection is structurally impossible: every dealt episode is on the ledger and every ledger entry counts.
+Until then (season 0), that guarantee does not exist for manual submissions — replay-checking proves each submitted trace is internally real against its instance, not that unfavorable runs were also submitted.
+Board-seed entries publish their full pre-registered cohorts for exactly this reason, and early manual submissions are asked to declare theirs.
 
 ## 5. How to submit
 
